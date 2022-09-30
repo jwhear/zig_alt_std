@@ -20,4 +20,4 @@ jobs:
 
       - run: zig version
       - run: zig env
-      - run: zig build test
+      - run: zig build test -fstage1
