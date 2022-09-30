@@ -1,6 +1,0 @@
-id: q9h8jjt44y0pkhox643q6825tqnctwce6f63gls272exk5q0
-name: alt_std
-main: alt_std.zig
-license: MIT
-description: Useful functionality not (yet) in the Zig standard library
-dependencies:
