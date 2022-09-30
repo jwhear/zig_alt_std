@@ -1,0 +1,22 @@
+name: Deploy docs
+on: [push] # defaults to master
+permissions:
+  contents: write
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+
+      - name: Install and Build 🔧
+        uses: goto-bus-stop/setup-zig@v1
+        with:
+          version: master
+        run: |
+          zig build docs
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: docs
