@@ -13,13 +13,6 @@ const std = @import("std");
 const expectEqual = std.testing.expectEqual;
 const expectEqualSlices = std.testing.expectEqualSlices;
 
-// There is an issue with recursive functions in stage2 that causes the compiler
-//  to overflow with some implementations here.  Setting this to false will
-//  cause those tests to not be run.  This bug is not present in stage1.
-// https://github.com/ziglang/zig/issues/12973
-const has_bug_12973 = @import("builtin").zig_backend == .stage1;
-
-
 // Internal tooling for testing/verifying complexity
 const trackSwaps = false;
 var swaps: usize = 0;
@@ -34,7 +27,9 @@ const swap = if (trackSwaps) local_swap else std.mem.swap;
 
 ///
 pub fn Predicate(comptime T: type) type {
-    return fn (T) bool;
+    // Use std.meta.FnPtr to work around stage1/2 differences:
+    //  https://github.com/ziglang/zig/wiki/Self-Hosted-Compiler-Upgrade-Guide#function-pointers
+    return std.meta.FnPtr(fn (T) bool);
 }
 
 
@@ -213,10 +208,6 @@ pub fn Partition(comptime T: type) type {
 ///
 /// Returns a Partition describing the truthy and falsy slices.
 pub fn stablePartition(comptime T: type, slice: []T, predicate: Predicate(T)) Partition(T) {
-    if (comptime has_bug_12973) {
-        @compileError("stage2 cannot handle this function; use -fstage1 or see https://github.com/ziglang/zig/issues/12973");
-    }
-
     // Terminal cases
     if (slice.len == 0)
         return .{ .truthy=slice, .falsy=slice};
@@ -246,21 +237,17 @@ pub fn stablePartition(comptime T: type, slice: []T, predicate: Predicate(T)) Pa
     return .{ .truthy=slice[0..pivot], .falsy=slice[pivot..] };
 }
 test "stablePartition" {
-    if (comptime !has_bug_12973) {
-        const isOdd = struct {
-            pub fn f(val: i8) bool {
-                return val & 1 == 1;
-            }
-        }.f;
+    const isOdd = struct {
+        pub fn f(val: i8) bool {
+            return val & 1 == 1;
+        }
+    }.f;
 
-        var items = [_]i8{0,1,2,3,4,5,6};
-        const part = stablePartition(i8, &items, isOdd);
-        try expectEqualSlices(i8, &[_]i8{1,3,5}, part.truthy);
-        try expectEqualSlices(i8, &[_]i8{0,2,4,6}, part.falsy);
-        try expectEqualSlices(i8, &[_]i8{1,3,5,  0,2,4,6}, &items);
-    } else {
-        std.debug.print("Skipping test for gather; see #12973\n", .{});
-    }
+    var items = [_]i8{0,1,2,3,4,5,6};
+    const part = stablePartition(i8, &items, isOdd);
+    try expectEqualSlices(i8, &[_]i8{1,3,5}, part.truthy);
+    try expectEqualSlices(i8, &[_]i8{0,2,4,6}, part.falsy);
+    try expectEqualSlices(i8, &[_]i8{1,3,5,  0,2,4,6}, &items);
 }
 
 /// Moves all elements for which predicate returns true to come before all elements
@@ -280,7 +267,7 @@ pub const partition = stablePartition;
 //}
 
 /// Inverts function `fun`
-pub fn not(comptime Arg: type, comptime fun: fn(Arg) bool) fn(Arg) bool {
+pub fn not(comptime Arg: type, comptime fun: std.meta.FnPtr(fn(Arg) bool)) fn(Arg) bool {
     return struct {
         pub fn f(arg: Arg) bool {
             return !fun(arg);
@@ -358,29 +345,21 @@ pub fn slideToEnd(comptime T: type, slice: []T, selection_start: usize, selectio
 ///
 /// Returns the slice representing the truthy elements.
 pub fn gather(comptime T: type, slice: []T, comptime predicate: Predicate(T), target: usize) []T {
-    if (comptime has_bug_12973) {
-        @compileError("stage2 cannot handle this function; use -fstage1 or see https://github.com/ziglang/zig/issues/12973");
-    }
-
     const lower = stablePartition(T, slice[0..target], not(T, predicate));
     const upper = stablePartition(T, slice[target..], predicate);
     return slice[target - lower.falsy.len .. target + upper.truthy.len];
 }
 test "gather" {
-    if (comptime !has_bug_12973) {
-        const isOdd = struct {
-            pub fn f(val: i8) bool {
-                return val & 1 == 1;
-            }
-        }.f;
-        // target               ↓
-        var items = [_]i8{0,1,2,3,4,5,6};
-        const truthy = gather(i8, &items, isOdd, 3);
-        try expectEqualSlices(i8, &[_]i8{1,3,5}, truthy);
-        try expectEqualSlices(i8, &[_]i8{0,2, 1,3,5, 4,6}, &items);
-    } else {
-        std.debug.print("Skipping test for gather; see #12973\n", .{});
-    }
+    const isOdd = struct {
+        pub fn f(val: i8) bool {
+            return val & 1 == 1;
+        }
+    }.f;
+    // target               ↓
+    var items = [_]i8{0,1,2,3,4,5,6};
+    const truthy = gather(i8, &items, isOdd, 3);
+    try expectEqualSlices(i8, &[_]i8{1,3,5}, truthy);
+    try expectEqualSlices(i8, &[_]i8{0,2, 1,3,5, 4,6}, &items);
 }
 
 /// Moves all values less than `slice[pivot]` to the left of `pivot` and returns
