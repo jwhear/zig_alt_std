@@ -1,6 +1,9 @@
 # alt_std
 The Zig languages is deliberately postponing serious development of the standard library until the language has stabilized.  As a result, the current standard library largely contains only the things needed for development of the core infrastructure.  This library is a parking place for useful functionality that will likely qualify for inclusion in a standard library.
 
+## Documentation
+[Online docs](https://jwhear.github.io/zig_alt_std/index.html#root) are built automatically from the master branch.
+
 ## Usage
 The modules in this library do not have any dependencies except the Zig standard library itself.  You can include this library in your project with zigmod by:
 1. Run `zigmod init` in your project root
