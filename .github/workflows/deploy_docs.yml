@@ -15,7 +15,7 @@ jobs:
           version: master
 
       - run: |
-          zig build docs
+          zig build -fstage1 docs
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4

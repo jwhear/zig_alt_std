@@ -9,8 +9,17 @@ pub fn build(b: *Builder) void {
     lib.setBuildMode(mode);
     lib.setTarget(target);
 
+    // Tests
     const tests = b.addTest("alt_std.zig");
     tests.setBuildMode(mode);
     const test_step = b.step("test", "run all tests");
     test_step.dependOn(&tests.step);
+
+
+    // Documentation
+    const docs = b.addTest("alt_std.zig");
+    docs.setBuildMode(mode);
+    docs.emit_docs = .emit;
+    const docs_step = b.step("docs", "Generate documentation");
+    docs_step.dependOn(&docs.step);
 }
