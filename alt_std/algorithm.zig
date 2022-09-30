@@ -336,7 +336,7 @@ pub fn slideToEnd(comptime T: type, slice: []T, selection_start: usize, selectio
 /// Gathers all elements in `slice` for which `predicate` is true together and
 ///  places them "around" `target`.  Specifically, all predicated elements which
 ///  are before `target` will be placed immediately before `target`, while all
-///  elements after `target` will be placed immediately before `target`.
+///  elements after `target` will be placed immediately after `target`.
 /// This function is always stable.
 ///
 /// Returns the slice representing the truthy elements.
