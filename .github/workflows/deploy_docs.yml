@@ -13,7 +13,8 @@ jobs:
         uses: goto-bus-stop/setup-zig@v1
         with:
           version: master
-        run: |
+
+      - run: |
           zig build docs
 
       - name: Deploy 🚀
