@@ -189,7 +189,7 @@ test "bringToFront, worst-case swaps" {
     try expectEqual(@as(usize, 1), partition_index);
 
     if (trackSwaps)
-        std.debug.print("worst-case bring to front took {} swaps on array of length {}\n",
+        std.debug.print("worst-case bringToFront took {} swaps on array of length {}\n",
                         .{ swaps, items.len });
 }
 
@@ -287,7 +287,7 @@ pub fn slide(comptime T: type, slice: []T, selection_start: usize, selection_len
     if (selection_len == 0) return slice[0..0];
     const selection_end = selection_start + selection_len;
     std.debug.assert(target < slice.len);
-    std.debug.assert(selection_end < slice.len);
+    std.debug.assert(selection_end <= slice.len);
 
     if (target < selection_start) {
         // a simple bringToFront
@@ -324,6 +324,14 @@ test "slide to first" {
     const selection_at_target = slide(i8, &items, 4, 2, 0);
     try expectEqualSlices(i8, &[_]i8{4,5}, selection_at_target);
     try expectEqualSlices(i8, &[_]i8{4,5,0,1,2,3,6}, &items);
+}
+test "slide whole slice" {
+    // selection     ↓             ↓
+    var items = [_]i8{0,1,2,3,4,5,6};
+    // target        ↑
+    const selection_at_target = slide(i8, &items, 0, items.len, 0);
+    try expectEqualSlices(i8, &[_]i8{0,1,2,3,4,5,6}, selection_at_target);
+    try expectEqualSlices(i8, &[_]i8{0,1,2,3,4,5,6}, &items);
 }
 
 ///
