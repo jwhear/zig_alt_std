@@ -48,6 +48,8 @@ pub fn Predicate(comptime T: type) type {
 ///  where `front` and `back` are completely disjoint.  However, `front[0]`
 ///  must not be reachable by iterating `back`.
 ///
+/// Relative ordering of elements within both slices is maintained.
+///
 /// Returns the length of `back`; if front and back are not disjoint this will
 ///  also be the new index of `front[0]`.
 pub fn stableBringToFront(comptime Element: type, front: []Element, back: []Element) usize {
@@ -109,7 +111,19 @@ pub fn stableBringToFront(comptime Element: type, front: []Element, back: []Elem
 
     return back.len;
 }
+
+/// This function operates on the (conceptual) concatenation of `front` and
+/// `back`, bringing all the elements of `back` forward so that they occur
+///  before the elements of `front`.
 ///
+/// This function detects when `front` overlaps with `back` and does not duplicate
+///  elements from the overlap.  This means that it is valid to call when `back`
+///  is a slice of `front`, where `front` and `back` overlap in the middle, and
+///  where `front` and `back` are completely disjoint.  However, `front[0]`
+///  must not be reachable by iterating `back`.
+///
+/// Returns the length of `back`; if front and back are not disjoint this will
+///  also be the new index of `front[0]`.
 pub const bringToFront = stableBringToFront;
 
 test "bringToFront, minimal" {
@@ -249,7 +263,10 @@ test "stablePartition" {
     }
 }
 
+/// Moves all elements for which predicate returns true to come before all elements
+///  for which it returns false.
 ///
+/// Returns a Partition describing the truthy and falsy slices.
 pub const partition = stablePartition;
 
 // Enforces that `fun` takes a single argument and returns the type of that argument.
