@@ -119,7 +119,7 @@
 <span class="line" id="L6"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> Status = <span class="tok-kw">enum</span>(<span class="tok-type">u10</span>) {</span>
 <span class="line" id="L7">    @&quot;continue&quot; = <span class="tok-number">100</span>, <span class="tok-comment">// RFC7231, Section 6.2.1</span>
 </span>
-<span class="line" id="L8">    switching_protcols = <span class="tok-number">101</span>, <span class="tok-comment">// RFC7231, Section 6.2.2</span>
+<span class="line" id="L8">    switching_protocols = <span class="tok-number">101</span>, <span class="tok-comment">// RFC7231, Section 6.2.2</span>
 </span>
 <span class="line" id="L9">    processing = <span class="tok-number">102</span>, <span class="tok-comment">// RFC2518</span>
 </span>
@@ -253,7 +253,7 @@
 <span class="line" id="L78">            <span class="tok-comment">// 1xx statuses</span>
 </span>
 <span class="line" id="L79">            .@&quot;continue&quot; =&gt; <span class="tok-str">&quot;Continue&quot;</span>,</span>
-<span class="line" id="L80">            .switching_protcols =&gt; <span class="tok-str">&quot;Switching Protocols&quot;</span>,</span>
+<span class="line" id="L80">            .switching_protocols =&gt; <span class="tok-str">&quot;Switching Protocols&quot;</span>,</span>
 <span class="line" id="L81">            .processing =&gt; <span class="tok-str">&quot;Processing&quot;</span>,</span>
 <span class="line" id="L82">            .early_hints =&gt; <span class="tok-str">&quot;Early Hints&quot;</span>,</span>
 <span class="line" id="L83"></span>

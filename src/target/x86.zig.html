@@ -2836,724 +2836,723 @@
 <span class="line" id="L2723">            .avx512vbmi,</span>
 <span class="line" id="L2724">            .avx512vbmi2,</span>
 <span class="line" id="L2725">            .avx512vnni,</span>
-<span class="line" id="L2726">            .avx512vp2intersect,</span>
-<span class="line" id="L2727">            .avx512vpopcntdq,</span>
-<span class="line" id="L2728">            .avxvnni,</span>
-<span class="line" id="L2729">            .bmi,</span>
-<span class="line" id="L2730">            .bmi2,</span>
-<span class="line" id="L2731">            .cldemote,</span>
-<span class="line" id="L2732">            .clflushopt,</span>
-<span class="line" id="L2733">            .clwb,</span>
-<span class="line" id="L2734">            .cmov,</span>
-<span class="line" id="L2735">            .crc32,</span>
-<span class="line" id="L2736">            .cx16,</span>
-<span class="line" id="L2737">            .enqcmd,</span>
-<span class="line" id="L2738">            .ermsb,</span>
-<span class="line" id="L2739">            .false_deps_getmant,</span>
-<span class="line" id="L2740">            .false_deps_mulc,</span>
-<span class="line" id="L2741">            .false_deps_mullq,</span>
-<span class="line" id="L2742">            .false_deps_perm,</span>
-<span class="line" id="L2743">            .false_deps_range,</span>
-<span class="line" id="L2744">            .fast_15bytenop,</span>
-<span class="line" id="L2745">            .fast_gather,</span>
-<span class="line" id="L2746">            .fast_scalar_fsqrt,</span>
-<span class="line" id="L2747">            .fast_shld_rotate,</span>
-<span class="line" id="L2748">            .fast_variable_crosslane_shuffle,</span>
-<span class="line" id="L2749">            .fast_variable_perlane_shuffle,</span>
-<span class="line" id="L2750">            .fast_vector_fsqrt,</span>
-<span class="line" id="L2751">            .fsgsbase,</span>
-<span class="line" id="L2752">            .fsrm,</span>
-<span class="line" id="L2753">            .fxsr,</span>
-<span class="line" id="L2754">            .gfni,</span>
-<span class="line" id="L2755">            .idivq_to_divl,</span>
-<span class="line" id="L2756">            .invpcid,</span>
-<span class="line" id="L2757">            .lzcnt,</span>
-<span class="line" id="L2758">            .macrofusion,</span>
-<span class="line" id="L2759">            .mmx,</span>
-<span class="line" id="L2760">            .movbe,</span>
-<span class="line" id="L2761">            .movdir64b,</span>
-<span class="line" id="L2762">            .movdiri,</span>
-<span class="line" id="L2763">            .nopl,</span>
-<span class="line" id="L2764">            .pconfig,</span>
-<span class="line" id="L2765">            .pku,</span>
-<span class="line" id="L2766">            .popcnt,</span>
-<span class="line" id="L2767">            .prefer_256_bit,</span>
-<span class="line" id="L2768">            .prfchw,</span>
-<span class="line" id="L2769">            .ptwrite,</span>
-<span class="line" id="L2770">            .rdpid,</span>
-<span class="line" id="L2771">            .rdrnd,</span>
-<span class="line" id="L2772">            .rdseed,</span>
-<span class="line" id="L2773">            .sahf,</span>
-<span class="line" id="L2774">            .serialize,</span>
-<span class="line" id="L2775">            .sha,</span>
-<span class="line" id="L2776">            .shstk,</span>
-<span class="line" id="L2777">            .slow_3ops_lea,</span>
-<span class="line" id="L2778">            .tsxldtrk,</span>
-<span class="line" id="L2779">            .uintr,</span>
-<span class="line" id="L2780">            .vaes,</span>
-<span class="line" id="L2781">            .vpclmulqdq,</span>
-<span class="line" id="L2782">            .vzeroupper,</span>
-<span class="line" id="L2783">            .waitpkg,</span>
-<span class="line" id="L2784">            .wbnoinvd,</span>
-<span class="line" id="L2785">            .x87,</span>
-<span class="line" id="L2786">            .xsavec,</span>
-<span class="line" id="L2787">            .xsaveopt,</span>
-<span class="line" id="L2788">            .xsaves,</span>
-<span class="line" id="L2789">        }),</span>
-<span class="line" id="L2790">    };</span>
-<span class="line" id="L2791">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> silvermont = CpuModel{</span>
-<span class="line" id="L2792">        .name = <span class="tok-str">&quot;silvermont&quot;</span>,</span>
-<span class="line" id="L2793">        .llvm_name = <span class="tok-str">&quot;silvermont&quot;</span>,</span>
-<span class="line" id="L2794">        .features = featureSet(&amp;[_]Feature{</span>
-<span class="line" id="L2795">            .@&quot;64bit&quot;,</span>
-<span class="line" id="L2796">            .cmov,</span>
-<span class="line" id="L2797">            .crc32,</span>
-<span class="line" id="L2798">            .cx16,</span>
-<span class="line" id="L2799">            .false_deps_popcnt,</span>
-<span class="line" id="L2800">            .fast_7bytenop,</span>
-<span class="line" id="L2801">            .fast_movbe,</span>
-<span class="line" id="L2802">            .fxsr,</span>
-<span class="line" id="L2803">            .idivq_to_divl,</span>
-<span class="line" id="L2804">            .mmx,</span>
-<span class="line" id="L2805">            .movbe,</span>
-<span class="line" id="L2806">            .nopl,</span>
-<span class="line" id="L2807">            .pclmul,</span>
-<span class="line" id="L2808">            .popcnt,</span>
-<span class="line" id="L2809">            .prfchw,</span>
-<span class="line" id="L2810">            .rdrnd,</span>
-<span class="line" id="L2811">            .sahf,</span>
-<span class="line" id="L2812">            .slow_incdec,</span>
-<span class="line" id="L2813">            .slow_lea,</span>
-<span class="line" id="L2814">            .slow_pmulld,</span>
-<span class="line" id="L2815">            .slow_two_mem_ops,</span>
-<span class="line" id="L2816">            .sse4_2,</span>
-<span class="line" id="L2817">            .use_slm_arith_costs,</span>
-<span class="line" id="L2818">            .vzeroupper,</span>
-<span class="line" id="L2819">            .x87,</span>
-<span class="line" id="L2820">        }),</span>
-<span class="line" id="L2821">    };</span>
-<span class="line" id="L2822">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> skx = CpuModel{</span>
-<span class="line" id="L2823">        .name = <span class="tok-str">&quot;skx&quot;</span>,</span>
-<span class="line" id="L2824">        .llvm_name = <span class="tok-str">&quot;skx&quot;</span>,</span>
-<span class="line" id="L2825">        .features = featureSet(&amp;[_]Feature{</span>
-<span class="line" id="L2826">            .@&quot;64bit&quot;,</span>
-<span class="line" id="L2827">            .adx,</span>
-<span class="line" id="L2828">            .aes,</span>
-<span class="line" id="L2829">            .avx512bw,</span>
-<span class="line" id="L2830">            .avx512cd,</span>
-<span class="line" id="L2831">            .avx512dq,</span>
-<span class="line" id="L2832">            .avx512vl,</span>
-<span class="line" id="L2833">            .bmi,</span>
-<span class="line" id="L2834">            .bmi2,</span>
-<span class="line" id="L2835">            .clflushopt,</span>
-<span class="line" id="L2836">            .clwb,</span>
-<span class="line" id="L2837">            .cmov,</span>
-<span class="line" id="L2838">            .crc32,</span>
-<span class="line" id="L2839">            .cx16,</span>
-<span class="line" id="L2840">            .ermsb,</span>
-<span class="line" id="L2841">            .false_deps_popcnt,</span>
-<span class="line" id="L2842">            .fast_15bytenop,</span>
-<span class="line" id="L2843">            .fast_gather,</span>
-<span class="line" id="L2844">            .fast_scalar_fsqrt,</span>
-<span class="line" id="L2845">            .fast_shld_rotate,</span>
-<span class="line" id="L2846">            .fast_variable_crosslane_shuffle,</span>
-<span class="line" id="L2847">            .fast_variable_perlane_shuffle,</span>
-<span class="line" id="L2848">            .fast_vector_fsqrt,</span>
-<span class="line" id="L2849">            .fsgsbase,</span>
-<span class="line" id="L2850">            .fxsr,</span>
-<span class="line" id="L2851">            .idivq_to_divl,</span>
-<span class="line" id="L2852">            .invpcid,</span>
-<span class="line" id="L2853">            .lzcnt,</span>
-<span class="line" id="L2854">            .macrofusion,</span>
-<span class="line" id="L2855">            .mmx,</span>
-<span class="line" id="L2856">            .movbe,</span>
-<span class="line" id="L2857">            .nopl,</span>
-<span class="line" id="L2858">            .pclmul,</span>
-<span class="line" id="L2859">            .pku,</span>
-<span class="line" id="L2860">            .popcnt,</span>
-<span class="line" id="L2861">            .prefer_256_bit,</span>
-<span class="line" id="L2862">            .prfchw,</span>
-<span class="line" id="L2863">            .rdrnd,</span>
-<span class="line" id="L2864">            .rdseed,</span>
-<span class="line" id="L2865">            .sahf,</span>
-<span class="line" id="L2866">            .slow_3ops_lea,</span>
-<span class="line" id="L2867">            .vzeroupper,</span>
-<span class="line" id="L2868">            .x87,</span>
-<span class="line" id="L2869">            .xsavec,</span>
-<span class="line" id="L2870">            .xsaveopt,</span>
-<span class="line" id="L2871">            .xsaves,</span>
-<span class="line" id="L2872">        }),</span>
-<span class="line" id="L2873">    };</span>
-<span class="line" id="L2874">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> skylake = CpuModel{</span>
-<span class="line" id="L2875">        .name = <span class="tok-str">&quot;skylake&quot;</span>,</span>
-<span class="line" id="L2876">        .llvm_name = <span class="tok-str">&quot;skylake&quot;</span>,</span>
-<span class="line" id="L2877">        .features = featureSet(&amp;[_]Feature{</span>
-<span class="line" id="L2878">            .@&quot;64bit&quot;,</span>
-<span class="line" id="L2879">            .adx,</span>
-<span class="line" id="L2880">            .aes,</span>
-<span class="line" id="L2881">            .avx2,</span>
-<span class="line" id="L2882">            .bmi,</span>
-<span class="line" id="L2883">            .bmi2,</span>
-<span class="line" id="L2884">            .clflushopt,</span>
-<span class="line" id="L2885">            .cmov,</span>
-<span class="line" id="L2886">            .crc32,</span>
-<span class="line" id="L2887">            .cx16,</span>
-<span class="line" id="L2888">            .ermsb,</span>
-<span class="line" id="L2889">            .f16c,</span>
-<span class="line" id="L2890">            .false_deps_popcnt,</span>
-<span class="line" id="L2891">            .fast_15bytenop,</span>
-<span class="line" id="L2892">            .fast_gather,</span>
-<span class="line" id="L2893">            .fast_scalar_fsqrt,</span>
-<span class="line" id="L2894">            .fast_shld_rotate,</span>
-<span class="line" id="L2895">            .fast_variable_crosslane_shuffle,</span>
-<span class="line" id="L2896">            .fast_variable_perlane_shuffle,</span>
-<span class="line" id="L2897">            .fast_vector_fsqrt,</span>
-<span class="line" id="L2898">            .fma,</span>
-<span class="line" id="L2899">            .fsgsbase,</span>
-<span class="line" id="L2900">            .fxsr,</span>
-<span class="line" id="L2901">            .idivq_to_divl,</span>
-<span class="line" id="L2902">            .invpcid,</span>
-<span class="line" id="L2903">            .lzcnt,</span>
-<span class="line" id="L2904">            .macrofusion,</span>
-<span class="line" id="L2905">            .mmx,</span>
-<span class="line" id="L2906">            .movbe,</span>
-<span class="line" id="L2907">            .nopl,</span>
-<span class="line" id="L2908">            .pclmul,</span>
-<span class="line" id="L2909">            .popcnt,</span>
-<span class="line" id="L2910">            .prfchw,</span>
-<span class="line" id="L2911">            .rdrnd,</span>
-<span class="line" id="L2912">            .rdseed,</span>
-<span class="line" id="L2913">            .sahf,</span>
-<span class="line" id="L2914">            .slow_3ops_lea,</span>
-<span class="line" id="L2915">            .vzeroupper,</span>
-<span class="line" id="L2916">            .x87,</span>
-<span class="line" id="L2917">            .xsavec,</span>
-<span class="line" id="L2918">            .xsaveopt,</span>
-<span class="line" id="L2919">            .xsaves,</span>
-<span class="line" id="L2920">        }),</span>
-<span class="line" id="L2921">    };</span>
-<span class="line" id="L2922">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> skylake_avx512 = CpuModel{</span>
-<span class="line" id="L2923">        .name = <span class="tok-str">&quot;skylake_avx512&quot;</span>,</span>
-<span class="line" id="L2924">        .llvm_name = <span class="tok-str">&quot;skylake-avx512&quot;</span>,</span>
-<span class="line" id="L2925">        .features = featureSet(&amp;[_]Feature{</span>
-<span class="line" id="L2926">            .@&quot;64bit&quot;,</span>
-<span class="line" id="L2927">            .adx,</span>
-<span class="line" id="L2928">            .aes,</span>
-<span class="line" id="L2929">            .avx512bw,</span>
-<span class="line" id="L2930">            .avx512cd,</span>
-<span class="line" id="L2931">            .avx512dq,</span>
-<span class="line" id="L2932">            .avx512vl,</span>
-<span class="line" id="L2933">            .bmi,</span>
-<span class="line" id="L2934">            .bmi2,</span>
-<span class="line" id="L2935">            .clflushopt,</span>
-<span class="line" id="L2936">            .clwb,</span>
-<span class="line" id="L2937">            .cmov,</span>
-<span class="line" id="L2938">            .crc32,</span>
-<span class="line" id="L2939">            .cx16,</span>
-<span class="line" id="L2940">            .ermsb,</span>
-<span class="line" id="L2941">            .false_deps_popcnt,</span>
-<span class="line" id="L2942">            .fast_15bytenop,</span>
-<span class="line" id="L2943">            .fast_gather,</span>
-<span class="line" id="L2944">            .fast_scalar_fsqrt,</span>
-<span class="line" id="L2945">            .fast_shld_rotate,</span>
-<span class="line" id="L2946">            .fast_variable_crosslane_shuffle,</span>
-<span class="line" id="L2947">            .fast_variable_perlane_shuffle,</span>
-<span class="line" id="L2948">            .fast_vector_fsqrt,</span>
-<span class="line" id="L2949">            .fsgsbase,</span>
-<span class="line" id="L2950">            .fxsr,</span>
-<span class="line" id="L2951">            .idivq_to_divl,</span>
-<span class="line" id="L2952">            .invpcid,</span>
-<span class="line" id="L2953">            .lzcnt,</span>
-<span class="line" id="L2954">            .macrofusion,</span>
-<span class="line" id="L2955">            .mmx,</span>
-<span class="line" id="L2956">            .movbe,</span>
-<span class="line" id="L2957">            .nopl,</span>
-<span class="line" id="L2958">            .pclmul,</span>
-<span class="line" id="L2959">            .pku,</span>
-<span class="line" id="L2960">            .popcnt,</span>
-<span class="line" id="L2961">            .prefer_256_bit,</span>
-<span class="line" id="L2962">            .prfchw,</span>
-<span class="line" id="L2963">            .rdrnd,</span>
-<span class="line" id="L2964">            .rdseed,</span>
-<span class="line" id="L2965">            .sahf,</span>
-<span class="line" id="L2966">            .slow_3ops_lea,</span>
-<span class="line" id="L2967">            .vzeroupper,</span>
-<span class="line" id="L2968">            .x87,</span>
-<span class="line" id="L2969">            .xsavec,</span>
-<span class="line" id="L2970">            .xsaveopt,</span>
-<span class="line" id="L2971">            .xsaves,</span>
-<span class="line" id="L2972">        }),</span>
-<span class="line" id="L2973">    };</span>
-<span class="line" id="L2974">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> slm = CpuModel{</span>
-<span class="line" id="L2975">        .name = <span class="tok-str">&quot;slm&quot;</span>,</span>
-<span class="line" id="L2976">        .llvm_name = <span class="tok-str">&quot;slm&quot;</span>,</span>
-<span class="line" id="L2977">        .features = featureSet(&amp;[_]Feature{</span>
-<span class="line" id="L2978">            .@&quot;64bit&quot;,</span>
-<span class="line" id="L2979">            .cmov,</span>
-<span class="line" id="L2980">            .crc32,</span>
-<span class="line" id="L2981">            .cx16,</span>
-<span class="line" id="L2982">            .false_deps_popcnt,</span>
-<span class="line" id="L2983">            .fast_7bytenop,</span>
-<span class="line" id="L2984">            .fast_movbe,</span>
-<span class="line" id="L2985">            .fxsr,</span>
-<span class="line" id="L2986">            .idivq_to_divl,</span>
-<span class="line" id="L2987">            .mmx,</span>
-<span class="line" id="L2988">            .movbe,</span>
-<span class="line" id="L2989">            .nopl,</span>
-<span class="line" id="L2990">            .pclmul,</span>
-<span class="line" id="L2991">            .popcnt,</span>
-<span class="line" id="L2992">            .prfchw,</span>
-<span class="line" id="L2993">            .rdrnd,</span>
-<span class="line" id="L2994">            .sahf,</span>
-<span class="line" id="L2995">            .slow_incdec,</span>
-<span class="line" id="L2996">            .slow_lea,</span>
-<span class="line" id="L2997">            .slow_pmulld,</span>
-<span class="line" id="L2998">            .slow_two_mem_ops,</span>
-<span class="line" id="L2999">            .sse4_2,</span>
-<span class="line" id="L3000">            .use_slm_arith_costs,</span>
-<span class="line" id="L3001">            .vzeroupper,</span>
-<span class="line" id="L3002">            .x87,</span>
-<span class="line" id="L3003">        }),</span>
-<span class="line" id="L3004">    };</span>
-<span class="line" id="L3005">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> tigerlake = CpuModel{</span>
-<span class="line" id="L3006">        .name = <span class="tok-str">&quot;tigerlake&quot;</span>,</span>
-<span class="line" id="L3007">        .llvm_name = <span class="tok-str">&quot;tigerlake&quot;</span>,</span>
-<span class="line" id="L3008">        .features = featureSet(&amp;[_]Feature{</span>
-<span class="line" id="L3009">            .@&quot;64bit&quot;,</span>
-<span class="line" id="L3010">            .adx,</span>
-<span class="line" id="L3011">            .avx512bitalg,</span>
-<span class="line" id="L3012">            .avx512cd,</span>
-<span class="line" id="L3013">            .avx512dq,</span>
-<span class="line" id="L3014">            .avx512ifma,</span>
-<span class="line" id="L3015">            .avx512vbmi,</span>
-<span class="line" id="L3016">            .avx512vbmi2,</span>
-<span class="line" id="L3017">            .avx512vl,</span>
-<span class="line" id="L3018">            .avx512vnni,</span>
-<span class="line" id="L3019">            .avx512vp2intersect,</span>
-<span class="line" id="L3020">            .avx512vpopcntdq,</span>
-<span class="line" id="L3021">            .bmi,</span>
-<span class="line" id="L3022">            .bmi2,</span>
-<span class="line" id="L3023">            .clflushopt,</span>
-<span class="line" id="L3024">            .clwb,</span>
-<span class="line" id="L3025">            .cmov,</span>
-<span class="line" id="L3026">            .crc32,</span>
-<span class="line" id="L3027">            .cx16,</span>
-<span class="line" id="L3028">            .ermsb,</span>
-<span class="line" id="L3029">            .fast_15bytenop,</span>
-<span class="line" id="L3030">            .fast_gather,</span>
-<span class="line" id="L3031">            .fast_scalar_fsqrt,</span>
-<span class="line" id="L3032">            .fast_shld_rotate,</span>
-<span class="line" id="L3033">            .fast_variable_crosslane_shuffle,</span>
-<span class="line" id="L3034">            .fast_variable_perlane_shuffle,</span>
-<span class="line" id="L3035">            .fast_vector_fsqrt,</span>
-<span class="line" id="L3036">            .fsgsbase,</span>
-<span class="line" id="L3037">            .fsrm,</span>
-<span class="line" id="L3038">            .fxsr,</span>
-<span class="line" id="L3039">            .gfni,</span>
-<span class="line" id="L3040">            .idivq_to_divl,</span>
-<span class="line" id="L3041">            .invpcid,</span>
-<span class="line" id="L3042">            .lzcnt,</span>
-<span class="line" id="L3043">            .macrofusion,</span>
-<span class="line" id="L3044">            .mmx,</span>
-<span class="line" id="L3045">            .movbe,</span>
-<span class="line" id="L3046">            .movdir64b,</span>
-<span class="line" id="L3047">            .movdiri,</span>
-<span class="line" id="L3048">            .nopl,</span>
-<span class="line" id="L3049">            .pku,</span>
-<span class="line" id="L3050">            .popcnt,</span>
-<span class="line" id="L3051">            .prefer_256_bit,</span>
-<span class="line" id="L3052">            .prfchw,</span>
-<span class="line" id="L3053">            .rdpid,</span>
-<span class="line" id="L3054">            .rdrnd,</span>
-<span class="line" id="L3055">            .rdseed,</span>
-<span class="line" id="L3056">            .sahf,</span>
-<span class="line" id="L3057">            .sha,</span>
-<span class="line" id="L3058">            .shstk,</span>
-<span class="line" id="L3059">            .slow_3ops_lea,</span>
-<span class="line" id="L3060">            .vaes,</span>
-<span class="line" id="L3061">            .vpclmulqdq,</span>
-<span class="line" id="L3062">            .vzeroupper,</span>
-<span class="line" id="L3063">            .x87,</span>
-<span class="line" id="L3064">            .xsavec,</span>
-<span class="line" id="L3065">            .xsaveopt,</span>
-<span class="line" id="L3066">            .xsaves,</span>
-<span class="line" id="L3067">        }),</span>
-<span class="line" id="L3068">    };</span>
-<span class="line" id="L3069">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> tremont = CpuModel{</span>
-<span class="line" id="L3070">        .name = <span class="tok-str">&quot;tremont&quot;</span>,</span>
-<span class="line" id="L3071">        .llvm_name = <span class="tok-str">&quot;tremont&quot;</span>,</span>
-<span class="line" id="L3072">        .features = featureSet(&amp;[_]Feature{</span>
-<span class="line" id="L3073">            .@&quot;64bit&quot;,</span>
-<span class="line" id="L3074">            .aes,</span>
-<span class="line" id="L3075">            .clflushopt,</span>
-<span class="line" id="L3076">            .clwb,</span>
-<span class="line" id="L3077">            .cmov,</span>
-<span class="line" id="L3078">            .crc32,</span>
-<span class="line" id="L3079">            .cx16,</span>
-<span class="line" id="L3080">            .fast_movbe,</span>
-<span class="line" id="L3081">            .fsgsbase,</span>
-<span class="line" id="L3082">            .fxsr,</span>
-<span class="line" id="L3083">            .gfni,</span>
-<span class="line" id="L3084">            .mmx,</span>
-<span class="line" id="L3085">            .movbe,</span>
-<span class="line" id="L3086">            .nopl,</span>
-<span class="line" id="L3087">            .pclmul,</span>
-<span class="line" id="L3088">            .popcnt,</span>
-<span class="line" id="L3089">            .prfchw,</span>
-<span class="line" id="L3090">            .ptwrite,</span>
-<span class="line" id="L3091">            .rdpid,</span>
-<span class="line" id="L3092">            .rdrnd,</span>
-<span class="line" id="L3093">            .rdseed,</span>
-<span class="line" id="L3094">            .sahf,</span>
-<span class="line" id="L3095">            .sha,</span>
-<span class="line" id="L3096">            .slow_incdec,</span>
-<span class="line" id="L3097">            .slow_lea,</span>
-<span class="line" id="L3098">            .slow_two_mem_ops,</span>
-<span class="line" id="L3099">            .sse4_2,</span>
-<span class="line" id="L3100">            .use_glm_div_sqrt_costs,</span>
-<span class="line" id="L3101">            .vzeroupper,</span>
-<span class="line" id="L3102">            .x87,</span>
-<span class="line" id="L3103">            .xsavec,</span>
-<span class="line" id="L3104">            .xsaveopt,</span>
-<span class="line" id="L3105">            .xsaves,</span>
-<span class="line" id="L3106">        }),</span>
-<span class="line" id="L3107">    };</span>
-<span class="line" id="L3108">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> westmere = CpuModel{</span>
-<span class="line" id="L3109">        .name = <span class="tok-str">&quot;westmere&quot;</span>,</span>
-<span class="line" id="L3110">        .llvm_name = <span class="tok-str">&quot;westmere&quot;</span>,</span>
-<span class="line" id="L3111">        .features = featureSet(&amp;[_]Feature{</span>
-<span class="line" id="L3112">            .@&quot;64bit&quot;,</span>
-<span class="line" id="L3113">            .cmov,</span>
-<span class="line" id="L3114">            .crc32,</span>
-<span class="line" id="L3115">            .cx16,</span>
-<span class="line" id="L3116">            .fxsr,</span>
-<span class="line" id="L3117">            .macrofusion,</span>
-<span class="line" id="L3118">            .mmx,</span>
-<span class="line" id="L3119">            .nopl,</span>
-<span class="line" id="L3120">            .pclmul,</span>
-<span class="line" id="L3121">            .popcnt,</span>
-<span class="line" id="L3122">            .sahf,</span>
-<span class="line" id="L3123">            .sse4_2,</span>
-<span class="line" id="L3124">            .vzeroupper,</span>
-<span class="line" id="L3125">            .x87,</span>
-<span class="line" id="L3126">        }),</span>
-<span class="line" id="L3127">    };</span>
-<span class="line" id="L3128">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> winchip2 = CpuModel{</span>
-<span class="line" id="L3129">        .name = <span class="tok-str">&quot;winchip2&quot;</span>,</span>
-<span class="line" id="L3130">        .llvm_name = <span class="tok-str">&quot;winchip2&quot;</span>,</span>
-<span class="line" id="L3131">        .features = featureSet(&amp;[_]Feature{</span>
-<span class="line" id="L3132">            .@&quot;3dnow&quot;,</span>
-<span class="line" id="L3133">            .slow_unaligned_mem_16,</span>
-<span class="line" id="L3134">            .vzeroupper,</span>
-<span class="line" id="L3135">            .x87,</span>
-<span class="line" id="L3136">        }),</span>
-<span class="line" id="L3137">    };</span>
-<span class="line" id="L3138">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> winchip_c6 = CpuModel{</span>
-<span class="line" id="L3139">        .name = <span class="tok-str">&quot;winchip_c6&quot;</span>,</span>
-<span class="line" id="L3140">        .llvm_name = <span class="tok-str">&quot;winchip-c6&quot;</span>,</span>
-<span class="line" id="L3141">        .features = featureSet(&amp;[_]Feature{</span>
-<span class="line" id="L3142">            .mmx,</span>
-<span class="line" id="L3143">            .slow_unaligned_mem_16,</span>
-<span class="line" id="L3144">            .vzeroupper,</span>
-<span class="line" id="L3145">            .x87,</span>
-<span class="line" id="L3146">        }),</span>
-<span class="line" id="L3147">    };</span>
-<span class="line" id="L3148">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> x86_64 = CpuModel{</span>
-<span class="line" id="L3149">        .name = <span class="tok-str">&quot;x86_64&quot;</span>,</span>
-<span class="line" id="L3150">        .llvm_name = <span class="tok-str">&quot;x86-64&quot;</span>,</span>
-<span class="line" id="L3151">        .features = featureSet(&amp;[_]Feature{</span>
-<span class="line" id="L3152">            .@&quot;64bit&quot;,</span>
-<span class="line" id="L3153">            .cmov,</span>
-<span class="line" id="L3154">            .cx8,</span>
-<span class="line" id="L3155">            .fxsr,</span>
-<span class="line" id="L3156">            .idivq_to_divl,</span>
-<span class="line" id="L3157">            .macrofusion,</span>
-<span class="line" id="L3158">            .mmx,</span>
-<span class="line" id="L3159">            .nopl,</span>
-<span class="line" id="L3160">            .slow_3ops_lea,</span>
-<span class="line" id="L3161">            .slow_incdec,</span>
-<span class="line" id="L3162">            .sse2,</span>
-<span class="line" id="L3163">            .vzeroupper,</span>
-<span class="line" id="L3164">            .x87,</span>
-<span class="line" id="L3165">        }),</span>
-<span class="line" id="L3166">    };</span>
-<span class="line" id="L3167">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> x86_64_v2 = CpuModel{</span>
-<span class="line" id="L3168">        .name = <span class="tok-str">&quot;x86_64_v2&quot;</span>,</span>
-<span class="line" id="L3169">        .llvm_name = <span class="tok-str">&quot;x86-64-v2&quot;</span>,</span>
-<span class="line" id="L3170">        .features = featureSet(&amp;[_]Feature{</span>
-<span class="line" id="L3171">            .@&quot;64bit&quot;,</span>
-<span class="line" id="L3172">            .cmov,</span>
-<span class="line" id="L3173">            .crc32,</span>
-<span class="line" id="L3174">            .cx16,</span>
-<span class="line" id="L3175">            .false_deps_popcnt,</span>
-<span class="line" id="L3176">            .fast_15bytenop,</span>
-<span class="line" id="L3177">            .fast_scalar_fsqrt,</span>
-<span class="line" id="L3178">            .fast_shld_rotate,</span>
-<span class="line" id="L3179">            .fxsr,</span>
-<span class="line" id="L3180">            .idivq_to_divl,</span>
-<span class="line" id="L3181">            .macrofusion,</span>
-<span class="line" id="L3182">            .mmx,</span>
-<span class="line" id="L3183">            .nopl,</span>
-<span class="line" id="L3184">            .popcnt,</span>
-<span class="line" id="L3185">            .sahf,</span>
-<span class="line" id="L3186">            .slow_3ops_lea,</span>
-<span class="line" id="L3187">            .slow_unaligned_mem_32,</span>
-<span class="line" id="L3188">            .sse4_2,</span>
-<span class="line" id="L3189">            .vzeroupper,</span>
-<span class="line" id="L3190">            .x87,</span>
-<span class="line" id="L3191">        }),</span>
-<span class="line" id="L3192">    };</span>
-<span class="line" id="L3193">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> x86_64_v3 = CpuModel{</span>
-<span class="line" id="L3194">        .name = <span class="tok-str">&quot;x86_64_v3&quot;</span>,</span>
-<span class="line" id="L3195">        .llvm_name = <span class="tok-str">&quot;x86-64-v3&quot;</span>,</span>
-<span class="line" id="L3196">        .features = featureSet(&amp;[_]Feature{</span>
-<span class="line" id="L3197">            .@&quot;64bit&quot;,</span>
-<span class="line" id="L3198">            .avx2,</span>
-<span class="line" id="L3199">            .bmi,</span>
-<span class="line" id="L3200">            .bmi2,</span>
-<span class="line" id="L3201">            .cmov,</span>
-<span class="line" id="L3202">            .crc32,</span>
-<span class="line" id="L3203">            .cx16,</span>
-<span class="line" id="L3204">            .f16c,</span>
-<span class="line" id="L3205">            .false_deps_lzcnt_tzcnt,</span>
-<span class="line" id="L3206">            .false_deps_popcnt,</span>
-<span class="line" id="L3207">            .fast_15bytenop,</span>
-<span class="line" id="L3208">            .fast_scalar_fsqrt,</span>
-<span class="line" id="L3209">            .fast_shld_rotate,</span>
-<span class="line" id="L3210">            .fast_variable_crosslane_shuffle,</span>
-<span class="line" id="L3211">            .fast_variable_perlane_shuffle,</span>
-<span class="line" id="L3212">            .fma,</span>
-<span class="line" id="L3213">            .fxsr,</span>
-<span class="line" id="L3214">            .idivq_to_divl,</span>
-<span class="line" id="L3215">            .lzcnt,</span>
-<span class="line" id="L3216">            .macrofusion,</span>
-<span class="line" id="L3217">            .mmx,</span>
-<span class="line" id="L3218">            .movbe,</span>
-<span class="line" id="L3219">            .nopl,</span>
-<span class="line" id="L3220">            .popcnt,</span>
-<span class="line" id="L3221">            .sahf,</span>
-<span class="line" id="L3222">            .slow_3ops_lea,</span>
-<span class="line" id="L3223">            .vzeroupper,</span>
-<span class="line" id="L3224">            .x87,</span>
-<span class="line" id="L3225">            .xsave,</span>
-<span class="line" id="L3226">        }),</span>
-<span class="line" id="L3227">    };</span>
-<span class="line" id="L3228">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> x86_64_v4 = CpuModel{</span>
-<span class="line" id="L3229">        .name = <span class="tok-str">&quot;x86_64_v4&quot;</span>,</span>
-<span class="line" id="L3230">        .llvm_name = <span class="tok-str">&quot;x86-64-v4&quot;</span>,</span>
-<span class="line" id="L3231">        .features = featureSet(&amp;[_]Feature{</span>
-<span class="line" id="L3232">            .@&quot;64bit&quot;,</span>
-<span class="line" id="L3233">            .avx512bw,</span>
-<span class="line" id="L3234">            .avx512cd,</span>
-<span class="line" id="L3235">            .avx512dq,</span>
-<span class="line" id="L3236">            .avx512vl,</span>
-<span class="line" id="L3237">            .bmi,</span>
-<span class="line" id="L3238">            .bmi2,</span>
-<span class="line" id="L3239">            .cmov,</span>
-<span class="line" id="L3240">            .crc32,</span>
-<span class="line" id="L3241">            .cx16,</span>
-<span class="line" id="L3242">            .false_deps_popcnt,</span>
-<span class="line" id="L3243">            .fast_15bytenop,</span>
-<span class="line" id="L3244">            .fast_gather,</span>
-<span class="line" id="L3245">            .fast_scalar_fsqrt,</span>
-<span class="line" id="L3246">            .fast_shld_rotate,</span>
-<span class="line" id="L3247">            .fast_variable_crosslane_shuffle,</span>
-<span class="line" id="L3248">            .fast_variable_perlane_shuffle,</span>
-<span class="line" id="L3249">            .fast_vector_fsqrt,</span>
-<span class="line" id="L3250">            .fxsr,</span>
-<span class="line" id="L3251">            .idivq_to_divl,</span>
-<span class="line" id="L3252">            .lzcnt,</span>
-<span class="line" id="L3253">            .macrofusion,</span>
-<span class="line" id="L3254">            .mmx,</span>
-<span class="line" id="L3255">            .movbe,</span>
-<span class="line" id="L3256">            .nopl,</span>
-<span class="line" id="L3257">            .popcnt,</span>
-<span class="line" id="L3258">            .prefer_256_bit,</span>
-<span class="line" id="L3259">            .sahf,</span>
-<span class="line" id="L3260">            .slow_3ops_lea,</span>
-<span class="line" id="L3261">            .vzeroupper,</span>
-<span class="line" id="L3262">            .x87,</span>
-<span class="line" id="L3263">            .xsave,</span>
-<span class="line" id="L3264">        }),</span>
-<span class="line" id="L3265">    };</span>
-<span class="line" id="L3266">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> yonah = CpuModel{</span>
-<span class="line" id="L3267">        .name = <span class="tok-str">&quot;yonah&quot;</span>,</span>
-<span class="line" id="L3268">        .llvm_name = <span class="tok-str">&quot;yonah&quot;</span>,</span>
-<span class="line" id="L3269">        .features = featureSet(&amp;[_]Feature{</span>
-<span class="line" id="L3270">            .cmov,</span>
-<span class="line" id="L3271">            .cx8,</span>
-<span class="line" id="L3272">            .fxsr,</span>
-<span class="line" id="L3273">            .mmx,</span>
-<span class="line" id="L3274">            .nopl,</span>
-<span class="line" id="L3275">            .slow_unaligned_mem_16,</span>
-<span class="line" id="L3276">            .sse3,</span>
-<span class="line" id="L3277">            .vzeroupper,</span>
-<span class="line" id="L3278">            .x87,</span>
-<span class="line" id="L3279">        }),</span>
-<span class="line" id="L3280">    };</span>
-<span class="line" id="L3281">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> znver1 = CpuModel{</span>
-<span class="line" id="L3282">        .name = <span class="tok-str">&quot;znver1&quot;</span>,</span>
-<span class="line" id="L3283">        .llvm_name = <span class="tok-str">&quot;znver1&quot;</span>,</span>
-<span class="line" id="L3284">        .features = featureSet(&amp;[_]Feature{</span>
-<span class="line" id="L3285">            .@&quot;64bit&quot;,</span>
-<span class="line" id="L3286">            .adx,</span>
-<span class="line" id="L3287">            .aes,</span>
-<span class="line" id="L3288">            .avx2,</span>
-<span class="line" id="L3289">            .bmi,</span>
-<span class="line" id="L3290">            .bmi2,</span>
-<span class="line" id="L3291">            .branchfusion,</span>
-<span class="line" id="L3292">            .clflushopt,</span>
-<span class="line" id="L3293">            .clzero,</span>
-<span class="line" id="L3294">            .cmov,</span>
-<span class="line" id="L3295">            .crc32,</span>
-<span class="line" id="L3296">            .cx16,</span>
-<span class="line" id="L3297">            .f16c,</span>
-<span class="line" id="L3298">            .fast_15bytenop,</span>
-<span class="line" id="L3299">            .fast_bextr,</span>
-<span class="line" id="L3300">            .fast_lzcnt,</span>
-<span class="line" id="L3301">            .fast_movbe,</span>
-<span class="line" id="L3302">            .fast_scalar_fsqrt,</span>
-<span class="line" id="L3303">            .fast_scalar_shift_masks,</span>
-<span class="line" id="L3304">            .fast_variable_perlane_shuffle,</span>
-<span class="line" id="L3305">            .fast_vector_fsqrt,</span>
-<span class="line" id="L3306">            .fma,</span>
-<span class="line" id="L3307">            .fsgsbase,</span>
-<span class="line" id="L3308">            .fxsr,</span>
-<span class="line" id="L3309">            .lzcnt,</span>
-<span class="line" id="L3310">            .mmx,</span>
-<span class="line" id="L3311">            .movbe,</span>
-<span class="line" id="L3312">            .mwaitx,</span>
-<span class="line" id="L3313">            .nopl,</span>
-<span class="line" id="L3314">            .pclmul,</span>
-<span class="line" id="L3315">            .popcnt,</span>
-<span class="line" id="L3316">            .prfchw,</span>
-<span class="line" id="L3317">            .rdrnd,</span>
-<span class="line" id="L3318">            .rdseed,</span>
-<span class="line" id="L3319">            .sahf,</span>
-<span class="line" id="L3320">            .sbb_dep_breaking,</span>
-<span class="line" id="L3321">            .sha,</span>
-<span class="line" id="L3322">            .slow_shld,</span>
-<span class="line" id="L3323">            .sse4a,</span>
-<span class="line" id="L3324">            .vzeroupper,</span>
-<span class="line" id="L3325">            .x87,</span>
-<span class="line" id="L3326">            .xsavec,</span>
-<span class="line" id="L3327">            .xsaveopt,</span>
-<span class="line" id="L3328">            .xsaves,</span>
-<span class="line" id="L3329">        }),</span>
-<span class="line" id="L3330">    };</span>
-<span class="line" id="L3331">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> znver2 = CpuModel{</span>
-<span class="line" id="L3332">        .name = <span class="tok-str">&quot;znver2&quot;</span>,</span>
-<span class="line" id="L3333">        .llvm_name = <span class="tok-str">&quot;znver2&quot;</span>,</span>
-<span class="line" id="L3334">        .features = featureSet(&amp;[_]Feature{</span>
-<span class="line" id="L3335">            .@&quot;64bit&quot;,</span>
-<span class="line" id="L3336">            .adx,</span>
-<span class="line" id="L3337">            .aes,</span>
-<span class="line" id="L3338">            .avx2,</span>
-<span class="line" id="L3339">            .bmi,</span>
-<span class="line" id="L3340">            .bmi2,</span>
-<span class="line" id="L3341">            .branchfusion,</span>
-<span class="line" id="L3342">            .clflushopt,</span>
-<span class="line" id="L3343">            .clwb,</span>
-<span class="line" id="L3344">            .clzero,</span>
-<span class="line" id="L3345">            .cmov,</span>
-<span class="line" id="L3346">            .crc32,</span>
-<span class="line" id="L3347">            .cx16,</span>
-<span class="line" id="L3348">            .f16c,</span>
-<span class="line" id="L3349">            .fast_15bytenop,</span>
-<span class="line" id="L3350">            .fast_bextr,</span>
-<span class="line" id="L3351">            .fast_lzcnt,</span>
-<span class="line" id="L3352">            .fast_movbe,</span>
-<span class="line" id="L3353">            .fast_scalar_fsqrt,</span>
-<span class="line" id="L3354">            .fast_scalar_shift_masks,</span>
-<span class="line" id="L3355">            .fast_variable_perlane_shuffle,</span>
-<span class="line" id="L3356">            .fast_vector_fsqrt,</span>
-<span class="line" id="L3357">            .fma,</span>
-<span class="line" id="L3358">            .fsgsbase,</span>
-<span class="line" id="L3359">            .fxsr,</span>
-<span class="line" id="L3360">            .lzcnt,</span>
-<span class="line" id="L3361">            .mmx,</span>
-<span class="line" id="L3362">            .movbe,</span>
-<span class="line" id="L3363">            .mwaitx,</span>
-<span class="line" id="L3364">            .nopl,</span>
-<span class="line" id="L3365">            .pclmul,</span>
-<span class="line" id="L3366">            .popcnt,</span>
-<span class="line" id="L3367">            .prfchw,</span>
-<span class="line" id="L3368">            .rdpid,</span>
-<span class="line" id="L3369">            .rdpru,</span>
-<span class="line" id="L3370">            .rdrnd,</span>
-<span class="line" id="L3371">            .rdseed,</span>
-<span class="line" id="L3372">            .sahf,</span>
-<span class="line" id="L3373">            .sbb_dep_breaking,</span>
-<span class="line" id="L3374">            .sha,</span>
-<span class="line" id="L3375">            .slow_shld,</span>
-<span class="line" id="L3376">            .sse4a,</span>
-<span class="line" id="L3377">            .vzeroupper,</span>
-<span class="line" id="L3378">            .wbnoinvd,</span>
-<span class="line" id="L3379">            .x87,</span>
-<span class="line" id="L3380">            .xsavec,</span>
-<span class="line" id="L3381">            .xsaveopt,</span>
-<span class="line" id="L3382">            .xsaves,</span>
-<span class="line" id="L3383">        }),</span>
-<span class="line" id="L3384">    };</span>
-<span class="line" id="L3385">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> znver3 = CpuModel{</span>
-<span class="line" id="L3386">        .name = <span class="tok-str">&quot;znver3&quot;</span>,</span>
-<span class="line" id="L3387">        .llvm_name = <span class="tok-str">&quot;znver3&quot;</span>,</span>
-<span class="line" id="L3388">        .features = featureSet(&amp;[_]Feature{</span>
-<span class="line" id="L3389">            .@&quot;64bit&quot;,</span>
-<span class="line" id="L3390">            .adx,</span>
-<span class="line" id="L3391">            .avx2,</span>
-<span class="line" id="L3392">            .bmi,</span>
-<span class="line" id="L3393">            .bmi2,</span>
-<span class="line" id="L3394">            .branchfusion,</span>
-<span class="line" id="L3395">            .clflushopt,</span>
-<span class="line" id="L3396">            .clwb,</span>
-<span class="line" id="L3397">            .clzero,</span>
-<span class="line" id="L3398">            .cmov,</span>
-<span class="line" id="L3399">            .crc32,</span>
-<span class="line" id="L3400">            .cx16,</span>
-<span class="line" id="L3401">            .f16c,</span>
-<span class="line" id="L3402">            .fast_15bytenop,</span>
-<span class="line" id="L3403">            .fast_bextr,</span>
-<span class="line" id="L3404">            .fast_lzcnt,</span>
-<span class="line" id="L3405">            .fast_movbe,</span>
-<span class="line" id="L3406">            .fast_scalar_fsqrt,</span>
-<span class="line" id="L3407">            .fast_scalar_shift_masks,</span>
-<span class="line" id="L3408">            .fast_variable_perlane_shuffle,</span>
-<span class="line" id="L3409">            .fast_vector_fsqrt,</span>
-<span class="line" id="L3410">            .fma,</span>
-<span class="line" id="L3411">            .fsgsbase,</span>
-<span class="line" id="L3412">            .fsrm,</span>
-<span class="line" id="L3413">            .fxsr,</span>
-<span class="line" id="L3414">            .invpcid,</span>
-<span class="line" id="L3415">            .lzcnt,</span>
-<span class="line" id="L3416">            .macrofusion,</span>
-<span class="line" id="L3417">            .mmx,</span>
-<span class="line" id="L3418">            .movbe,</span>
-<span class="line" id="L3419">            .mwaitx,</span>
-<span class="line" id="L3420">            .nopl,</span>
-<span class="line" id="L3421">            .pku,</span>
-<span class="line" id="L3422">            .popcnt,</span>
-<span class="line" id="L3423">            .prfchw,</span>
-<span class="line" id="L3424">            .rdpid,</span>
-<span class="line" id="L3425">            .rdpru,</span>
-<span class="line" id="L3426">            .rdrnd,</span>
-<span class="line" id="L3427">            .rdseed,</span>
-<span class="line" id="L3428">            .sahf,</span>
-<span class="line" id="L3429">            .sbb_dep_breaking,</span>
-<span class="line" id="L3430">            .sha,</span>
-<span class="line" id="L3431">            .slow_shld,</span>
-<span class="line" id="L3432">            .sse4a,</span>
-<span class="line" id="L3433">            .vaes,</span>
-<span class="line" id="L3434">            .vpclmulqdq,</span>
-<span class="line" id="L3435">            .vzeroupper,</span>
-<span class="line" id="L3436">            .wbnoinvd,</span>
-<span class="line" id="L3437">            .x87,</span>
-<span class="line" id="L3438">            .xsavec,</span>
-<span class="line" id="L3439">            .xsaveopt,</span>
-<span class="line" id="L3440">            .xsaves,</span>
-<span class="line" id="L3441">        }),</span>
-<span class="line" id="L3442">    };</span>
-<span class="line" id="L3443">};</span>
-<span class="line" id="L3444"></span>
+<span class="line" id="L2726">            .avx512vpopcntdq,</span>
+<span class="line" id="L2727">            .avxvnni,</span>
+<span class="line" id="L2728">            .bmi,</span>
+<span class="line" id="L2729">            .bmi2,</span>
+<span class="line" id="L2730">            .cldemote,</span>
+<span class="line" id="L2731">            .clflushopt,</span>
+<span class="line" id="L2732">            .clwb,</span>
+<span class="line" id="L2733">            .cmov,</span>
+<span class="line" id="L2734">            .crc32,</span>
+<span class="line" id="L2735">            .cx16,</span>
+<span class="line" id="L2736">            .enqcmd,</span>
+<span class="line" id="L2737">            .ermsb,</span>
+<span class="line" id="L2738">            .false_deps_getmant,</span>
+<span class="line" id="L2739">            .false_deps_mulc,</span>
+<span class="line" id="L2740">            .false_deps_mullq,</span>
+<span class="line" id="L2741">            .false_deps_perm,</span>
+<span class="line" id="L2742">            .false_deps_range,</span>
+<span class="line" id="L2743">            .fast_15bytenop,</span>
+<span class="line" id="L2744">            .fast_gather,</span>
+<span class="line" id="L2745">            .fast_scalar_fsqrt,</span>
+<span class="line" id="L2746">            .fast_shld_rotate,</span>
+<span class="line" id="L2747">            .fast_variable_crosslane_shuffle,</span>
+<span class="line" id="L2748">            .fast_variable_perlane_shuffle,</span>
+<span class="line" id="L2749">            .fast_vector_fsqrt,</span>
+<span class="line" id="L2750">            .fsgsbase,</span>
+<span class="line" id="L2751">            .fsrm,</span>
+<span class="line" id="L2752">            .fxsr,</span>
+<span class="line" id="L2753">            .gfni,</span>
+<span class="line" id="L2754">            .idivq_to_divl,</span>
+<span class="line" id="L2755">            .invpcid,</span>
+<span class="line" id="L2756">            .lzcnt,</span>
+<span class="line" id="L2757">            .macrofusion,</span>
+<span class="line" id="L2758">            .mmx,</span>
+<span class="line" id="L2759">            .movbe,</span>
+<span class="line" id="L2760">            .movdir64b,</span>
+<span class="line" id="L2761">            .movdiri,</span>
+<span class="line" id="L2762">            .nopl,</span>
+<span class="line" id="L2763">            .pconfig,</span>
+<span class="line" id="L2764">            .pku,</span>
+<span class="line" id="L2765">            .popcnt,</span>
+<span class="line" id="L2766">            .prefer_256_bit,</span>
+<span class="line" id="L2767">            .prfchw,</span>
+<span class="line" id="L2768">            .ptwrite,</span>
+<span class="line" id="L2769">            .rdpid,</span>
+<span class="line" id="L2770">            .rdrnd,</span>
+<span class="line" id="L2771">            .rdseed,</span>
+<span class="line" id="L2772">            .sahf,</span>
+<span class="line" id="L2773">            .serialize,</span>
+<span class="line" id="L2774">            .sha,</span>
+<span class="line" id="L2775">            .shstk,</span>
+<span class="line" id="L2776">            .slow_3ops_lea,</span>
+<span class="line" id="L2777">            .tsxldtrk,</span>
+<span class="line" id="L2778">            .uintr,</span>
+<span class="line" id="L2779">            .vaes,</span>
+<span class="line" id="L2780">            .vpclmulqdq,</span>
+<span class="line" id="L2781">            .vzeroupper,</span>
+<span class="line" id="L2782">            .waitpkg,</span>
+<span class="line" id="L2783">            .wbnoinvd,</span>
+<span class="line" id="L2784">            .x87,</span>
+<span class="line" id="L2785">            .xsavec,</span>
+<span class="line" id="L2786">            .xsaveopt,</span>
+<span class="line" id="L2787">            .xsaves,</span>
+<span class="line" id="L2788">        }),</span>
+<span class="line" id="L2789">    };</span>
+<span class="line" id="L2790">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> silvermont = CpuModel{</span>
+<span class="line" id="L2791">        .name = <span class="tok-str">&quot;silvermont&quot;</span>,</span>
+<span class="line" id="L2792">        .llvm_name = <span class="tok-str">&quot;silvermont&quot;</span>,</span>
+<span class="line" id="L2793">        .features = featureSet(&amp;[_]Feature{</span>
+<span class="line" id="L2794">            .@&quot;64bit&quot;,</span>
+<span class="line" id="L2795">            .cmov,</span>
+<span class="line" id="L2796">            .crc32,</span>
+<span class="line" id="L2797">            .cx16,</span>
+<span class="line" id="L2798">            .false_deps_popcnt,</span>
+<span class="line" id="L2799">            .fast_7bytenop,</span>
+<span class="line" id="L2800">            .fast_movbe,</span>
+<span class="line" id="L2801">            .fxsr,</span>
+<span class="line" id="L2802">            .idivq_to_divl,</span>
+<span class="line" id="L2803">            .mmx,</span>
+<span class="line" id="L2804">            .movbe,</span>
+<span class="line" id="L2805">            .nopl,</span>
+<span class="line" id="L2806">            .pclmul,</span>
+<span class="line" id="L2807">            .popcnt,</span>
+<span class="line" id="L2808">            .prfchw,</span>
+<span class="line" id="L2809">            .rdrnd,</span>
+<span class="line" id="L2810">            .sahf,</span>
+<span class="line" id="L2811">            .slow_incdec,</span>
+<span class="line" id="L2812">            .slow_lea,</span>
+<span class="line" id="L2813">            .slow_pmulld,</span>
+<span class="line" id="L2814">            .slow_two_mem_ops,</span>
+<span class="line" id="L2815">            .sse4_2,</span>
+<span class="line" id="L2816">            .use_slm_arith_costs,</span>
+<span class="line" id="L2817">            .vzeroupper,</span>
+<span class="line" id="L2818">            .x87,</span>
+<span class="line" id="L2819">        }),</span>
+<span class="line" id="L2820">    };</span>
+<span class="line" id="L2821">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> skx = CpuModel{</span>
+<span class="line" id="L2822">        .name = <span class="tok-str">&quot;skx&quot;</span>,</span>
+<span class="line" id="L2823">        .llvm_name = <span class="tok-str">&quot;skx&quot;</span>,</span>
+<span class="line" id="L2824">        .features = featureSet(&amp;[_]Feature{</span>
+<span class="line" id="L2825">            .@&quot;64bit&quot;,</span>
+<span class="line" id="L2826">            .adx,</span>
+<span class="line" id="L2827">            .aes,</span>
+<span class="line" id="L2828">            .avx512bw,</span>
+<span class="line" id="L2829">            .avx512cd,</span>
+<span class="line" id="L2830">            .avx512dq,</span>
+<span class="line" id="L2831">            .avx512vl,</span>
+<span class="line" id="L2832">            .bmi,</span>
+<span class="line" id="L2833">            .bmi2,</span>
+<span class="line" id="L2834">            .clflushopt,</span>
+<span class="line" id="L2835">            .clwb,</span>
+<span class="line" id="L2836">            .cmov,</span>
+<span class="line" id="L2837">            .crc32,</span>
+<span class="line" id="L2838">            .cx16,</span>
+<span class="line" id="L2839">            .ermsb,</span>
+<span class="line" id="L2840">            .false_deps_popcnt,</span>
+<span class="line" id="L2841">            .fast_15bytenop,</span>
+<span class="line" id="L2842">            .fast_gather,</span>
+<span class="line" id="L2843">            .fast_scalar_fsqrt,</span>
+<span class="line" id="L2844">            .fast_shld_rotate,</span>
+<span class="line" id="L2845">            .fast_variable_crosslane_shuffle,</span>
+<span class="line" id="L2846">            .fast_variable_perlane_shuffle,</span>
+<span class="line" id="L2847">            .fast_vector_fsqrt,</span>
+<span class="line" id="L2848">            .fsgsbase,</span>
+<span class="line" id="L2849">            .fxsr,</span>
+<span class="line" id="L2850">            .idivq_to_divl,</span>
+<span class="line" id="L2851">            .invpcid,</span>
+<span class="line" id="L2852">            .lzcnt,</span>
+<span class="line" id="L2853">            .macrofusion,</span>
+<span class="line" id="L2854">            .mmx,</span>
+<span class="line" id="L2855">            .movbe,</span>
+<span class="line" id="L2856">            .nopl,</span>
+<span class="line" id="L2857">            .pclmul,</span>
+<span class="line" id="L2858">            .pku,</span>
+<span class="line" id="L2859">            .popcnt,</span>
+<span class="line" id="L2860">            .prefer_256_bit,</span>
+<span class="line" id="L2861">            .prfchw,</span>
+<span class="line" id="L2862">            .rdrnd,</span>
+<span class="line" id="L2863">            .rdseed,</span>
+<span class="line" id="L2864">            .sahf,</span>
+<span class="line" id="L2865">            .slow_3ops_lea,</span>
+<span class="line" id="L2866">            .vzeroupper,</span>
+<span class="line" id="L2867">            .x87,</span>
+<span class="line" id="L2868">            .xsavec,</span>
+<span class="line" id="L2869">            .xsaveopt,</span>
+<span class="line" id="L2870">            .xsaves,</span>
+<span class="line" id="L2871">        }),</span>
+<span class="line" id="L2872">    };</span>
+<span class="line" id="L2873">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> skylake = CpuModel{</span>
+<span class="line" id="L2874">        .name = <span class="tok-str">&quot;skylake&quot;</span>,</span>
+<span class="line" id="L2875">        .llvm_name = <span class="tok-str">&quot;skylake&quot;</span>,</span>
+<span class="line" id="L2876">        .features = featureSet(&amp;[_]Feature{</span>
+<span class="line" id="L2877">            .@&quot;64bit&quot;,</span>
+<span class="line" id="L2878">            .adx,</span>
+<span class="line" id="L2879">            .aes,</span>
+<span class="line" id="L2880">            .avx2,</span>
+<span class="line" id="L2881">            .bmi,</span>
+<span class="line" id="L2882">            .bmi2,</span>
+<span class="line" id="L2883">            .clflushopt,</span>
+<span class="line" id="L2884">            .cmov,</span>
+<span class="line" id="L2885">            .crc32,</span>
+<span class="line" id="L2886">            .cx16,</span>
+<span class="line" id="L2887">            .ermsb,</span>
+<span class="line" id="L2888">            .f16c,</span>
+<span class="line" id="L2889">            .false_deps_popcnt,</span>
+<span class="line" id="L2890">            .fast_15bytenop,</span>
+<span class="line" id="L2891">            .fast_gather,</span>
+<span class="line" id="L2892">            .fast_scalar_fsqrt,</span>
+<span class="line" id="L2893">            .fast_shld_rotate,</span>
+<span class="line" id="L2894">            .fast_variable_crosslane_shuffle,</span>
+<span class="line" id="L2895">            .fast_variable_perlane_shuffle,</span>
+<span class="line" id="L2896">            .fast_vector_fsqrt,</span>
+<span class="line" id="L2897">            .fma,</span>
+<span class="line" id="L2898">            .fsgsbase,</span>
+<span class="line" id="L2899">            .fxsr,</span>
+<span class="line" id="L2900">            .idivq_to_divl,</span>
+<span class="line" id="L2901">            .invpcid,</span>
+<span class="line" id="L2902">            .lzcnt,</span>
+<span class="line" id="L2903">            .macrofusion,</span>
+<span class="line" id="L2904">            .mmx,</span>
+<span class="line" id="L2905">            .movbe,</span>
+<span class="line" id="L2906">            .nopl,</span>
+<span class="line" id="L2907">            .pclmul,</span>
+<span class="line" id="L2908">            .popcnt,</span>
+<span class="line" id="L2909">            .prfchw,</span>
+<span class="line" id="L2910">            .rdrnd,</span>
+<span class="line" id="L2911">            .rdseed,</span>
+<span class="line" id="L2912">            .sahf,</span>
+<span class="line" id="L2913">            .slow_3ops_lea,</span>
+<span class="line" id="L2914">            .vzeroupper,</span>
+<span class="line" id="L2915">            .x87,</span>
+<span class="line" id="L2916">            .xsavec,</span>
+<span class="line" id="L2917">            .xsaveopt,</span>
+<span class="line" id="L2918">            .xsaves,</span>
+<span class="line" id="L2919">        }),</span>
+<span class="line" id="L2920">    };</span>
+<span class="line" id="L2921">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> skylake_avx512 = CpuModel{</span>
+<span class="line" id="L2922">        .name = <span class="tok-str">&quot;skylake_avx512&quot;</span>,</span>
+<span class="line" id="L2923">        .llvm_name = <span class="tok-str">&quot;skylake-avx512&quot;</span>,</span>
+<span class="line" id="L2924">        .features = featureSet(&amp;[_]Feature{</span>
+<span class="line" id="L2925">            .@&quot;64bit&quot;,</span>
+<span class="line" id="L2926">            .adx,</span>
+<span class="line" id="L2927">            .aes,</span>
+<span class="line" id="L2928">            .avx512bw,</span>
+<span class="line" id="L2929">            .avx512cd,</span>
+<span class="line" id="L2930">            .avx512dq,</span>
+<span class="line" id="L2931">            .avx512vl,</span>
+<span class="line" id="L2932">            .bmi,</span>
+<span class="line" id="L2933">            .bmi2,</span>
+<span class="line" id="L2934">            .clflushopt,</span>
+<span class="line" id="L2935">            .clwb,</span>
+<span class="line" id="L2936">            .cmov,</span>
+<span class="line" id="L2937">            .crc32,</span>
+<span class="line" id="L2938">            .cx16,</span>
+<span class="line" id="L2939">            .ermsb,</span>
+<span class="line" id="L2940">            .false_deps_popcnt,</span>
+<span class="line" id="L2941">            .fast_15bytenop,</span>
+<span class="line" id="L2942">            .fast_gather,</span>
+<span class="line" id="L2943">            .fast_scalar_fsqrt,</span>
+<span class="line" id="L2944">            .fast_shld_rotate,</span>
+<span class="line" id="L2945">            .fast_variable_crosslane_shuffle,</span>
+<span class="line" id="L2946">            .fast_variable_perlane_shuffle,</span>
+<span class="line" id="L2947">            .fast_vector_fsqrt,</span>
+<span class="line" id="L2948">            .fsgsbase,</span>
+<span class="line" id="L2949">            .fxsr,</span>
+<span class="line" id="L2950">            .idivq_to_divl,</span>
+<span class="line" id="L2951">            .invpcid,</span>
+<span class="line" id="L2952">            .lzcnt,</span>
+<span class="line" id="L2953">            .macrofusion,</span>
+<span class="line" id="L2954">            .mmx,</span>
+<span class="line" id="L2955">            .movbe,</span>
+<span class="line" id="L2956">            .nopl,</span>
+<span class="line" id="L2957">            .pclmul,</span>
+<span class="line" id="L2958">            .pku,</span>
+<span class="line" id="L2959">            .popcnt,</span>
+<span class="line" id="L2960">            .prefer_256_bit,</span>
+<span class="line" id="L2961">            .prfchw,</span>
+<span class="line" id="L2962">            .rdrnd,</span>
+<span class="line" id="L2963">            .rdseed,</span>
+<span class="line" id="L2964">            .sahf,</span>
+<span class="line" id="L2965">            .slow_3ops_lea,</span>
+<span class="line" id="L2966">            .vzeroupper,</span>
+<span class="line" id="L2967">            .x87,</span>
+<span class="line" id="L2968">            .xsavec,</span>
+<span class="line" id="L2969">            .xsaveopt,</span>
+<span class="line" id="L2970">            .xsaves,</span>
+<span class="line" id="L2971">        }),</span>
+<span class="line" id="L2972">    };</span>
+<span class="line" id="L2973">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> slm = CpuModel{</span>
+<span class="line" id="L2974">        .name = <span class="tok-str">&quot;slm&quot;</span>,</span>
+<span class="line" id="L2975">        .llvm_name = <span class="tok-str">&quot;slm&quot;</span>,</span>
+<span class="line" id="L2976">        .features = featureSet(&amp;[_]Feature{</span>
+<span class="line" id="L2977">            .@&quot;64bit&quot;,</span>
+<span class="line" id="L2978">            .cmov,</span>
+<span class="line" id="L2979">            .crc32,</span>
+<span class="line" id="L2980">            .cx16,</span>
+<span class="line" id="L2981">            .false_deps_popcnt,</span>
+<span class="line" id="L2982">            .fast_7bytenop,</span>
+<span class="line" id="L2983">            .fast_movbe,</span>
+<span class="line" id="L2984">            .fxsr,</span>
+<span class="line" id="L2985">            .idivq_to_divl,</span>
+<span class="line" id="L2986">            .mmx,</span>
+<span class="line" id="L2987">            .movbe,</span>
+<span class="line" id="L2988">            .nopl,</span>
+<span class="line" id="L2989">            .pclmul,</span>
+<span class="line" id="L2990">            .popcnt,</span>
+<span class="line" id="L2991">            .prfchw,</span>
+<span class="line" id="L2992">            .rdrnd,</span>
+<span class="line" id="L2993">            .sahf,</span>
+<span class="line" id="L2994">            .slow_incdec,</span>
+<span class="line" id="L2995">            .slow_lea,</span>
+<span class="line" id="L2996">            .slow_pmulld,</span>
+<span class="line" id="L2997">            .slow_two_mem_ops,</span>
+<span class="line" id="L2998">            .sse4_2,</span>
+<span class="line" id="L2999">            .use_slm_arith_costs,</span>
+<span class="line" id="L3000">            .vzeroupper,</span>
+<span class="line" id="L3001">            .x87,</span>
+<span class="line" id="L3002">        }),</span>
+<span class="line" id="L3003">    };</span>
+<span class="line" id="L3004">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> tigerlake = CpuModel{</span>
+<span class="line" id="L3005">        .name = <span class="tok-str">&quot;tigerlake&quot;</span>,</span>
+<span class="line" id="L3006">        .llvm_name = <span class="tok-str">&quot;tigerlake&quot;</span>,</span>
+<span class="line" id="L3007">        .features = featureSet(&amp;[_]Feature{</span>
+<span class="line" id="L3008">            .@&quot;64bit&quot;,</span>
+<span class="line" id="L3009">            .adx,</span>
+<span class="line" id="L3010">            .avx512bitalg,</span>
+<span class="line" id="L3011">            .avx512cd,</span>
+<span class="line" id="L3012">            .avx512dq,</span>
+<span class="line" id="L3013">            .avx512ifma,</span>
+<span class="line" id="L3014">            .avx512vbmi,</span>
+<span class="line" id="L3015">            .avx512vbmi2,</span>
+<span class="line" id="L3016">            .avx512vl,</span>
+<span class="line" id="L3017">            .avx512vnni,</span>
+<span class="line" id="L3018">            .avx512vp2intersect,</span>
+<span class="line" id="L3019">            .avx512vpopcntdq,</span>
+<span class="line" id="L3020">            .bmi,</span>
+<span class="line" id="L3021">            .bmi2,</span>
+<span class="line" id="L3022">            .clflushopt,</span>
+<span class="line" id="L3023">            .clwb,</span>
+<span class="line" id="L3024">            .cmov,</span>
+<span class="line" id="L3025">            .crc32,</span>
+<span class="line" id="L3026">            .cx16,</span>
+<span class="line" id="L3027">            .ermsb,</span>
+<span class="line" id="L3028">            .fast_15bytenop,</span>
+<span class="line" id="L3029">            .fast_gather,</span>
+<span class="line" id="L3030">            .fast_scalar_fsqrt,</span>
+<span class="line" id="L3031">            .fast_shld_rotate,</span>
+<span class="line" id="L3032">            .fast_variable_crosslane_shuffle,</span>
+<span class="line" id="L3033">            .fast_variable_perlane_shuffle,</span>
+<span class="line" id="L3034">            .fast_vector_fsqrt,</span>
+<span class="line" id="L3035">            .fsgsbase,</span>
+<span class="line" id="L3036">            .fsrm,</span>
+<span class="line" id="L3037">            .fxsr,</span>
+<span class="line" id="L3038">            .gfni,</span>
+<span class="line" id="L3039">            .idivq_to_divl,</span>
+<span class="line" id="L3040">            .invpcid,</span>
+<span class="line" id="L3041">            .lzcnt,</span>
+<span class="line" id="L3042">            .macrofusion,</span>
+<span class="line" id="L3043">            .mmx,</span>
+<span class="line" id="L3044">            .movbe,</span>
+<span class="line" id="L3045">            .movdir64b,</span>
+<span class="line" id="L3046">            .movdiri,</span>
+<span class="line" id="L3047">            .nopl,</span>
+<span class="line" id="L3048">            .pku,</span>
+<span class="line" id="L3049">            .popcnt,</span>
+<span class="line" id="L3050">            .prefer_256_bit,</span>
+<span class="line" id="L3051">            .prfchw,</span>
+<span class="line" id="L3052">            .rdpid,</span>
+<span class="line" id="L3053">            .rdrnd,</span>
+<span class="line" id="L3054">            .rdseed,</span>
+<span class="line" id="L3055">            .sahf,</span>
+<span class="line" id="L3056">            .sha,</span>
+<span class="line" id="L3057">            .shstk,</span>
+<span class="line" id="L3058">            .slow_3ops_lea,</span>
+<span class="line" id="L3059">            .vaes,</span>
+<span class="line" id="L3060">            .vpclmulqdq,</span>
+<span class="line" id="L3061">            .vzeroupper,</span>
+<span class="line" id="L3062">            .x87,</span>
+<span class="line" id="L3063">            .xsavec,</span>
+<span class="line" id="L3064">            .xsaveopt,</span>
+<span class="line" id="L3065">            .xsaves,</span>
+<span class="line" id="L3066">        }),</span>
+<span class="line" id="L3067">    };</span>
+<span class="line" id="L3068">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> tremont = CpuModel{</span>
+<span class="line" id="L3069">        .name = <span class="tok-str">&quot;tremont&quot;</span>,</span>
+<span class="line" id="L3070">        .llvm_name = <span class="tok-str">&quot;tremont&quot;</span>,</span>
+<span class="line" id="L3071">        .features = featureSet(&amp;[_]Feature{</span>
+<span class="line" id="L3072">            .@&quot;64bit&quot;,</span>
+<span class="line" id="L3073">            .aes,</span>
+<span class="line" id="L3074">            .clflushopt,</span>
+<span class="line" id="L3075">            .clwb,</span>
+<span class="line" id="L3076">            .cmov,</span>
+<span class="line" id="L3077">            .crc32,</span>
+<span class="line" id="L3078">            .cx16,</span>
+<span class="line" id="L3079">            .fast_movbe,</span>
+<span class="line" id="L3080">            .fsgsbase,</span>
+<span class="line" id="L3081">            .fxsr,</span>
+<span class="line" id="L3082">            .gfni,</span>
+<span class="line" id="L3083">            .mmx,</span>
+<span class="line" id="L3084">            .movbe,</span>
+<span class="line" id="L3085">            .nopl,</span>
+<span class="line" id="L3086">            .pclmul,</span>
+<span class="line" id="L3087">            .popcnt,</span>
+<span class="line" id="L3088">            .prfchw,</span>
+<span class="line" id="L3089">            .ptwrite,</span>
+<span class="line" id="L3090">            .rdpid,</span>
+<span class="line" id="L3091">            .rdrnd,</span>
+<span class="line" id="L3092">            .rdseed,</span>
+<span class="line" id="L3093">            .sahf,</span>
+<span class="line" id="L3094">            .sha,</span>
+<span class="line" id="L3095">            .slow_incdec,</span>
+<span class="line" id="L3096">            .slow_lea,</span>
+<span class="line" id="L3097">            .slow_two_mem_ops,</span>
+<span class="line" id="L3098">            .sse4_2,</span>
+<span class="line" id="L3099">            .use_glm_div_sqrt_costs,</span>
+<span class="line" id="L3100">            .vzeroupper,</span>
+<span class="line" id="L3101">            .x87,</span>
+<span class="line" id="L3102">            .xsavec,</span>
+<span class="line" id="L3103">            .xsaveopt,</span>
+<span class="line" id="L3104">            .xsaves,</span>
+<span class="line" id="L3105">        }),</span>
+<span class="line" id="L3106">    };</span>
+<span class="line" id="L3107">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> westmere = CpuModel{</span>
+<span class="line" id="L3108">        .name = <span class="tok-str">&quot;westmere&quot;</span>,</span>
+<span class="line" id="L3109">        .llvm_name = <span class="tok-str">&quot;westmere&quot;</span>,</span>
+<span class="line" id="L3110">        .features = featureSet(&amp;[_]Feature{</span>
+<span class="line" id="L3111">            .@&quot;64bit&quot;,</span>
+<span class="line" id="L3112">            .cmov,</span>
+<span class="line" id="L3113">            .crc32,</span>
+<span class="line" id="L3114">            .cx16,</span>
+<span class="line" id="L3115">            .fxsr,</span>
+<span class="line" id="L3116">            .macrofusion,</span>
+<span class="line" id="L3117">            .mmx,</span>
+<span class="line" id="L3118">            .nopl,</span>
+<span class="line" id="L3119">            .pclmul,</span>
+<span class="line" id="L3120">            .popcnt,</span>
+<span class="line" id="L3121">            .sahf,</span>
+<span class="line" id="L3122">            .sse4_2,</span>
+<span class="line" id="L3123">            .vzeroupper,</span>
+<span class="line" id="L3124">            .x87,</span>
+<span class="line" id="L3125">        }),</span>
+<span class="line" id="L3126">    };</span>
+<span class="line" id="L3127">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> winchip2 = CpuModel{</span>
+<span class="line" id="L3128">        .name = <span class="tok-str">&quot;winchip2&quot;</span>,</span>
+<span class="line" id="L3129">        .llvm_name = <span class="tok-str">&quot;winchip2&quot;</span>,</span>
+<span class="line" id="L3130">        .features = featureSet(&amp;[_]Feature{</span>
+<span class="line" id="L3131">            .@&quot;3dnow&quot;,</span>
+<span class="line" id="L3132">            .slow_unaligned_mem_16,</span>
+<span class="line" id="L3133">            .vzeroupper,</span>
+<span class="line" id="L3134">            .x87,</span>
+<span class="line" id="L3135">        }),</span>
+<span class="line" id="L3136">    };</span>
+<span class="line" id="L3137">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> winchip_c6 = CpuModel{</span>
+<span class="line" id="L3138">        .name = <span class="tok-str">&quot;winchip_c6&quot;</span>,</span>
+<span class="line" id="L3139">        .llvm_name = <span class="tok-str">&quot;winchip-c6&quot;</span>,</span>
+<span class="line" id="L3140">        .features = featureSet(&amp;[_]Feature{</span>
+<span class="line" id="L3141">            .mmx,</span>
+<span class="line" id="L3142">            .slow_unaligned_mem_16,</span>
+<span class="line" id="L3143">            .vzeroupper,</span>
+<span class="line" id="L3144">            .x87,</span>
+<span class="line" id="L3145">        }),</span>
+<span class="line" id="L3146">    };</span>
+<span class="line" id="L3147">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> x86_64 = CpuModel{</span>
+<span class="line" id="L3148">        .name = <span class="tok-str">&quot;x86_64&quot;</span>,</span>
+<span class="line" id="L3149">        .llvm_name = <span class="tok-str">&quot;x86-64&quot;</span>,</span>
+<span class="line" id="L3150">        .features = featureSet(&amp;[_]Feature{</span>
+<span class="line" id="L3151">            .@&quot;64bit&quot;,</span>
+<span class="line" id="L3152">            .cmov,</span>
+<span class="line" id="L3153">            .cx8,</span>
+<span class="line" id="L3154">            .fxsr,</span>
+<span class="line" id="L3155">            .idivq_to_divl,</span>
+<span class="line" id="L3156">            .macrofusion,</span>
+<span class="line" id="L3157">            .mmx,</span>
+<span class="line" id="L3158">            .nopl,</span>
+<span class="line" id="L3159">            .slow_3ops_lea,</span>
+<span class="line" id="L3160">            .slow_incdec,</span>
+<span class="line" id="L3161">            .sse2,</span>
+<span class="line" id="L3162">            .vzeroupper,</span>
+<span class="line" id="L3163">            .x87,</span>
+<span class="line" id="L3164">        }),</span>
+<span class="line" id="L3165">    };</span>
+<span class="line" id="L3166">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> x86_64_v2 = CpuModel{</span>
+<span class="line" id="L3167">        .name = <span class="tok-str">&quot;x86_64_v2&quot;</span>,</span>
+<span class="line" id="L3168">        .llvm_name = <span class="tok-str">&quot;x86-64-v2&quot;</span>,</span>
+<span class="line" id="L3169">        .features = featureSet(&amp;[_]Feature{</span>
+<span class="line" id="L3170">            .@&quot;64bit&quot;,</span>
+<span class="line" id="L3171">            .cmov,</span>
+<span class="line" id="L3172">            .crc32,</span>
+<span class="line" id="L3173">            .cx16,</span>
+<span class="line" id="L3174">            .false_deps_popcnt,</span>
+<span class="line" id="L3175">            .fast_15bytenop,</span>
+<span class="line" id="L3176">            .fast_scalar_fsqrt,</span>
+<span class="line" id="L3177">            .fast_shld_rotate,</span>
+<span class="line" id="L3178">            .fxsr,</span>
+<span class="line" id="L3179">            .idivq_to_divl,</span>
+<span class="line" id="L3180">            .macrofusion,</span>
+<span class="line" id="L3181">            .mmx,</span>
+<span class="line" id="L3182">            .nopl,</span>
+<span class="line" id="L3183">            .popcnt,</span>
+<span class="line" id="L3184">            .sahf,</span>
+<span class="line" id="L3185">            .slow_3ops_lea,</span>
+<span class="line" id="L3186">            .slow_unaligned_mem_32,</span>
+<span class="line" id="L3187">            .sse4_2,</span>
+<span class="line" id="L3188">            .vzeroupper,</span>
+<span class="line" id="L3189">            .x87,</span>
+<span class="line" id="L3190">        }),</span>
+<span class="line" id="L3191">    };</span>
+<span class="line" id="L3192">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> x86_64_v3 = CpuModel{</span>
+<span class="line" id="L3193">        .name = <span class="tok-str">&quot;x86_64_v3&quot;</span>,</span>
+<span class="line" id="L3194">        .llvm_name = <span class="tok-str">&quot;x86-64-v3&quot;</span>,</span>
+<span class="line" id="L3195">        .features = featureSet(&amp;[_]Feature{</span>
+<span class="line" id="L3196">            .@&quot;64bit&quot;,</span>
+<span class="line" id="L3197">            .avx2,</span>
+<span class="line" id="L3198">            .bmi,</span>
+<span class="line" id="L3199">            .bmi2,</span>
+<span class="line" id="L3200">            .cmov,</span>
+<span class="line" id="L3201">            .crc32,</span>
+<span class="line" id="L3202">            .cx16,</span>
+<span class="line" id="L3203">            .f16c,</span>
+<span class="line" id="L3204">            .false_deps_lzcnt_tzcnt,</span>
+<span class="line" id="L3205">            .false_deps_popcnt,</span>
+<span class="line" id="L3206">            .fast_15bytenop,</span>
+<span class="line" id="L3207">            .fast_scalar_fsqrt,</span>
+<span class="line" id="L3208">            .fast_shld_rotate,</span>
+<span class="line" id="L3209">            .fast_variable_crosslane_shuffle,</span>
+<span class="line" id="L3210">            .fast_variable_perlane_shuffle,</span>
+<span class="line" id="L3211">            .fma,</span>
+<span class="line" id="L3212">            .fxsr,</span>
+<span class="line" id="L3213">            .idivq_to_divl,</span>
+<span class="line" id="L3214">            .lzcnt,</span>
+<span class="line" id="L3215">            .macrofusion,</span>
+<span class="line" id="L3216">            .mmx,</span>
+<span class="line" id="L3217">            .movbe,</span>
+<span class="line" id="L3218">            .nopl,</span>
+<span class="line" id="L3219">            .popcnt,</span>
+<span class="line" id="L3220">            .sahf,</span>
+<span class="line" id="L3221">            .slow_3ops_lea,</span>
+<span class="line" id="L3222">            .vzeroupper,</span>
+<span class="line" id="L3223">            .x87,</span>
+<span class="line" id="L3224">            .xsave,</span>
+<span class="line" id="L3225">        }),</span>
+<span class="line" id="L3226">    };</span>
+<span class="line" id="L3227">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> x86_64_v4 = CpuModel{</span>
+<span class="line" id="L3228">        .name = <span class="tok-str">&quot;x86_64_v4&quot;</span>,</span>
+<span class="line" id="L3229">        .llvm_name = <span class="tok-str">&quot;x86-64-v4&quot;</span>,</span>
+<span class="line" id="L3230">        .features = featureSet(&amp;[_]Feature{</span>
+<span class="line" id="L3231">            .@&quot;64bit&quot;,</span>
+<span class="line" id="L3232">            .avx512bw,</span>
+<span class="line" id="L3233">            .avx512cd,</span>
+<span class="line" id="L3234">            .avx512dq,</span>
+<span class="line" id="L3235">            .avx512vl,</span>
+<span class="line" id="L3236">            .bmi,</span>
+<span class="line" id="L3237">            .bmi2,</span>
+<span class="line" id="L3238">            .cmov,</span>
+<span class="line" id="L3239">            .crc32,</span>
+<span class="line" id="L3240">            .cx16,</span>
+<span class="line" id="L3241">            .false_deps_popcnt,</span>
+<span class="line" id="L3242">            .fast_15bytenop,</span>
+<span class="line" id="L3243">            .fast_gather,</span>
+<span class="line" id="L3244">            .fast_scalar_fsqrt,</span>
+<span class="line" id="L3245">            .fast_shld_rotate,</span>
+<span class="line" id="L3246">            .fast_variable_crosslane_shuffle,</span>
+<span class="line" id="L3247">            .fast_variable_perlane_shuffle,</span>
+<span class="line" id="L3248">            .fast_vector_fsqrt,</span>
+<span class="line" id="L3249">            .fxsr,</span>
+<span class="line" id="L3250">            .idivq_to_divl,</span>
+<span class="line" id="L3251">            .lzcnt,</span>
+<span class="line" id="L3252">            .macrofusion,</span>
+<span class="line" id="L3253">            .mmx,</span>
+<span class="line" id="L3254">            .movbe,</span>
+<span class="line" id="L3255">            .nopl,</span>
+<span class="line" id="L3256">            .popcnt,</span>
+<span class="line" id="L3257">            .prefer_256_bit,</span>
+<span class="line" id="L3258">            .sahf,</span>
+<span class="line" id="L3259">            .slow_3ops_lea,</span>
+<span class="line" id="L3260">            .vzeroupper,</span>
+<span class="line" id="L3261">            .x87,</span>
+<span class="line" id="L3262">            .xsave,</span>
+<span class="line" id="L3263">        }),</span>
+<span class="line" id="L3264">    };</span>
+<span class="line" id="L3265">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> yonah = CpuModel{</span>
+<span class="line" id="L3266">        .name = <span class="tok-str">&quot;yonah&quot;</span>,</span>
+<span class="line" id="L3267">        .llvm_name = <span class="tok-str">&quot;yonah&quot;</span>,</span>
+<span class="line" id="L3268">        .features = featureSet(&amp;[_]Feature{</span>
+<span class="line" id="L3269">            .cmov,</span>
+<span class="line" id="L3270">            .cx8,</span>
+<span class="line" id="L3271">            .fxsr,</span>
+<span class="line" id="L3272">            .mmx,</span>
+<span class="line" id="L3273">            .nopl,</span>
+<span class="line" id="L3274">            .slow_unaligned_mem_16,</span>
+<span class="line" id="L3275">            .sse3,</span>
+<span class="line" id="L3276">            .vzeroupper,</span>
+<span class="line" id="L3277">            .x87,</span>
+<span class="line" id="L3278">        }),</span>
+<span class="line" id="L3279">    };</span>
+<span class="line" id="L3280">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> znver1 = CpuModel{</span>
+<span class="line" id="L3281">        .name = <span class="tok-str">&quot;znver1&quot;</span>,</span>
+<span class="line" id="L3282">        .llvm_name = <span class="tok-str">&quot;znver1&quot;</span>,</span>
+<span class="line" id="L3283">        .features = featureSet(&amp;[_]Feature{</span>
+<span class="line" id="L3284">            .@&quot;64bit&quot;,</span>
+<span class="line" id="L3285">            .adx,</span>
+<span class="line" id="L3286">            .aes,</span>
+<span class="line" id="L3287">            .avx2,</span>
+<span class="line" id="L3288">            .bmi,</span>
+<span class="line" id="L3289">            .bmi2,</span>
+<span class="line" id="L3290">            .branchfusion,</span>
+<span class="line" id="L3291">            .clflushopt,</span>
+<span class="line" id="L3292">            .clzero,</span>
+<span class="line" id="L3293">            .cmov,</span>
+<span class="line" id="L3294">            .crc32,</span>
+<span class="line" id="L3295">            .cx16,</span>
+<span class="line" id="L3296">            .f16c,</span>
+<span class="line" id="L3297">            .fast_15bytenop,</span>
+<span class="line" id="L3298">            .fast_bextr,</span>
+<span class="line" id="L3299">            .fast_lzcnt,</span>
+<span class="line" id="L3300">            .fast_movbe,</span>
+<span class="line" id="L3301">            .fast_scalar_fsqrt,</span>
+<span class="line" id="L3302">            .fast_scalar_shift_masks,</span>
+<span class="line" id="L3303">            .fast_variable_perlane_shuffle,</span>
+<span class="line" id="L3304">            .fast_vector_fsqrt,</span>
+<span class="line" id="L3305">            .fma,</span>
+<span class="line" id="L3306">            .fsgsbase,</span>
+<span class="line" id="L3307">            .fxsr,</span>
+<span class="line" id="L3308">            .lzcnt,</span>
+<span class="line" id="L3309">            .mmx,</span>
+<span class="line" id="L3310">            .movbe,</span>
+<span class="line" id="L3311">            .mwaitx,</span>
+<span class="line" id="L3312">            .nopl,</span>
+<span class="line" id="L3313">            .pclmul,</span>
+<span class="line" id="L3314">            .popcnt,</span>
+<span class="line" id="L3315">            .prfchw,</span>
+<span class="line" id="L3316">            .rdrnd,</span>
+<span class="line" id="L3317">            .rdseed,</span>
+<span class="line" id="L3318">            .sahf,</span>
+<span class="line" id="L3319">            .sbb_dep_breaking,</span>
+<span class="line" id="L3320">            .sha,</span>
+<span class="line" id="L3321">            .slow_shld,</span>
+<span class="line" id="L3322">            .sse4a,</span>
+<span class="line" id="L3323">            .vzeroupper,</span>
+<span class="line" id="L3324">            .x87,</span>
+<span class="line" id="L3325">            .xsavec,</span>
+<span class="line" id="L3326">            .xsaveopt,</span>
+<span class="line" id="L3327">            .xsaves,</span>
+<span class="line" id="L3328">        }),</span>
+<span class="line" id="L3329">    };</span>
+<span class="line" id="L3330">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> znver2 = CpuModel{</span>
+<span class="line" id="L3331">        .name = <span class="tok-str">&quot;znver2&quot;</span>,</span>
+<span class="line" id="L3332">        .llvm_name = <span class="tok-str">&quot;znver2&quot;</span>,</span>
+<span class="line" id="L3333">        .features = featureSet(&amp;[_]Feature{</span>
+<span class="line" id="L3334">            .@&quot;64bit&quot;,</span>
+<span class="line" id="L3335">            .adx,</span>
+<span class="line" id="L3336">            .aes,</span>
+<span class="line" id="L3337">            .avx2,</span>
+<span class="line" id="L3338">            .bmi,</span>
+<span class="line" id="L3339">            .bmi2,</span>
+<span class="line" id="L3340">            .branchfusion,</span>
+<span class="line" id="L3341">            .clflushopt,</span>
+<span class="line" id="L3342">            .clwb,</span>
+<span class="line" id="L3343">            .clzero,</span>
+<span class="line" id="L3344">            .cmov,</span>
+<span class="line" id="L3345">            .crc32,</span>
+<span class="line" id="L3346">            .cx16,</span>
+<span class="line" id="L3347">            .f16c,</span>
+<span class="line" id="L3348">            .fast_15bytenop,</span>
+<span class="line" id="L3349">            .fast_bextr,</span>
+<span class="line" id="L3350">            .fast_lzcnt,</span>
+<span class="line" id="L3351">            .fast_movbe,</span>
+<span class="line" id="L3352">            .fast_scalar_fsqrt,</span>
+<span class="line" id="L3353">            .fast_scalar_shift_masks,</span>
+<span class="line" id="L3354">            .fast_variable_perlane_shuffle,</span>
+<span class="line" id="L3355">            .fast_vector_fsqrt,</span>
+<span class="line" id="L3356">            .fma,</span>
+<span class="line" id="L3357">            .fsgsbase,</span>
+<span class="line" id="L3358">            .fxsr,</span>
+<span class="line" id="L3359">            .lzcnt,</span>
+<span class="line" id="L3360">            .mmx,</span>
+<span class="line" id="L3361">            .movbe,</span>
+<span class="line" id="L3362">            .mwaitx,</span>
+<span class="line" id="L3363">            .nopl,</span>
+<span class="line" id="L3364">            .pclmul,</span>
+<span class="line" id="L3365">            .popcnt,</span>
+<span class="line" id="L3366">            .prfchw,</span>
+<span class="line" id="L3367">            .rdpid,</span>
+<span class="line" id="L3368">            .rdpru,</span>
+<span class="line" id="L3369">            .rdrnd,</span>
+<span class="line" id="L3370">            .rdseed,</span>
+<span class="line" id="L3371">            .sahf,</span>
+<span class="line" id="L3372">            .sbb_dep_breaking,</span>
+<span class="line" id="L3373">            .sha,</span>
+<span class="line" id="L3374">            .slow_shld,</span>
+<span class="line" id="L3375">            .sse4a,</span>
+<span class="line" id="L3376">            .vzeroupper,</span>
+<span class="line" id="L3377">            .wbnoinvd,</span>
+<span class="line" id="L3378">            .x87,</span>
+<span class="line" id="L3379">            .xsavec,</span>
+<span class="line" id="L3380">            .xsaveopt,</span>
+<span class="line" id="L3381">            .xsaves,</span>
+<span class="line" id="L3382">        }),</span>
+<span class="line" id="L3383">    };</span>
+<span class="line" id="L3384">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> znver3 = CpuModel{</span>
+<span class="line" id="L3385">        .name = <span class="tok-str">&quot;znver3&quot;</span>,</span>
+<span class="line" id="L3386">        .llvm_name = <span class="tok-str">&quot;znver3&quot;</span>,</span>
+<span class="line" id="L3387">        .features = featureSet(&amp;[_]Feature{</span>
+<span class="line" id="L3388">            .@&quot;64bit&quot;,</span>
+<span class="line" id="L3389">            .adx,</span>
+<span class="line" id="L3390">            .avx2,</span>
+<span class="line" id="L3391">            .bmi,</span>
+<span class="line" id="L3392">            .bmi2,</span>
+<span class="line" id="L3393">            .branchfusion,</span>
+<span class="line" id="L3394">            .clflushopt,</span>
+<span class="line" id="L3395">            .clwb,</span>
+<span class="line" id="L3396">            .clzero,</span>
+<span class="line" id="L3397">            .cmov,</span>
+<span class="line" id="L3398">            .crc32,</span>
+<span class="line" id="L3399">            .cx16,</span>
+<span class="line" id="L3400">            .f16c,</span>
+<span class="line" id="L3401">            .fast_15bytenop,</span>
+<span class="line" id="L3402">            .fast_bextr,</span>
+<span class="line" id="L3403">            .fast_lzcnt,</span>
+<span class="line" id="L3404">            .fast_movbe,</span>
+<span class="line" id="L3405">            .fast_scalar_fsqrt,</span>
+<span class="line" id="L3406">            .fast_scalar_shift_masks,</span>
+<span class="line" id="L3407">            .fast_variable_perlane_shuffle,</span>
+<span class="line" id="L3408">            .fast_vector_fsqrt,</span>
+<span class="line" id="L3409">            .fma,</span>
+<span class="line" id="L3410">            .fsgsbase,</span>
+<span class="line" id="L3411">            .fsrm,</span>
+<span class="line" id="L3412">            .fxsr,</span>
+<span class="line" id="L3413">            .invpcid,</span>
+<span class="line" id="L3414">            .lzcnt,</span>
+<span class="line" id="L3415">            .macrofusion,</span>
+<span class="line" id="L3416">            .mmx,</span>
+<span class="line" id="L3417">            .movbe,</span>
+<span class="line" id="L3418">            .mwaitx,</span>
+<span class="line" id="L3419">            .nopl,</span>
+<span class="line" id="L3420">            .pku,</span>
+<span class="line" id="L3421">            .popcnt,</span>
+<span class="line" id="L3422">            .prfchw,</span>
+<span class="line" id="L3423">            .rdpid,</span>
+<span class="line" id="L3424">            .rdpru,</span>
+<span class="line" id="L3425">            .rdrnd,</span>
+<span class="line" id="L3426">            .rdseed,</span>
+<span class="line" id="L3427">            .sahf,</span>
+<span class="line" id="L3428">            .sbb_dep_breaking,</span>
+<span class="line" id="L3429">            .sha,</span>
+<span class="line" id="L3430">            .slow_shld,</span>
+<span class="line" id="L3431">            .sse4a,</span>
+<span class="line" id="L3432">            .vaes,</span>
+<span class="line" id="L3433">            .vpclmulqdq,</span>
+<span class="line" id="L3434">            .vzeroupper,</span>
+<span class="line" id="L3435">            .wbnoinvd,</span>
+<span class="line" id="L3436">            .x87,</span>
+<span class="line" id="L3437">            .xsavec,</span>
+<span class="line" id="L3438">            .xsaveopt,</span>
+<span class="line" id="L3439">            .xsaves,</span>
+<span class="line" id="L3440">        }),</span>
+<span class="line" id="L3441">    };</span>
+<span class="line" id="L3442">};</span>
+<span class="line" id="L3443"></span>
 </code></pre></body>
 </html>

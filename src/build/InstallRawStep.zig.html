@@ -415,7 +415,7 @@
 <span class="line" id="L301">            <span class="tok-kw">const</span> row_address = <span class="tok-builtin">@intCast</span>(<span class="tok-type">u32</span>, segment.physicalAddress + bytes_read);</span>
 <span class="line" id="L302"></span>
 <span class="line" id="L303">            <span class="tok-kw">const</span> remaining = segment.fileSize - bytes_read;</span>
-<span class="line" id="L304">            <span class="tok-kw">const</span> to_read = <span class="tok-builtin">@minimum</span>(remaining, MAX_PAYLOAD_LEN);</span>
+<span class="line" id="L304">            <span class="tok-kw">const</span> to_read = <span class="tok-builtin">@min</span>(remaining, MAX_PAYLOAD_LEN);</span>
 <span class="line" id="L305">            <span class="tok-kw">const</span> did_read = <span class="tok-kw">try</span> elf_file.preadAll(buf[<span class="tok-number">0</span>..to_read], segment.elfOffset + bytes_read);</span>
 <span class="line" id="L306">            <span class="tok-kw">if</span> (did_read &lt; to_read) <span class="tok-kw">return</span> <span class="tok-kw">error</span>.UnexpectedEOF;</span>
 <span class="line" id="L307"></span>

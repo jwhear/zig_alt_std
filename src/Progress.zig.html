@@ -286,10 +286,10 @@
 <span class="line" id="L172"><span class="tok-comment">/// Updates the terminal if enough time has passed since last update. Thread-safe.</span></span>
 <span class="line" id="L173"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">maybeRefresh</span>(self: *Progress) <span class="tok-type">void</span> {</span>
 <span class="line" id="L174">    <span class="tok-kw">if</span> (self.timer) |*timer| {</span>
-<span class="line" id="L175">        <span class="tok-kw">const</span> now = timer.read();</span>
-<span class="line" id="L176">        <span class="tok-kw">if</span> (now &lt; self.initial_delay_ns) <span class="tok-kw">return</span>;</span>
-<span class="line" id="L177">        <span class="tok-kw">if</span> (!self.update_mutex.tryLock()) <span class="tok-kw">return</span>;</span>
-<span class="line" id="L178">        <span class="tok-kw">defer</span> self.update_mutex.unlock();</span>
+<span class="line" id="L175">        <span class="tok-kw">if</span> (!self.update_mutex.tryLock()) <span class="tok-kw">return</span>;</span>
+<span class="line" id="L176">        <span class="tok-kw">defer</span> self.update_mutex.unlock();</span>
+<span class="line" id="L177">        <span class="tok-kw">const</span> now = timer.read();</span>
+<span class="line" id="L178">        <span class="tok-kw">if</span> (now &lt; self.initial_delay_ns) <span class="tok-kw">return</span>;</span>
 <span class="line" id="L179">        <span class="tok-comment">// TODO I have observed this to happen sometimes. I think we need to follow Rust's</span>
 </span>
 <span class="line" id="L180">        <span class="tok-comment">// lead and guarantee monotonically increasing times in the std lib itself.</span>

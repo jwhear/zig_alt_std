@@ -179,7 +179,7 @@
 <span class="line" id="L62">    }</span>
 <span class="line" id="L63"></span>
 <span class="line" id="L64">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">format</span>(self: Self, <span class="tok-kw">comptime</span> fmt: []<span class="tok-kw">const</span> <span class="tok-type">u8</span>, options: std.fmt.FormatOptions, out_stream: <span class="tok-kw">anytype</span>) !<span class="tok-type">void</span> {</span>
-<span class="line" id="L65">        _ = fmt;</span>
+<span class="line" id="L65">        <span class="tok-kw">if</span> (fmt.len != <span class="tok-number">0</span>) std.fmt.invalidFmtError(fmt, self);</span>
 <span class="line" id="L66">        _ = options;</span>
 <span class="line" id="L67">        <span class="tok-kw">try</span> out_stream.print(<span class="tok-str">&quot;PreopenType{{ &quot;</span>, .{});</span>
 <span class="line" id="L68">        <span class="tok-kw">switch</span> (self) {</span>
@@ -197,13 +197,13 @@
 <span class="line" id="L80">    fd: fd_t,</span>
 <span class="line" id="L81"></span>
 <span class="line" id="L82">    <span class="tok-comment">/// Type of the preopen.</span></span>
-<span class="line" id="L83">    @&quot;type&quot;: PreopenType,</span>
+<span class="line" id="L83">    <span class="tok-type">type</span>: PreopenType,</span>
 <span class="line" id="L84"></span>
 <span class="line" id="L85">    <span class="tok-comment">/// Construct new `Preopen` instance.</span></span>
 <span class="line" id="L86">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">new</span>(fd: fd_t, preopen_type: PreopenType) Preopen {</span>
 <span class="line" id="L87">        <span class="tok-kw">return</span> Preopen{</span>
 <span class="line" id="L88">            .fd = fd,</span>
-<span class="line" id="L89">            .@&quot;type&quot; = preopen_type,</span>
+<span class="line" id="L89">            .<span class="tok-type">type</span> = preopen_type,</span>
 <span class="line" id="L90">        };</span>
 <span class="line" id="L91">    }</span>
 <span class="line" id="L92">};</span>
@@ -242,7 +242,7 @@
 <span class="line" id="L125">    <span class="tok-comment">/// Release all allocated memory.</span></span>
 <span class="line" id="L126">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">deinit</span>(pm: Self) <span class="tok-type">void</span> {</span>
 <span class="line" id="L127">        <span class="tok-kw">for</span> (pm.buffer.items) |preopen| {</span>
-<span class="line" id="L128">            <span class="tok-kw">switch</span> (preopen.@&quot;type&quot;) {</span>
+<span class="line" id="L128">            <span class="tok-kw">switch</span> (preopen.<span class="tok-type">type</span>) {</span>
 <span class="line" id="L129">                PreopenType.Dir =&gt; |path| pm.buffer.allocator.free(path),</span>
 <span class="line" id="L130">            }</span>
 <span class="line" id="L131">        }</span>
@@ -278,8 +278,8 @@
 <span class="line" id="L161"></span>
 <span class="line" id="L162">        <span class="tok-comment">// Clear contents if we're being called again</span>
 </span>
-<span class="line" id="L163">        <span class="tok-kw">for</span> (self.toOwnedSlice()) |preopen| {</span>
-<span class="line" id="L164">            <span class="tok-kw">switch</span> (preopen.@&quot;type&quot;) {</span>
+<span class="line" id="L163">        <span class="tok-kw">for</span> (<span class="tok-kw">try</span> self.toOwnedSlice()) |preopen| {</span>
+<span class="line" id="L164">            <span class="tok-kw">switch</span> (preopen.<span class="tok-type">type</span>) {</span>
 <span class="line" id="L165">                PreopenType.Dir =&gt; |path| self.buffer.allocator.free(path),</span>
 <span class="line" id="L166">            }</span>
 <span class="line" id="L167">        }</span>
@@ -326,101 +326,97 @@
 <span class="line" id="L202">            <span class="tok-comment">// POSIX paths, relative to &quot;/&quot; or `cwd_root` depending on whether they start with &quot;.&quot;</span>
 </span>
 <span class="line" id="L203">            <span class="tok-kw">const</span> path = <span class="tok-kw">if</span> (cwd_root) |cwd| blk: {</span>
-<span class="line" id="L204">                <span class="tok-kw">const</span> resolve_paths: [][]<span class="tok-kw">const</span> <span class="tok-type">u8</span> = <span class="tok-kw">if</span> (raw_path[<span class="tok-number">0</span>] == <span class="tok-str">'.'</span>) &amp;.{ cwd, raw_path } <span class="tok-kw">else</span> &amp;.{ <span class="tok-str">&quot;/&quot;</span>, raw_path };</span>
-<span class="line" id="L205">                <span class="tok-kw">break</span> :blk fs.path.resolve(self.buffer.allocator, resolve_paths) <span class="tok-kw">catch</span> |err| <span class="tok-kw">switch</span> (err) {</span>
-<span class="line" id="L206">                    <span class="tok-kw">error</span>.CurrentWorkingDirectoryUnlinked =&gt; <span class="tok-kw">unreachable</span>, <span class="tok-comment">// root is absolute, so CWD not queried</span>
+<span class="line" id="L204">                <span class="tok-kw">const</span> resolve_paths: []<span class="tok-kw">const</span> []<span class="tok-kw">const</span> <span class="tok-type">u8</span> = <span class="tok-kw">if</span> (raw_path[<span class="tok-number">0</span>] == <span class="tok-str">'.'</span>) &amp;.{ cwd, raw_path } <span class="tok-kw">else</span> &amp;.{ <span class="tok-str">&quot;/&quot;</span>, raw_path };</span>
+<span class="line" id="L205">                <span class="tok-kw">break</span> :blk <span class="tok-kw">try</span> fs.path.resolve(self.buffer.allocator, resolve_paths);</span>
+<span class="line" id="L206">            } <span class="tok-kw">else</span> blk: {</span>
+<span class="line" id="L207">                <span class="tok-comment">// If we were provided no CWD root, we preserve the preopen dir without resolving</span>
 </span>
-<span class="line" id="L207">                    <span class="tok-kw">else</span> =&gt; |e| <span class="tok-kw">return</span> e,</span>
-<span class="line" id="L208">                };</span>
-<span class="line" id="L209">            } <span class="tok-kw">else</span> blk: {</span>
-<span class="line" id="L210">                <span class="tok-comment">// If we were provided no CWD root, we preserve the preopen dir without resolving</span>
-</span>
-<span class="line" id="L211">                <span class="tok-kw">break</span> :blk <span class="tok-kw">try</span> self.buffer.allocator.dupe(<span class="tok-type">u8</span>, raw_path);</span>
-<span class="line" id="L212">            };</span>
-<span class="line" id="L213">            <span class="tok-kw">errdefer</span> self.buffer.allocator.free(path);</span>
-<span class="line" id="L214">            <span class="tok-kw">const</span> preopen = Preopen.new(fd, .{ .Dir = path });</span>
-<span class="line" id="L215"></span>
-<span class="line" id="L216">            <span class="tok-kw">try</span> self.buffer.append(preopen);</span>
-<span class="line" id="L217">            fd = <span class="tok-kw">try</span> math.add(fd_t, fd, <span class="tok-number">1</span>);</span>
-<span class="line" id="L218">        }</span>
-<span class="line" id="L219">    }</span>
-<span class="line" id="L220"></span>
-<span class="line" id="L221">    <span class="tok-comment">/// Find a preopen which includes access to `preopen_type`.</span></span>
-<span class="line" id="L222">    <span class="tok-comment">///</span></span>
-<span class="line" id="L223">    <span class="tok-comment">/// If multiple preopens match the provided resource, the most specific</span></span>
-<span class="line" id="L224">    <span class="tok-comment">/// match is returned. More recent preopens take priority, as well.</span></span>
-<span class="line" id="L225">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">findContaining</span>(self: Self, preopen_type: PreopenType) ?PreopenUri {</span>
-<span class="line" id="L226">        <span class="tok-kw">var</span> best_match: ?PreopenUri = <span class="tok-null">null</span>;</span>
-<span class="line" id="L227"></span>
-<span class="line" id="L228">        <span class="tok-kw">for</span> (self.buffer.items) |preopen| {</span>
-<span class="line" id="L229">            <span class="tok-kw">if</span> (preopen.@&quot;type&quot;.getRelativePath(preopen_type)) |rel_path| {</span>
-<span class="line" id="L230">                <span class="tok-kw">if</span> (best_match == <span class="tok-null">null</span> <span class="tok-kw">or</span> rel_path.len &lt;= best_match.?.relative_path.len) {</span>
-<span class="line" id="L231">                    best_match = PreopenUri{</span>
-<span class="line" id="L232">                        .base = preopen,</span>
-<span class="line" id="L233">                        .relative_path = <span class="tok-kw">if</span> (rel_path.len == <span class="tok-number">0</span>) <span class="tok-str">&quot;.&quot;</span> <span class="tok-kw">else</span> rel_path,</span>
-<span class="line" id="L234">                    };</span>
-<span class="line" id="L235">                }</span>
-<span class="line" id="L236">            }</span>
-<span class="line" id="L237">        }</span>
-<span class="line" id="L238">        <span class="tok-kw">return</span> best_match;</span>
-<span class="line" id="L239">    }</span>
-<span class="line" id="L240"></span>
-<span class="line" id="L241">    <span class="tok-comment">/// Find preopen by fd. If the preopen exists, return it.</span></span>
-<span class="line" id="L242">    <span class="tok-comment">/// Otherwise, return `null`.</span></span>
-<span class="line" id="L243">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">findByFd</span>(self: Self, fd: fd_t) ?Preopen {</span>
-<span class="line" id="L244">        <span class="tok-kw">for</span> (self.buffer.items) |preopen| {</span>
-<span class="line" id="L245">            <span class="tok-kw">if</span> (preopen.fd == fd) {</span>
-<span class="line" id="L246">                <span class="tok-kw">return</span> preopen;</span>
-<span class="line" id="L247">            }</span>
-<span class="line" id="L248">        }</span>
-<span class="line" id="L249">        <span class="tok-kw">return</span> <span class="tok-null">null</span>;</span>
-<span class="line" id="L250">    }</span>
-<span class="line" id="L251"></span>
-<span class="line" id="L252">    <span class="tok-comment">/// Find preopen by type. If the preopen exists, return it.</span></span>
-<span class="line" id="L253">    <span class="tok-comment">/// Otherwise, return `null`.</span></span>
-<span class="line" id="L254">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">find</span>(self: Self, preopen_type: PreopenType) ?*<span class="tok-kw">const</span> Preopen {</span>
-<span class="line" id="L255">        <span class="tok-kw">for</span> (self.buffer.items) |*preopen| {</span>
-<span class="line" id="L256">            <span class="tok-kw">if</span> (preopen.@&quot;type&quot;.eql(preopen_type)) {</span>
-<span class="line" id="L257">                <span class="tok-kw">return</span> preopen;</span>
-<span class="line" id="L258">            }</span>
-<span class="line" id="L259">        }</span>
-<span class="line" id="L260">        <span class="tok-kw">return</span> <span class="tok-null">null</span>;</span>
-<span class="line" id="L261">    }</span>
-<span class="line" id="L262"></span>
-<span class="line" id="L263">    <span class="tok-comment">/// Return the inner buffer as read-only slice.</span></span>
-<span class="line" id="L264">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">asSlice</span>(self: Self) []<span class="tok-kw">const</span> Preopen {</span>
-<span class="line" id="L265">        <span class="tok-kw">return</span> self.buffer.items;</span>
-<span class="line" id="L266">    }</span>
-<span class="line" id="L267"></span>
-<span class="line" id="L268">    <span class="tok-comment">/// The caller owns the returned memory. ArrayList becomes empty.</span></span>
-<span class="line" id="L269">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">toOwnedSlice</span>(self: *Self) []Preopen {</span>
-<span class="line" id="L270">        <span class="tok-kw">return</span> self.buffer.toOwnedSlice();</span>
-<span class="line" id="L271">    }</span>
-<span class="line" id="L272">};</span>
+<span class="line" id="L208">                <span class="tok-kw">break</span> :blk <span class="tok-kw">try</span> self.buffer.allocator.dupe(<span class="tok-type">u8</span>, raw_path);</span>
+<span class="line" id="L209">            };</span>
+<span class="line" id="L210">            <span class="tok-kw">errdefer</span> self.buffer.allocator.free(path);</span>
+<span class="line" id="L211">            <span class="tok-kw">const</span> preopen = Preopen.new(fd, .{ .Dir = path });</span>
+<span class="line" id="L212"></span>
+<span class="line" id="L213">            <span class="tok-kw">try</span> self.buffer.append(preopen);</span>
+<span class="line" id="L214">            fd = <span class="tok-kw">try</span> math.add(fd_t, fd, <span class="tok-number">1</span>);</span>
+<span class="line" id="L215">        }</span>
+<span class="line" id="L216">    }</span>
+<span class="line" id="L217"></span>
+<span class="line" id="L218">    <span class="tok-comment">/// Find a preopen which includes access to `preopen_type`.</span></span>
+<span class="line" id="L219">    <span class="tok-comment">///</span></span>
+<span class="line" id="L220">    <span class="tok-comment">/// If multiple preopens match the provided resource, the most specific</span></span>
+<span class="line" id="L221">    <span class="tok-comment">/// match is returned. More recent preopens take priority, as well.</span></span>
+<span class="line" id="L222">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">findContaining</span>(self: Self, preopen_type: PreopenType) ?PreopenUri {</span>
+<span class="line" id="L223">        <span class="tok-kw">var</span> best_match: ?PreopenUri = <span class="tok-null">null</span>;</span>
+<span class="line" id="L224"></span>
+<span class="line" id="L225">        <span class="tok-kw">for</span> (self.buffer.items) |preopen| {</span>
+<span class="line" id="L226">            <span class="tok-kw">if</span> (preopen.<span class="tok-type">type</span>.getRelativePath(preopen_type)) |rel_path| {</span>
+<span class="line" id="L227">                <span class="tok-kw">if</span> (best_match == <span class="tok-null">null</span> <span class="tok-kw">or</span> rel_path.len &lt;= best_match.?.relative_path.len) {</span>
+<span class="line" id="L228">                    best_match = PreopenUri{</span>
+<span class="line" id="L229">                        .base = preopen,</span>
+<span class="line" id="L230">                        .relative_path = <span class="tok-kw">if</span> (rel_path.len == <span class="tok-number">0</span>) <span class="tok-str">&quot;.&quot;</span> <span class="tok-kw">else</span> rel_path,</span>
+<span class="line" id="L231">                    };</span>
+<span class="line" id="L232">                }</span>
+<span class="line" id="L233">            }</span>
+<span class="line" id="L234">        }</span>
+<span class="line" id="L235">        <span class="tok-kw">return</span> best_match;</span>
+<span class="line" id="L236">    }</span>
+<span class="line" id="L237"></span>
+<span class="line" id="L238">    <span class="tok-comment">/// Find preopen by fd. If the preopen exists, return it.</span></span>
+<span class="line" id="L239">    <span class="tok-comment">/// Otherwise, return `null`.</span></span>
+<span class="line" id="L240">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">findByFd</span>(self: Self, fd: fd_t) ?Preopen {</span>
+<span class="line" id="L241">        <span class="tok-kw">for</span> (self.buffer.items) |preopen| {</span>
+<span class="line" id="L242">            <span class="tok-kw">if</span> (preopen.fd == fd) {</span>
+<span class="line" id="L243">                <span class="tok-kw">return</span> preopen;</span>
+<span class="line" id="L244">            }</span>
+<span class="line" id="L245">        }</span>
+<span class="line" id="L246">        <span class="tok-kw">return</span> <span class="tok-null">null</span>;</span>
+<span class="line" id="L247">    }</span>
+<span class="line" id="L248"></span>
+<span class="line" id="L249">    <span class="tok-comment">/// Find preopen by type. If the preopen exists, return it.</span></span>
+<span class="line" id="L250">    <span class="tok-comment">/// Otherwise, return `null`.</span></span>
+<span class="line" id="L251">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">find</span>(self: Self, preopen_type: PreopenType) ?*<span class="tok-kw">const</span> Preopen {</span>
+<span class="line" id="L252">        <span class="tok-kw">for</span> (self.buffer.items) |*preopen| {</span>
+<span class="line" id="L253">            <span class="tok-kw">if</span> (preopen.<span class="tok-type">type</span>.eql(preopen_type)) {</span>
+<span class="line" id="L254">                <span class="tok-kw">return</span> preopen;</span>
+<span class="line" id="L255">            }</span>
+<span class="line" id="L256">        }</span>
+<span class="line" id="L257">        <span class="tok-kw">return</span> <span class="tok-null">null</span>;</span>
+<span class="line" id="L258">    }</span>
+<span class="line" id="L259"></span>
+<span class="line" id="L260">    <span class="tok-comment">/// Return the inner buffer as read-only slice.</span></span>
+<span class="line" id="L261">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">asSlice</span>(self: Self) []<span class="tok-kw">const</span> Preopen {</span>
+<span class="line" id="L262">        <span class="tok-kw">return</span> self.buffer.items;</span>
+<span class="line" id="L263">    }</span>
+<span class="line" id="L264"></span>
+<span class="line" id="L265">    <span class="tok-comment">/// The caller owns the returned memory. ArrayList becomes empty.</span></span>
+<span class="line" id="L266">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">toOwnedSlice</span>(self: *Self) ![]Preopen {</span>
+<span class="line" id="L267">        <span class="tok-kw">return</span> <span class="tok-kw">try</span> self.buffer.toOwnedSlice();</span>
+<span class="line" id="L268">    }</span>
+<span class="line" id="L269">};</span>
+<span class="line" id="L270"></span>
+<span class="line" id="L271"><span class="tok-kw">test</span> <span class="tok-str">&quot;extracting WASI preopens&quot;</span> {</span>
+<span class="line" id="L272">    <span class="tok-kw">if</span> (builtin.os.tag != .wasi <span class="tok-kw">or</span> builtin.link_libc) <span class="tok-kw">return</span> <span class="tok-kw">error</span>.SkipZigTest;</span>
 <span class="line" id="L273"></span>
-<span class="line" id="L274"><span class="tok-kw">test</span> <span class="tok-str">&quot;extracting WASI preopens&quot;</span> {</span>
-<span class="line" id="L275">    <span class="tok-kw">if</span> (builtin.os.tag != .wasi <span class="tok-kw">or</span> builtin.link_libc) <span class="tok-kw">return</span> <span class="tok-kw">error</span>.SkipZigTest;</span>
+<span class="line" id="L274">    <span class="tok-kw">var</span> preopens = PreopenList.init(std.testing.allocator);</span>
+<span class="line" id="L275">    <span class="tok-kw">defer</span> preopens.deinit();</span>
 <span class="line" id="L276"></span>
-<span class="line" id="L277">    <span class="tok-kw">var</span> preopens = PreopenList.init(std.testing.allocator);</span>
-<span class="line" id="L278">    <span class="tok-kw">defer</span> preopens.deinit();</span>
-<span class="line" id="L279"></span>
-<span class="line" id="L280">    <span class="tok-kw">try</span> preopens.populate(<span class="tok-null">null</span>);</span>
+<span class="line" id="L277">    <span class="tok-kw">try</span> preopens.populate(<span class="tok-null">null</span>);</span>
+<span class="line" id="L278"></span>
+<span class="line" id="L279">    <span class="tok-kw">const</span> preopen = preopens.find(PreopenType{ .Dir = <span class="tok-str">&quot;.&quot;</span> }) <span class="tok-kw">orelse</span> <span class="tok-kw">unreachable</span>;</span>
+<span class="line" id="L280">    <span class="tok-kw">try</span> std.testing.expect(preopen.<span class="tok-type">type</span>.eql(PreopenType{ .Dir = <span class="tok-str">&quot;.&quot;</span> }));</span>
 <span class="line" id="L281"></span>
-<span class="line" id="L282">    <span class="tok-kw">const</span> preopen = preopens.find(PreopenType{ .Dir = <span class="tok-str">&quot;.&quot;</span> }) <span class="tok-kw">orelse</span> <span class="tok-kw">unreachable</span>;</span>
-<span class="line" id="L283">    <span class="tok-kw">try</span> std.testing.expect(preopen.@&quot;type&quot;.eql(PreopenType{ .Dir = <span class="tok-str">&quot;.&quot;</span> }));</span>
-<span class="line" id="L284"></span>
-<span class="line" id="L285">    <span class="tok-kw">const</span> po_type1 = PreopenType{ .Dir = <span class="tok-str">&quot;/&quot;</span> };</span>
-<span class="line" id="L286">    <span class="tok-kw">try</span> std.testing.expect(std.mem.eql(<span class="tok-type">u8</span>, po_type1.getRelativePath(.{ .Dir = <span class="tok-str">&quot;/&quot;</span> }).?, <span class="tok-str">&quot;&quot;</span>));</span>
-<span class="line" id="L287">    <span class="tok-kw">try</span> std.testing.expect(std.mem.eql(<span class="tok-type">u8</span>, po_type1.getRelativePath(.{ .Dir = <span class="tok-str">&quot;/test/foobar&quot;</span> }).?, <span class="tok-str">&quot;test/foobar&quot;</span>));</span>
+<span class="line" id="L282">    <span class="tok-kw">const</span> po_type1 = PreopenType{ .Dir = <span class="tok-str">&quot;/&quot;</span> };</span>
+<span class="line" id="L283">    <span class="tok-kw">try</span> std.testing.expect(std.mem.eql(<span class="tok-type">u8</span>, po_type1.getRelativePath(.{ .Dir = <span class="tok-str">&quot;/&quot;</span> }).?, <span class="tok-str">&quot;&quot;</span>));</span>
+<span class="line" id="L284">    <span class="tok-kw">try</span> std.testing.expect(std.mem.eql(<span class="tok-type">u8</span>, po_type1.getRelativePath(.{ .Dir = <span class="tok-str">&quot;/test/foobar&quot;</span> }).?, <span class="tok-str">&quot;test/foobar&quot;</span>));</span>
+<span class="line" id="L285"></span>
+<span class="line" id="L286">    <span class="tok-kw">const</span> po_type2 = PreopenType{ .Dir = <span class="tok-str">&quot;/test/foo&quot;</span> };</span>
+<span class="line" id="L287">    <span class="tok-kw">try</span> std.testing.expect(po_type2.getRelativePath(.{ .Dir = <span class="tok-str">&quot;/test/foobar&quot;</span> }) == <span class="tok-null">null</span>);</span>
 <span class="line" id="L288"></span>
-<span class="line" id="L289">    <span class="tok-kw">const</span> po_type2 = PreopenType{ .Dir = <span class="tok-str">&quot;/test/foo&quot;</span> };</span>
-<span class="line" id="L290">    <span class="tok-kw">try</span> std.testing.expect(po_type2.getRelativePath(.{ .Dir = <span class="tok-str">&quot;/test/foobar&quot;</span> }) == <span class="tok-null">null</span>);</span>
-<span class="line" id="L291"></span>
-<span class="line" id="L292">    <span class="tok-kw">const</span> po_type3 = PreopenType{ .Dir = <span class="tok-str">&quot;/test&quot;</span> };</span>
-<span class="line" id="L293">    <span class="tok-kw">try</span> std.testing.expect(std.mem.eql(<span class="tok-type">u8</span>, po_type3.getRelativePath(.{ .Dir = <span class="tok-str">&quot;/test&quot;</span> }).?, <span class="tok-str">&quot;&quot;</span>));</span>
-<span class="line" id="L294">    <span class="tok-kw">try</span> std.testing.expect(std.mem.eql(<span class="tok-type">u8</span>, po_type3.getRelativePath(.{ .Dir = <span class="tok-str">&quot;/test/&quot;</span> }).?, <span class="tok-str">&quot;&quot;</span>));</span>
-<span class="line" id="L295">    <span class="tok-kw">try</span> std.testing.expect(std.mem.eql(<span class="tok-type">u8</span>, po_type3.getRelativePath(.{ .Dir = <span class="tok-str">&quot;/test/foo/bar&quot;</span> }).?, <span class="tok-str">&quot;foo/bar&quot;</span>));</span>
-<span class="line" id="L296">}</span>
-<span class="line" id="L297"></span>
+<span class="line" id="L289">    <span class="tok-kw">const</span> po_type3 = PreopenType{ .Dir = <span class="tok-str">&quot;/test&quot;</span> };</span>
+<span class="line" id="L290">    <span class="tok-kw">try</span> std.testing.expect(std.mem.eql(<span class="tok-type">u8</span>, po_type3.getRelativePath(.{ .Dir = <span class="tok-str">&quot;/test&quot;</span> }).?, <span class="tok-str">&quot;&quot;</span>));</span>
+<span class="line" id="L291">    <span class="tok-kw">try</span> std.testing.expect(std.mem.eql(<span class="tok-type">u8</span>, po_type3.getRelativePath(.{ .Dir = <span class="tok-str">&quot;/test/&quot;</span> }).?, <span class="tok-str">&quot;&quot;</span>));</span>
+<span class="line" id="L292">    <span class="tok-kw">try</span> std.testing.expect(std.mem.eql(<span class="tok-type">u8</span>, po_type3.getRelativePath(.{ .Dir = <span class="tok-str">&quot;/test/foo/bar&quot;</span> }).?, <span class="tok-str">&quot;foo/bar&quot;</span>));</span>
+<span class="line" id="L293">}</span>
+<span class="line" id="L294"></span>
 </code></pre></body>
 </html>

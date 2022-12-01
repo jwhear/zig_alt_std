@@ -136,7 +136,7 @@
 <span class="line" id="L23"><span class="tok-comment">//!   size.  The interfaces of these two types match exactly, except for fields.</span></span>
 <span class="line" id="L24"><span class="tok-comment">//!</span></span>
 <span class="line" id="L25"><span class="tok-comment">//! DynamicBitSet:</span></span>
-<span class="line" id="L26"><span class="tok-comment">//!   A bit set with runtime known size, backed by an allocated slice</span></span>
+<span class="line" id="L26"><span class="tok-comment">//!   A bit set with runtime-known size, backed by an allocated slice</span></span>
 <span class="line" id="L27"><span class="tok-comment">//!   of usize.</span></span>
 <span class="line" id="L28"><span class="tok-comment">//!</span></span>
 <span class="line" id="L29"><span class="tok-comment">//! DynamicBitSetUnmanaged:</span></span>
@@ -652,7 +652,7 @@
 <span class="line" id="L515">    };</span>
 <span class="line" id="L516">}</span>
 <span class="line" id="L517"></span>
-<span class="line" id="L518"><span class="tok-comment">/// A bit set with runtime known size, backed by an allocated slice</span></span>
+<span class="line" id="L518"><span class="tok-comment">/// A bit set with runtime-known size, backed by an allocated slice</span></span>
 <span class="line" id="L519"><span class="tok-comment">/// of usize.  The allocator must be tracked externally by the user.</span></span>
 <span class="line" id="L520"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> DynamicBitSetUnmanaged = <span class="tok-kw">struct</span> {</span>
 <span class="line" id="L521">    <span class="tok-kw">const</span> Self = <span class="tok-builtin">@This</span>();</span>
@@ -1002,7 +1002,7 @@
 <span class="line" id="L843">    }</span>
 <span class="line" id="L844">};</span>
 <span class="line" id="L845"></span>
-<span class="line" id="L846"><span class="tok-comment">/// A bit set with runtime known size, backed by an allocated slice</span></span>
+<span class="line" id="L846"><span class="tok-comment">/// A bit set with runtime-known size, backed by an allocated slice</span></span>
 <span class="line" id="L847"><span class="tok-comment">/// of usize.  Thin wrapper around DynamicBitSetUnmanaged which keeps</span></span>
 <span class="line" id="L848"><span class="tok-comment">/// track of the allocator instance.</span></span>
 <span class="line" id="L849"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> DynamicBitSet = <span class="tok-kw">struct</span> {</span>

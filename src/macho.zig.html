@@ -956,7 +956,7 @@
 <span class="line" id="L700"><span class="tok-comment">/// The format of the relocation entries referenced by the reloff and nreloc</span></span>
 <span class="line" id="L701"><span class="tok-comment">/// fields of the section structure for mach object files is described in the</span></span>
 <span class="line" id="L702"><span class="tok-comment">/// header file &lt;reloc.h&gt;.</span></span>
-<span class="line" id="L703"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> @&quot;section&quot; = <span class="tok-kw">extern</span> <span class="tok-kw">struct</span> {</span>
+<span class="line" id="L703"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> section = <span class="tok-kw">extern</span> <span class="tok-kw">struct</span> {</span>
 <span class="line" id="L704">    <span class="tok-comment">/// name of this section</span></span>
 <span class="line" id="L705">    sectname: [<span class="tok-number">16</span>]<span class="tok-type">u8</span>,</span>
 <span class="line" id="L706"></span>
@@ -1050,12 +1050,12 @@
 <span class="line" id="L794">    }</span>
 <span class="line" id="L795"></span>
 <span class="line" id="L796">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">isZerofill</span>(sect: section_64) <span class="tok-type">bool</span> {</span>
-<span class="line" id="L797">        <span class="tok-kw">const</span> tt = sect.@&quot;type&quot;();</span>
+<span class="line" id="L797">        <span class="tok-kw">const</span> tt = sect.<span class="tok-type">type</span>();</span>
 <span class="line" id="L798">        <span class="tok-kw">return</span> tt == S_ZEROFILL <span class="tok-kw">or</span> tt == S_GB_ZEROFILL <span class="tok-kw">or</span> tt == S_THREAD_LOCAL_ZEROFILL;</span>
 <span class="line" id="L799">    }</span>
 <span class="line" id="L800"></span>
 <span class="line" id="L801">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">isSymbolStubs</span>(sect: section_64) <span class="tok-type">bool</span> {</span>
-<span class="line" id="L802">        <span class="tok-kw">const</span> tt = sect.@&quot;type&quot;();</span>
+<span class="line" id="L802">        <span class="tok-kw">const</span> tt = sect.<span class="tok-type">type</span>();</span>
 <span class="line" id="L803">        <span class="tok-kw">return</span> tt == S_SYMBOL_STUBS;</span>
 <span class="line" id="L804">    }</span>
 <span class="line" id="L805"></span>
@@ -1458,7 +1458,7 @@
 <span class="line" id="L1201"><span class="tok-comment">/// Contains a section of type S_THREAD_LOCAL_VARIABLES</span></span>
 <span class="line" id="L1202"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> MH_HAS_TLV_DESCRIPTORS = <span class="tok-number">0x800000</span>;</span>
 <span class="line" id="L1203"></span>
-<span class="line" id="L1204"><span class="tok-comment">/// When this bit is set, the OS will run the main executable with a non-executable heap even on platforms (e.g. i386) that don't require it. Only used in MH_EXECUTE filetypes.</span></span>
+<span class="line" id="L1204"><span class="tok-comment">/// When this bit is set, the OS will run the main executable with a non-executable heap even on platforms (e.g. x86) that don't require it. Only used in MH_EXECUTE filetypes.</span></span>
 <span class="line" id="L1205"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> MH_NO_HEAP_EXECUTION = <span class="tok-number">0x1000000</span>;</span>
 <span class="line" id="L1206"></span>
 <span class="line" id="L1207"><span class="tok-comment">/// The code was linked for use in an application extension.</span></span>
@@ -1719,7 +1719,7 @@
 <span class="line" id="L1444"><span class="tok-comment">/// blocks are live if they reference live blocks</span></span>
 <span class="line" id="L1445"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> S_ATTR_LIVE_SUPPORT = <span class="tok-number">0x8000000</span>;</span>
 <span class="line" id="L1446"></span>
-<span class="line" id="L1447"><span class="tok-comment">/// used with i386 code stubs written on by dyld</span></span>
+<span class="line" id="L1447"><span class="tok-comment">/// used with x86 code stubs written on by dyld</span></span>
 <span class="line" id="L1448"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> S_ATTR_SELF_MODIFYING_CODE = <span class="tok-number">0x4000000</span>;</span>
 <span class="line" id="L1449"></span>
 <span class="line" id="L1450"><span class="tok-comment">/// section contains some machine instructions</span></span>
@@ -2089,7 +2089,7 @@
 <span class="line" id="L1804"><span class="tok-comment">/// Structure of an embedded-signature SuperBlob</span></span>
 <span class="line" id="L1805"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> BlobIndex = <span class="tok-kw">extern</span> <span class="tok-kw">struct</span> {</span>
 <span class="line" id="L1806">    <span class="tok-comment">/// Type of entry</span></span>
-<span class="line" id="L1807">    @&quot;type&quot;: <span class="tok-type">u32</span>,</span>
+<span class="line" id="L1807">    <span class="tok-type">type</span>: <span class="tok-type">u32</span>,</span>
 <span class="line" id="L1808"></span>
 <span class="line" id="L1809">    <span class="tok-comment">/// Offset of entry</span></span>
 <span class="line" id="L1810">    offset: <span class="tok-type">u32</span>,</span>

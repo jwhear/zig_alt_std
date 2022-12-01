@@ -111,113 +111,177 @@
     </style>
 </head>
 <body>
-<pre><code><span class="line" id="L1"><span class="tok-comment">// Ported from musl, which is licensed under the MIT license:</span>
-</span>
-<span class="line" id="L2"><span class="tok-comment">// https://git.musl-libc.org/cgit/musl/tree/COPYRIGHT</span>
-</span>
-<span class="line" id="L3"><span class="tok-comment">//</span>
-</span>
-<span class="line" id="L4"><span class="tok-comment">// https://git.musl-libc.org/cgit/musl/tree/src/math/ldexpf.c</span>
-</span>
-<span class="line" id="L5"><span class="tok-comment">// https://git.musl-libc.org/cgit/musl/tree/src/math/ldexp.c</span>
-</span>
+<pre><code><span class="line" id="L1"><span class="tok-kw">const</span> std = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;std&quot;</span>);</span>
+<span class="line" id="L2"><span class="tok-kw">const</span> math = std.math;</span>
+<span class="line" id="L3"><span class="tok-kw">const</span> Log2Int = std.math.Log2Int;</span>
+<span class="line" id="L4"><span class="tok-kw">const</span> assert = std.debug.assert;</span>
+<span class="line" id="L5"><span class="tok-kw">const</span> expect = std.testing.expect;</span>
 <span class="line" id="L6"></span>
-<span class="line" id="L7"><span class="tok-kw">const</span> std = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;std&quot;</span>);</span>
-<span class="line" id="L8"><span class="tok-kw">const</span> math = std.math;</span>
-<span class="line" id="L9"><span class="tok-kw">const</span> assert = std.debug.assert;</span>
-<span class="line" id="L10"><span class="tok-kw">const</span> expect = std.testing.expect;</span>
+<span class="line" id="L7"><span class="tok-comment">/// Returns x * 2^n.</span></span>
+<span class="line" id="L8"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">ldexp</span>(x: <span class="tok-kw">anytype</span>, n: <span class="tok-type">i32</span>) <span class="tok-builtin">@TypeOf</span>(x) {</span>
+<span class="line" id="L9">    <span class="tok-kw">const</span> T = <span class="tok-builtin">@TypeOf</span>(x);</span>
+<span class="line" id="L10">    <span class="tok-kw">const</span> TBits = std.meta.Int(.unsigned, <span class="tok-builtin">@typeInfo</span>(T).Float.bits);</span>
 <span class="line" id="L11"></span>
-<span class="line" id="L12"><span class="tok-comment">/// Returns x * 2^n.</span></span>
-<span class="line" id="L13"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">ldexp</span>(x: <span class="tok-kw">anytype</span>, n: <span class="tok-type">i32</span>) <span class="tok-builtin">@TypeOf</span>(x) {</span>
-<span class="line" id="L14">    <span class="tok-kw">var</span> base = x;</span>
-<span class="line" id="L15">    <span class="tok-kw">var</span> shift = n;</span>
-<span class="line" id="L16"></span>
-<span class="line" id="L17">    <span class="tok-kw">const</span> T = <span class="tok-builtin">@TypeOf</span>(base);</span>
-<span class="line" id="L18">    <span class="tok-kw">const</span> TBits = std.meta.Int(.unsigned, <span class="tok-builtin">@typeInfo</span>(T).Float.bits);</span>
-<span class="line" id="L19"></span>
-<span class="line" id="L20">    <span class="tok-kw">const</span> mantissa_bits = math.floatMantissaBits(T);</span>
-<span class="line" id="L21">    <span class="tok-kw">const</span> exponent_min = math.floatExponentMin(T);</span>
-<span class="line" id="L22">    <span class="tok-kw">const</span> exponent_max = math.floatExponentMax(T);</span>
-<span class="line" id="L23"></span>
-<span class="line" id="L24">    <span class="tok-kw">const</span> exponent_bias = exponent_max;</span>
-<span class="line" id="L25"></span>
-<span class="line" id="L26">    <span class="tok-comment">// fix double rounding errors in subnormal ranges</span>
+<span class="line" id="L12">    <span class="tok-kw">const</span> exponent_bits = math.floatExponentBits(T);</span>
+<span class="line" id="L13">    <span class="tok-kw">const</span> mantissa_bits = math.floatMantissaBits(T);</span>
+<span class="line" id="L14">    <span class="tok-kw">const</span> fractional_bits = math.floatFractionalBits(T);</span>
+<span class="line" id="L15"></span>
+<span class="line" id="L16">    <span class="tok-kw">const</span> max_biased_exponent = <span class="tok-number">2</span> * math.floatExponentMax(T);</span>
+<span class="line" id="L17">    <span class="tok-kw">const</span> mantissa_mask = <span class="tok-builtin">@as</span>(TBits, (<span class="tok-number">1</span> &lt;&lt; mantissa_bits) - <span class="tok-number">1</span>);</span>
+<span class="line" id="L18"></span>
+<span class="line" id="L19">    <span class="tok-kw">const</span> repr = <span class="tok-builtin">@bitCast</span>(TBits, x);</span>
+<span class="line" id="L20">    <span class="tok-kw">const</span> sign_bit = repr &amp; (<span class="tok-number">1</span> &lt;&lt; (exponent_bits + mantissa_bits));</span>
+<span class="line" id="L21"></span>
+<span class="line" id="L22">    <span class="tok-kw">if</span> (math.isNan(x) <span class="tok-kw">or</span> !math.isFinite(x))</span>
+<span class="line" id="L23">        <span class="tok-kw">return</span> x;</span>
+<span class="line" id="L24"></span>
+<span class="line" id="L25">    <span class="tok-kw">var</span> exponent: <span class="tok-type">i32</span> = <span class="tok-builtin">@intCast</span>(<span class="tok-type">i32</span>, (repr &lt;&lt; <span class="tok-number">1</span>) &gt;&gt; (mantissa_bits + <span class="tok-number">1</span>));</span>
+<span class="line" id="L26">    <span class="tok-kw">if</span> (exponent == <span class="tok-number">0</span>)</span>
+<span class="line" id="L27">        exponent += (<span class="tok-builtin">@as</span>(<span class="tok-type">i32</span>, exponent_bits) + <span class="tok-builtin">@boolToInt</span>(T == <span class="tok-type">f80</span>)) - <span class="tok-builtin">@clz</span>(repr &lt;&lt; <span class="tok-number">1</span>);</span>
+<span class="line" id="L28"></span>
+<span class="line" id="L29">    <span class="tok-kw">if</span> (n &gt;= <span class="tok-number">0</span>) {</span>
+<span class="line" id="L30">        <span class="tok-kw">if</span> (n &gt; max_biased_exponent - exponent) {</span>
+<span class="line" id="L31">            <span class="tok-comment">// Overflow. Return +/- inf</span>
 </span>
-<span class="line" id="L27">    <span class="tok-comment">// https://git.musl-libc.org/cgit/musl/commit/src/math/ldexp.c?id=8c44a060243f04283ca68dad199aab90336141db</span>
+<span class="line" id="L32">            <span class="tok-kw">return</span> <span class="tok-builtin">@bitCast</span>(T, <span class="tok-builtin">@bitCast</span>(TBits, math.inf(T)) | sign_bit);</span>
+<span class="line" id="L33">        } <span class="tok-kw">else</span> <span class="tok-kw">if</span> (exponent + n &lt;= <span class="tok-number">0</span>) {</span>
+<span class="line" id="L34">            <span class="tok-comment">// Result is subnormal</span>
 </span>
-<span class="line" id="L28">    <span class="tok-kw">const</span> scale_min_expo = exponent_min + mantissa_bits + <span class="tok-number">1</span>;</span>
-<span class="line" id="L29">    <span class="tok-kw">const</span> scale_min = <span class="tok-builtin">@bitCast</span>(T, <span class="tok-builtin">@as</span>(TBits, scale_min_expo + exponent_bias) &lt;&lt; mantissa_bits);</span>
-<span class="line" id="L30">    <span class="tok-kw">const</span> scale_max = <span class="tok-builtin">@bitCast</span>(T, <span class="tok-builtin">@intCast</span>(TBits, exponent_max + exponent_bias) &lt;&lt; mantissa_bits);</span>
-<span class="line" id="L31"></span>
-<span class="line" id="L32">    <span class="tok-comment">// scale `shift` within floating point limits, if possible</span>
+<span class="line" id="L35">            <span class="tok-kw">return</span> <span class="tok-builtin">@bitCast</span>(T, (repr &lt;&lt; <span class="tok-builtin">@intCast</span>(Log2Int(TBits), n)) | sign_bit);</span>
+<span class="line" id="L36">        } <span class="tok-kw">else</span> <span class="tok-kw">if</span> (exponent &lt;= <span class="tok-number">0</span>) {</span>
+<span class="line" id="L37">            <span class="tok-comment">// Result is normal, but needs shifting</span>
 </span>
-<span class="line" id="L33">    <span class="tok-comment">// second pass is possible due to subnormal range</span>
+<span class="line" id="L38">            <span class="tok-kw">var</span> result = <span class="tok-builtin">@intCast</span>(TBits, n + exponent) &lt;&lt; mantissa_bits;</span>
+<span class="line" id="L39">            result |= (repr &lt;&lt; <span class="tok-builtin">@intCast</span>(Log2Int(TBits), <span class="tok-number">1</span> - exponent)) &amp; mantissa_mask;</span>
+<span class="line" id="L40">            <span class="tok-kw">return</span> <span class="tok-builtin">@bitCast</span>(T, result | sign_bit);</span>
+<span class="line" id="L41">        }</span>
+<span class="line" id="L42"></span>
+<span class="line" id="L43">        <span class="tok-comment">// Result needs no shifting</span>
 </span>
-<span class="line" id="L34">    <span class="tok-comment">// third pass always results in +/-0.0 or +/-inf</span>
+<span class="line" id="L44">        <span class="tok-kw">return</span> <span class="tok-builtin">@bitCast</span>(T, repr + (<span class="tok-builtin">@intCast</span>(TBits, n) &lt;&lt; mantissa_bits));</span>
+<span class="line" id="L45">    } <span class="tok-kw">else</span> {</span>
+<span class="line" id="L46">        <span class="tok-kw">if</span> (n &lt;= -exponent) {</span>
+<span class="line" id="L47">            <span class="tok-kw">if</span> (n &lt; -(mantissa_bits + exponent))</span>
+<span class="line" id="L48">                <span class="tok-kw">return</span> <span class="tok-builtin">@bitCast</span>(T, sign_bit); <span class="tok-comment">// Severe underflow. Return +/- 0</span>
 </span>
-<span class="line" id="L35">    <span class="tok-kw">if</span> (shift &gt; exponent_max) {</span>
-<span class="line" id="L36">        base *= scale_max;</span>
-<span class="line" id="L37">        shift -= exponent_max;</span>
-<span class="line" id="L38">        <span class="tok-kw">if</span> (shift &gt; exponent_max) {</span>
-<span class="line" id="L39">            base *= scale_max;</span>
-<span class="line" id="L40">            shift -= exponent_max;</span>
-<span class="line" id="L41">            <span class="tok-kw">if</span> (shift &gt; exponent_max) shift = exponent_max;</span>
-<span class="line" id="L42">        }</span>
-<span class="line" id="L43">    } <span class="tok-kw">else</span> <span class="tok-kw">if</span> (shift &lt; exponent_min) {</span>
-<span class="line" id="L44">        base *= scale_min;</span>
-<span class="line" id="L45">        shift -= scale_min_expo;</span>
-<span class="line" id="L46">        <span class="tok-kw">if</span> (shift &lt; exponent_min) {</span>
-<span class="line" id="L47">            base *= scale_min;</span>
-<span class="line" id="L48">            shift -= scale_min_expo;</span>
-<span class="line" id="L49">            <span class="tok-kw">if</span> (shift &lt; exponent_min) shift = exponent_min;</span>
-<span class="line" id="L50">        }</span>
-<span class="line" id="L51">    }</span>
-<span class="line" id="L52"></span>
-<span class="line" id="L53">    <span class="tok-kw">return</span> base * <span class="tok-builtin">@bitCast</span>(T, <span class="tok-builtin">@intCast</span>(TBits, shift + exponent_bias) &lt;&lt; mantissa_bits);</span>
-<span class="line" id="L54">}</span>
-<span class="line" id="L55"></span>
-<span class="line" id="L56"><span class="tok-kw">test</span> <span class="tok-str">&quot;math.ldexp&quot;</span> {</span>
-<span class="line" id="L57">    <span class="tok-comment">// TODO derive the various constants here with new maths API</span>
+<span class="line" id="L49"></span>
+<span class="line" id="L50">            <span class="tok-comment">// Result underflowed, we need to shift and round</span>
 </span>
+<span class="line" id="L51">            <span class="tok-kw">const</span> shift = <span class="tok-builtin">@intCast</span>(Log2Int(TBits), math.min(-n, -(exponent + n) + <span class="tok-number">1</span>));</span>
+<span class="line" id="L52">            <span class="tok-kw">const</span> exact_tie: <span class="tok-type">bool</span> = <span class="tok-builtin">@ctz</span>(repr) == shift - <span class="tok-number">1</span>;</span>
+<span class="line" id="L53">            <span class="tok-kw">var</span> result = repr &amp; mantissa_mask;</span>
+<span class="line" id="L54"></span>
+<span class="line" id="L55">            <span class="tok-kw">if</span> (T != <span class="tok-type">f80</span>) <span class="tok-comment">// Include integer bit</span>
+</span>
+<span class="line" id="L56">                result |= <span class="tok-builtin">@as</span>(TBits, <span class="tok-builtin">@boolToInt</span>(exponent &gt; <span class="tok-number">0</span>)) &lt;&lt; fractional_bits;</span>
+<span class="line" id="L57">            result = <span class="tok-builtin">@intCast</span>(TBits, (result &gt;&gt; (shift - <span class="tok-number">1</span>)));</span>
 <span class="line" id="L58"></span>
-<span class="line" id="L59">    <span class="tok-comment">// basic usage</span>
+<span class="line" id="L59">            <span class="tok-comment">// Round result, including round-to-even for exact ties</span>
 </span>
-<span class="line" id="L60">    <span class="tok-kw">try</span> expect(ldexp(<span class="tok-builtin">@as</span>(<span class="tok-type">f16</span>, <span class="tok-number">1.5</span>), <span class="tok-number">4</span>) == <span class="tok-number">24.0</span>);</span>
-<span class="line" id="L61">    <span class="tok-kw">try</span> expect(ldexp(<span class="tok-builtin">@as</span>(<span class="tok-type">f32</span>, <span class="tok-number">1.5</span>), <span class="tok-number">4</span>) == <span class="tok-number">24.0</span>);</span>
-<span class="line" id="L62">    <span class="tok-kw">try</span> expect(ldexp(<span class="tok-builtin">@as</span>(<span class="tok-type">f64</span>, <span class="tok-number">1.5</span>), <span class="tok-number">4</span>) == <span class="tok-number">24.0</span>);</span>
-<span class="line" id="L63">    <span class="tok-kw">try</span> expect(ldexp(<span class="tok-builtin">@as</span>(<span class="tok-type">f128</span>, <span class="tok-number">1.5</span>), <span class="tok-number">4</span>) == <span class="tok-number">24.0</span>);</span>
-<span class="line" id="L64"></span>
-<span class="line" id="L65">    <span class="tok-comment">// subnormals</span>
+<span class="line" id="L60">            result = ((result + <span class="tok-number">1</span>) &gt;&gt; <span class="tok-number">1</span>) &amp; ~<span class="tok-builtin">@as</span>(TBits, <span class="tok-builtin">@boolToInt</span>(exact_tie));</span>
+<span class="line" id="L61">            <span class="tok-kw">return</span> <span class="tok-builtin">@bitCast</span>(T, result | sign_bit);</span>
+<span class="line" id="L62">        }</span>
+<span class="line" id="L63"></span>
+<span class="line" id="L64">        <span class="tok-comment">// Result is exact, and needs no shifting</span>
 </span>
-<span class="line" id="L66">    <span class="tok-kw">try</span> expect(math.isNormal(ldexp(<span class="tok-builtin">@as</span>(<span class="tok-type">f16</span>, <span class="tok-number">1.0</span>), -<span class="tok-number">14</span>)));</span>
-<span class="line" id="L67">    <span class="tok-kw">try</span> expect(!math.isNormal(ldexp(<span class="tok-builtin">@as</span>(<span class="tok-type">f16</span>, <span class="tok-number">1.0</span>), -<span class="tok-number">15</span>)));</span>
-<span class="line" id="L68">    <span class="tok-kw">try</span> expect(math.isNormal(ldexp(<span class="tok-builtin">@as</span>(<span class="tok-type">f32</span>, <span class="tok-number">1.0</span>), -<span class="tok-number">126</span>)));</span>
-<span class="line" id="L69">    <span class="tok-kw">try</span> expect(!math.isNormal(ldexp(<span class="tok-builtin">@as</span>(<span class="tok-type">f32</span>, <span class="tok-number">1.0</span>), -<span class="tok-number">127</span>)));</span>
-<span class="line" id="L70">    <span class="tok-kw">try</span> expect(math.isNormal(ldexp(<span class="tok-builtin">@as</span>(<span class="tok-type">f64</span>, <span class="tok-number">1.0</span>), -<span class="tok-number">1022</span>)));</span>
-<span class="line" id="L71">    <span class="tok-kw">try</span> expect(!math.isNormal(ldexp(<span class="tok-builtin">@as</span>(<span class="tok-type">f64</span>, <span class="tok-number">1.0</span>), -<span class="tok-number">1023</span>)));</span>
-<span class="line" id="L72">    <span class="tok-kw">try</span> expect(math.isNormal(ldexp(<span class="tok-builtin">@as</span>(<span class="tok-type">f128</span>, <span class="tok-number">1.0</span>), -<span class="tok-number">16382</span>)));</span>
-<span class="line" id="L73">    <span class="tok-kw">try</span> expect(!math.isNormal(ldexp(<span class="tok-builtin">@as</span>(<span class="tok-type">f128</span>, <span class="tok-number">1.0</span>), -<span class="tok-number">16383</span>)));</span>
-<span class="line" id="L74">    <span class="tok-comment">// unreliable due to lack of native f16 support, see talk on PR #8733</span>
+<span class="line" id="L65">        <span class="tok-kw">return</span> <span class="tok-builtin">@bitCast</span>(T, repr - (<span class="tok-builtin">@intCast</span>(TBits, -n) &lt;&lt; mantissa_bits));</span>
+<span class="line" id="L66">    }</span>
+<span class="line" id="L67">}</span>
+<span class="line" id="L68"></span>
+<span class="line" id="L69"><span class="tok-kw">test</span> <span class="tok-str">&quot;math.ldexp&quot;</span> {</span>
+<span class="line" id="L70"></span>
+<span class="line" id="L71">    <span class="tok-comment">// subnormals</span>
 </span>
-<span class="line" id="L75">    <span class="tok-comment">// try expect(ldexp(@as(f16, 0x1.1FFp-1), -14 - 9) == math.floatTrueMin(f16));</span>
+<span class="line" id="L72">    <span class="tok-kw">try</span> expect(ldexp(<span class="tok-builtin">@as</span>(<span class="tok-type">f16</span>, <span class="tok-number">0x1.1FFp14</span>), -<span class="tok-number">14</span> - <span class="tok-number">9</span> - <span class="tok-number">15</span>) == math.floatTrueMin(<span class="tok-type">f16</span>));</span>
+<span class="line" id="L73">    <span class="tok-kw">try</span> expect(ldexp(<span class="tok-builtin">@as</span>(<span class="tok-type">f32</span>, <span class="tok-number">0x1.3FFFFFp-1</span>), -<span class="tok-number">126</span> - <span class="tok-number">22</span>) == math.floatTrueMin(<span class="tok-type">f32</span>));</span>
+<span class="line" id="L74">    <span class="tok-kw">try</span> expect(ldexp(<span class="tok-builtin">@as</span>(<span class="tok-type">f64</span>, <span class="tok-number">0x1.7FFFFFFFFFFFFp-1</span>), -<span class="tok-number">1022</span> - <span class="tok-number">51</span>) == math.floatTrueMin(<span class="tok-type">f64</span>));</span>
+<span class="line" id="L75">    <span class="tok-kw">try</span> expect(ldexp(<span class="tok-builtin">@as</span>(<span class="tok-type">f80</span>, <span class="tok-number">0x1.7FFFFFFFFFFFFFFEp-1</span>), -<span class="tok-number">16382</span> - <span class="tok-number">62</span>) == math.floatTrueMin(<span class="tok-type">f80</span>));</span>
+<span class="line" id="L76">    <span class="tok-kw">try</span> expect(ldexp(<span class="tok-builtin">@as</span>(<span class="tok-type">f128</span>, <span class="tok-number">0x1.7FFFFFFFFFFFFFFFFFFFFFFFFFFFp-1</span>), -<span class="tok-number">16382</span> - <span class="tok-number">111</span>) == math.floatTrueMin(<span class="tok-type">f128</span>));</span>
+<span class="line" id="L77"></span>
+<span class="line" id="L78">    <span class="tok-kw">try</span> expect(ldexp(math.floatMax(<span class="tok-type">f32</span>), -<span class="tok-number">128</span> - <span class="tok-number">149</span>) &gt; <span class="tok-number">0.0</span>);</span>
+<span class="line" id="L79">    <span class="tok-kw">try</span> expect(ldexp(math.floatMax(<span class="tok-type">f32</span>), -<span class="tok-number">128</span> - <span class="tok-number">149</span> - <span class="tok-number">1</span>) == <span class="tok-number">0.0</span>);</span>
+<span class="line" id="L80"></span>
+<span class="line" id="L81">    <span class="tok-builtin">@setEvalBranchQuota</span>(<span class="tok-number">10_000</span>);</span>
+<span class="line" id="L82"></span>
+<span class="line" id="L83">    <span class="tok-kw">inline</span> <span class="tok-kw">for</span> ([_]<span class="tok-type">type</span>{ <span class="tok-type">f16</span>, <span class="tok-type">f32</span>, <span class="tok-type">f64</span>, <span class="tok-type">f80</span>, <span class="tok-type">f128</span> }) |T| {</span>
+<span class="line" id="L84">        <span class="tok-kw">const</span> fractional_bits = math.floatFractionalBits(T);</span>
+<span class="line" id="L85"></span>
+<span class="line" id="L86">        <span class="tok-kw">const</span> min_exponent = math.floatExponentMin(T);</span>
+<span class="line" id="L87">        <span class="tok-kw">const</span> max_exponent = math.floatExponentMax(T);</span>
+<span class="line" id="L88">        <span class="tok-kw">const</span> exponent_bias = max_exponent;</span>
+<span class="line" id="L89"></span>
+<span class="line" id="L90">        <span class="tok-comment">// basic usage</span>
 </span>
-<span class="line" id="L76">    <span class="tok-kw">try</span> expect(ldexp(<span class="tok-builtin">@as</span>(<span class="tok-type">f32</span>, <span class="tok-number">0x1.3FFFFFp-1</span>), -<span class="tok-number">126</span> - <span class="tok-number">22</span>) == math.floatTrueMin(<span class="tok-type">f32</span>));</span>
-<span class="line" id="L77">    <span class="tok-kw">try</span> expect(ldexp(<span class="tok-builtin">@as</span>(<span class="tok-type">f64</span>, <span class="tok-number">0x1.7FFFFFFFFFFFFp-1</span>), -<span class="tok-number">1022</span> - <span class="tok-number">51</span>) == math.floatTrueMin(<span class="tok-type">f64</span>));</span>
-<span class="line" id="L78">    <span class="tok-kw">try</span> expect(ldexp(<span class="tok-builtin">@as</span>(<span class="tok-type">f128</span>, <span class="tok-number">0x1.7FFFFFFFFFFFFFFFFFFFFFFFFFFFp-1</span>), -<span class="tok-number">16382</span> - <span class="tok-number">111</span>) == math.floatTrueMin(<span class="tok-type">f128</span>));</span>
-<span class="line" id="L79"></span>
-<span class="line" id="L80">    <span class="tok-comment">// float limits</span>
-</span>
-<span class="line" id="L81">    <span class="tok-kw">try</span> expect(ldexp(math.floatMax(<span class="tok-type">f32</span>), -<span class="tok-number">128</span> - <span class="tok-number">149</span>) &gt; <span class="tok-number">0.0</span>);</span>
-<span class="line" id="L82">    <span class="tok-kw">try</span> expect(ldexp(math.floatMax(<span class="tok-type">f32</span>), -<span class="tok-number">128</span> - <span class="tok-number">149</span> - <span class="tok-number">1</span>) == <span class="tok-number">0.0</span>);</span>
-<span class="line" id="L83">    <span class="tok-kw">try</span> expect(!math.isPositiveInf(ldexp(math.floatTrueMin(<span class="tok-type">f16</span>), <span class="tok-number">15</span> + <span class="tok-number">24</span>)));</span>
-<span class="line" id="L84">    <span class="tok-kw">try</span> expect(math.isPositiveInf(ldexp(math.floatTrueMin(<span class="tok-type">f16</span>), <span class="tok-number">15</span> + <span class="tok-number">24</span> + <span class="tok-number">1</span>)));</span>
-<span class="line" id="L85">    <span class="tok-kw">try</span> expect(!math.isPositiveInf(ldexp(math.floatTrueMin(<span class="tok-type">f32</span>), <span class="tok-number">127</span> + <span class="tok-number">149</span>)));</span>
-<span class="line" id="L86">    <span class="tok-kw">try</span> expect(math.isPositiveInf(ldexp(math.floatTrueMin(<span class="tok-type">f32</span>), <span class="tok-number">127</span> + <span class="tok-number">149</span> + <span class="tok-number">1</span>)));</span>
-<span class="line" id="L87">    <span class="tok-kw">try</span> expect(!math.isPositiveInf(ldexp(math.floatTrueMin(<span class="tok-type">f64</span>), <span class="tok-number">1023</span> + <span class="tok-number">1074</span>)));</span>
-<span class="line" id="L88">    <span class="tok-kw">try</span> expect(math.isPositiveInf(ldexp(math.floatTrueMin(<span class="tok-type">f64</span>), <span class="tok-number">1023</span> + <span class="tok-number">1074</span> + <span class="tok-number">1</span>)));</span>
-<span class="line" id="L89">    <span class="tok-kw">try</span> expect(!math.isPositiveInf(ldexp(math.floatTrueMin(<span class="tok-type">f128</span>), <span class="tok-number">16383</span> + <span class="tok-number">16494</span>)));</span>
-<span class="line" id="L90">    <span class="tok-kw">try</span> expect(math.isPositiveInf(ldexp(math.floatTrueMin(<span class="tok-type">f128</span>), <span class="tok-number">16383</span> + <span class="tok-number">16494</span> + <span class="tok-number">1</span>)));</span>
-<span class="line" id="L91">}</span>
+<span class="line" id="L91">        <span class="tok-kw">try</span> expect(ldexp(<span class="tok-builtin">@as</span>(T, <span class="tok-number">1.5</span>), <span class="tok-number">4</span>) == <span class="tok-number">24.0</span>);</span>
 <span class="line" id="L92"></span>
+<span class="line" id="L93">        <span class="tok-comment">// normals -&gt; subnormals</span>
+</span>
+<span class="line" id="L94">        <span class="tok-kw">try</span> expect(math.isNormal(ldexp(<span class="tok-builtin">@as</span>(T, <span class="tok-number">1.0</span>), min_exponent)));</span>
+<span class="line" id="L95">        <span class="tok-kw">try</span> expect(!math.isNormal(ldexp(<span class="tok-builtin">@as</span>(T, <span class="tok-number">1.0</span>), min_exponent - <span class="tok-number">1</span>)));</span>
+<span class="line" id="L96"></span>
+<span class="line" id="L97">        <span class="tok-comment">// normals -&gt; zero</span>
+</span>
+<span class="line" id="L98">        <span class="tok-kw">try</span> expect(ldexp(<span class="tok-builtin">@as</span>(T, <span class="tok-number">1.0</span>), min_exponent - fractional_bits) &gt; <span class="tok-number">0.0</span>);</span>
+<span class="line" id="L99">        <span class="tok-kw">try</span> expect(ldexp(<span class="tok-builtin">@as</span>(T, <span class="tok-number">1.0</span>), min_exponent - fractional_bits - <span class="tok-number">1</span>) == <span class="tok-number">0.0</span>);</span>
+<span class="line" id="L100"></span>
+<span class="line" id="L101">        <span class="tok-comment">// subnormals -&gt; zero</span>
+</span>
+<span class="line" id="L102">        <span class="tok-kw">try</span> expect(ldexp(math.floatTrueMin(T), <span class="tok-number">0</span>) &gt; <span class="tok-number">0.0</span>);</span>
+<span class="line" id="L103">        <span class="tok-kw">try</span> expect(ldexp(math.floatTrueMin(T), -<span class="tok-number">1</span>) == <span class="tok-number">0.0</span>);</span>
+<span class="line" id="L104"></span>
+<span class="line" id="L105">        <span class="tok-comment">// Multiplications might flush the denormals to zero, esp. at</span>
+</span>
+<span class="line" id="L106">        <span class="tok-comment">// runtime, so we manually construct the constants here instead.</span>
+</span>
+<span class="line" id="L107">        <span class="tok-kw">const</span> Z = std.meta.Int(.unsigned, <span class="tok-builtin">@bitSizeOf</span>(T));</span>
+<span class="line" id="L108">        <span class="tok-kw">const</span> EightTimesTrueMin = <span class="tok-builtin">@bitCast</span>(T, <span class="tok-builtin">@as</span>(Z, <span class="tok-number">8</span>));</span>
+<span class="line" id="L109">        <span class="tok-kw">const</span> TwoTimesTrueMin = <span class="tok-builtin">@bitCast</span>(T, <span class="tok-builtin">@as</span>(Z, <span class="tok-number">2</span>));</span>
+<span class="line" id="L110"></span>
+<span class="line" id="L111">        <span class="tok-comment">// subnormals -&gt; subnormals</span>
+</span>
+<span class="line" id="L112">        <span class="tok-kw">try</span> expect(ldexp(math.floatTrueMin(T), <span class="tok-number">3</span>) == EightTimesTrueMin);</span>
+<span class="line" id="L113">        <span class="tok-kw">try</span> expect(ldexp(EightTimesTrueMin, -<span class="tok-number">2</span>) == TwoTimesTrueMin);</span>
+<span class="line" id="L114">        <span class="tok-kw">try</span> expect(ldexp(EightTimesTrueMin, -<span class="tok-number">3</span>) == math.floatTrueMin(T));</span>
+<span class="line" id="L115"></span>
+<span class="line" id="L116">        <span class="tok-comment">// subnormals -&gt; normals (+)</span>
+</span>
+<span class="line" id="L117">        <span class="tok-kw">try</span> expect(ldexp(math.floatTrueMin(T), fractional_bits) == math.floatMin(T));</span>
+<span class="line" id="L118">        <span class="tok-kw">try</span> expect(ldexp(math.floatTrueMin(T), fractional_bits - <span class="tok-number">1</span>) == math.floatMin(T) * <span class="tok-number">0.5</span>);</span>
+<span class="line" id="L119"></span>
+<span class="line" id="L120">        <span class="tok-comment">// subnormals -&gt; normals (-)</span>
+</span>
+<span class="line" id="L121">        <span class="tok-kw">try</span> expect(ldexp(-math.floatTrueMin(T), fractional_bits) == -math.floatMin(T));</span>
+<span class="line" id="L122">        <span class="tok-kw">try</span> expect(ldexp(-math.floatTrueMin(T), fractional_bits - <span class="tok-number">1</span>) == -math.floatMin(T) * <span class="tok-number">0.5</span>);</span>
+<span class="line" id="L123"></span>
+<span class="line" id="L124">        <span class="tok-comment">// subnormals -&gt; float limits (+inf)</span>
+</span>
+<span class="line" id="L125">        <span class="tok-kw">try</span> expect(math.isFinite(ldexp(math.floatTrueMin(T), max_exponent + exponent_bias + fractional_bits - <span class="tok-number">1</span>)));</span>
+<span class="line" id="L126">        <span class="tok-kw">try</span> expect(ldexp(math.floatTrueMin(T), max_exponent + exponent_bias + fractional_bits) == math.inf(T));</span>
+<span class="line" id="L127"></span>
+<span class="line" id="L128">        <span class="tok-comment">// subnormals -&gt; float limits (-inf)</span>
+</span>
+<span class="line" id="L129">        <span class="tok-kw">try</span> expect(math.isFinite(ldexp(-math.floatTrueMin(T), max_exponent + exponent_bias + fractional_bits - <span class="tok-number">1</span>)));</span>
+<span class="line" id="L130">        <span class="tok-kw">try</span> expect(ldexp(-math.floatTrueMin(T), max_exponent + exponent_bias + fractional_bits) == -math.inf(T));</span>
+<span class="line" id="L131"></span>
+<span class="line" id="L132">        <span class="tok-comment">// infinity -&gt; infinity</span>
+</span>
+<span class="line" id="L133">        <span class="tok-kw">try</span> expect(ldexp(math.inf(T), math.maxInt(<span class="tok-type">i32</span>)) == math.inf(T));</span>
+<span class="line" id="L134">        <span class="tok-kw">try</span> expect(ldexp(math.inf(T), math.minInt(<span class="tok-type">i32</span>)) == math.inf(T));</span>
+<span class="line" id="L135">        <span class="tok-kw">try</span> expect(ldexp(math.inf(T), max_exponent) == math.inf(T));</span>
+<span class="line" id="L136">        <span class="tok-kw">try</span> expect(ldexp(math.inf(T), min_exponent) == math.inf(T));</span>
+<span class="line" id="L137">        <span class="tok-kw">try</span> expect(ldexp(-math.inf(T), math.maxInt(<span class="tok-type">i32</span>)) == -math.inf(T));</span>
+<span class="line" id="L138">        <span class="tok-kw">try</span> expect(ldexp(-math.inf(T), math.minInt(<span class="tok-type">i32</span>)) == -math.inf(T));</span>
+<span class="line" id="L139"></span>
+<span class="line" id="L140">        <span class="tok-comment">// extremely large n</span>
+</span>
+<span class="line" id="L141">        <span class="tok-kw">try</span> expect(ldexp(math.floatMax(T), math.maxInt(<span class="tok-type">i32</span>)) == math.inf(T));</span>
+<span class="line" id="L142">        <span class="tok-kw">try</span> expect(ldexp(math.floatMax(T), -math.maxInt(<span class="tok-type">i32</span>)) == <span class="tok-number">0.0</span>);</span>
+<span class="line" id="L143">        <span class="tok-kw">try</span> expect(ldexp(math.floatMax(T), math.minInt(<span class="tok-type">i32</span>)) == <span class="tok-number">0.0</span>);</span>
+<span class="line" id="L144">        <span class="tok-kw">try</span> expect(ldexp(math.floatTrueMin(T), math.maxInt(<span class="tok-type">i32</span>)) == math.inf(T));</span>
+<span class="line" id="L145">        <span class="tok-kw">try</span> expect(ldexp(math.floatTrueMin(T), -math.maxInt(<span class="tok-type">i32</span>)) == <span class="tok-number">0.0</span>);</span>
+<span class="line" id="L146">        <span class="tok-kw">try</span> expect(ldexp(math.floatTrueMin(T), math.minInt(<span class="tok-type">i32</span>)) == <span class="tok-number">0.0</span>);</span>
+<span class="line" id="L147">    }</span>
+<span class="line" id="L148">}</span>
+<span class="line" id="L149"></span>
 </code></pre></body>
 </html>

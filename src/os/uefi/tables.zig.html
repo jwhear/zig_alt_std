@@ -117,5 +117,9 @@
 <span class="line" id="L4"><span class="tok-kw">pub</span> <span class="tok-kw">usingnamespace</span> <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;tables/system_table.zig&quot;</span>);</span>
 <span class="line" id="L5"><span class="tok-kw">pub</span> <span class="tok-kw">usingnamespace</span> <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;tables/table_header.zig&quot;</span>);</span>
 <span class="line" id="L6"></span>
+<span class="line" id="L7"><span class="tok-kw">test</span> {</span>
+<span class="line" id="L8">    <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;std&quot;</span>).testing.refAllDeclsRecursive(<span class="tok-builtin">@This</span>());</span>
+<span class="line" id="L9">}</span>
+<span class="line" id="L10"></span>
 </code></pre></body>
 </html>

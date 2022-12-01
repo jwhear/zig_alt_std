@@ -166,5 +166,10 @@
 <span class="line" id="L44"><span class="tok-kw">pub</span> <span class="tok-kw">usingnamespace</span> <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;protocols/hii_database_protocol.zig&quot;</span>);</span>
 <span class="line" id="L45"><span class="tok-kw">pub</span> <span class="tok-kw">usingnamespace</span> <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;protocols/hii_popup_protocol.zig&quot;</span>);</span>
 <span class="line" id="L46"></span>
+<span class="line" id="L47"><span class="tok-kw">test</span> {</span>
+<span class="line" id="L48">    <span class="tok-builtin">@setEvalBranchQuota</span>(<span class="tok-number">2000</span>);</span>
+<span class="line" id="L49">    <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;std&quot;</span>).testing.refAllDeclsRecursive(<span class="tok-builtin">@This</span>());</span>
+<span class="line" id="L50">}</span>
+<span class="line" id="L51"></span>
 </code></pre></body>
 </html>
