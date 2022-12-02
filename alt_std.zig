@@ -1,5 +1,6 @@
 
 pub const algorithm = @import("alt_std/algorithm.zig");
+pub const allocators = @import("alt_std/allocators.zig");
 
 test "run all tests" {
     comptime {
