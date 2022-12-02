@@ -70,10 +70,6 @@ pub fn init(buffer: []u8, block_size: usize, n_blocks_desired: usize) Self {
     //  need to grow or free the bitmap (it lives in the `buffer` slice),
     //  we don't need to store this allocator for later.
     var fba = std.heap.FixedBufferAllocator.init(buffer);
-
-    // Find the number of actually usuable blocks.  This is dynamic problem
-    //  because the more blocks, the bigger in_use_bitmap needs to be which
-    //  consumes more of buffer, leaving less for blocks...
     return .{
         .in_use_bitmap = BitSet.initEmpty(fba.allocator(), n_blocks_desired) catch unreachable,
         .allocations = buffer[fba.end_index..],
@@ -84,7 +80,7 @@ pub fn init(buffer: []u8, block_size: usize, n_blocks_desired: usize) Self {
 
 /// Uses `backing_allocator` to acquire a buffer large enough to allocate
 ///  at least `allocatable_size` bytes.  Note that if all allocations are
-///  exactly multiples of `block_size`, this allocator will likely fail
+///  not exactly multiples of `block_size`, this allocator will likely fail
 ///  before actually allocating `allocatable_size`.
 pub fn initAlloc(backing_allocator: Allocator, block_size: usize, allocatable_size: usize) !Self {
     std.debug.assert(block_size >= 1);
@@ -130,6 +126,7 @@ pub fn ownsSlice(self: *Self, slice: []u8) bool {
 /// Because this allocator uses part of the supplied buffer for bookkeeping,
 ///  use this function to determine how large of a buffer is needed to supply a
 ///  desired number of blocks.
+///
 /// Returns number of bytes required.
 pub fn bufferSizeRequired(block_size: usize, n_blocks_desired: usize) usize {
     return bitmapBytesRequired(n_blocks_desired) + n_blocks_desired * block_size;
