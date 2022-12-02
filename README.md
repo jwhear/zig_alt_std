@@ -27,6 +27,9 @@ The modules in this library do not have any dependencies except the Zig standard
 ### alt_std.algorithm
 Contains the functions expected in an algorithm module (ala C++ STL/D/etc).  All functions are constrained to operate on slices as the language has not settled on a standardized interface for iterators or ranges.  Note that the current `std.mem` module includes a number of things that would normally go in this module (e.g. `startsWith`, `count`, etc.) and no effort is made to replace/copy these.
 
+### alt_std.allocators
+Contains allocators that are either useful on their own or as building blocks of more sophisticated composite allocators.  These should complement and work with those already in `std.heap`.
+
 ## Contribution
 ### Bug Fixes
 If you find a bug, please do report it.  While I will respond to issues on this project, the ideal way to report an issue is to make a merge request with a minimal, failing test case as part of the function's test suite.  If you also have a fix for the code in question, great!

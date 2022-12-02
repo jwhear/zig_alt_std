@@ -53,9 +53,9 @@ block_size: usize,
 first_available_block: usize,
 
 /// Return instance of this allocator.
-/// * The caller is responsible for freeing `buffer`
-/// * `block_size` is the number of bytes per block
-/// * `n_blocks_desired` is the number of blocks this allocator should manage
+/// - The caller is responsible for freeing `buffer`
+/// - `block_size` is the number of bytes per block
+/// - `n_blocks_desired` is the number of blocks this allocator should manage
 ///
 /// `buffer.len` must be at least the result of calling `bufferSizeRequired`
 ///   with the same `block_size` and `n_blocks_desired` arguments.
@@ -128,9 +128,9 @@ pub fn ownsSlice(self: *Self, slice: []u8) bool {
 }
 
 /// Because this allocator uses part of the supplied buffer for bookkeeping,
-///  use this function to determine how large of a buffer to supply a desired
-///  number of blocks.
-/// Returns number of bytes.
+///  use this function to determine how large of a buffer is needed to supply a
+///  desired number of blocks.
+/// Returns number of bytes required.
 pub fn bufferSizeRequired(block_size: usize, n_blocks_desired: usize) usize {
     return bitmapBytesRequired(n_blocks_desired) + n_blocks_desired * block_size;
 }
