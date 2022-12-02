@@ -176,9 +176,9 @@
 <span class="line" id="L53">first_available_block: <span class="tok-type">usize</span>,</span>
 <span class="line" id="L54"></span>
 <span class="line" id="L55"><span class="tok-comment">/// Return instance of this allocator.</span></span>
-<span class="line" id="L56"><span class="tok-comment">/// * The caller is responsible for freeing `buffer`</span></span>
-<span class="line" id="L57"><span class="tok-comment">/// * `block_size` is the number of bytes per block</span></span>
-<span class="line" id="L58"><span class="tok-comment">/// * `n_blocks_desired` is the number of blocks this allocator should manage</span></span>
+<span class="line" id="L56"><span class="tok-comment">/// - The caller is responsible for freeing `buffer`</span></span>
+<span class="line" id="L57"><span class="tok-comment">/// - `block_size` is the number of bytes per block</span></span>
+<span class="line" id="L58"><span class="tok-comment">/// - `n_blocks_desired` is the number of blocks this allocator should manage</span></span>
 <span class="line" id="L59"><span class="tok-comment">///</span></span>
 <span class="line" id="L60"><span class="tok-comment">/// `buffer.len` must be at least the result of calling `bufferSizeRequired`</span></span>
 <span class="line" id="L61"><span class="tok-comment">///   with the same `block_size` and `n_blocks_desired` arguments.</span></span>
@@ -258,9 +258,9 @@
 <span class="line" id="L128">}</span>
 <span class="line" id="L129"></span>
 <span class="line" id="L130"><span class="tok-comment">/// Because this allocator uses part of the supplied buffer for bookkeeping,</span></span>
-<span class="line" id="L131"><span class="tok-comment">///  use this function to determine how large of a buffer to supply a desired</span></span>
-<span class="line" id="L132"><span class="tok-comment">///  number of blocks.</span></span>
-<span class="line" id="L133"><span class="tok-comment">/// Returns number of bytes.</span></span>
+<span class="line" id="L131"><span class="tok-comment">///  use this function to determine how large of a buffer is needed to supply a</span></span>
+<span class="line" id="L132"><span class="tok-comment">///  desired number of blocks.</span></span>
+<span class="line" id="L133"><span class="tok-comment">/// Returns number of bytes required.</span></span>
 <span class="line" id="L134"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">bufferSizeRequired</span>(block_size: <span class="tok-type">usize</span>, n_blocks_desired: <span class="tok-type">usize</span>) <span class="tok-type">usize</span> {</span>
 <span class="line" id="L135">    <span class="tok-kw">return</span> bitmapBytesRequired(n_blocks_desired) + n_blocks_desired * block_size;</span>
 <span class="line" id="L136">}</span>
