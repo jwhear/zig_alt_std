@@ -196,377 +196,371 @@
 <span class="line" id="L71">    <span class="tok-comment">//  we don't need to store this allocator for later.</span>
 </span>
 <span class="line" id="L72">    <span class="tok-kw">var</span> fba = std.heap.FixedBufferAllocator.init(buffer);</span>
-<span class="line" id="L73"></span>
-<span class="line" id="L74">    <span class="tok-comment">// Find the number of actually usuable blocks.  This is dynamic problem</span>
+<span class="line" id="L73">    <span class="tok-kw">return</span> .{</span>
+<span class="line" id="L74">        .in_use_bitmap = BitSet.initEmpty(fba.allocator(), n_blocks_desired) <span class="tok-kw">catch</span> <span class="tok-kw">unreachable</span>,</span>
+<span class="line" id="L75">        .allocations = buffer[fba.end_index..],</span>
+<span class="line" id="L76">        .block_size = block_size,</span>
+<span class="line" id="L77">        .first_available_block = <span class="tok-number">0</span>,</span>
+<span class="line" id="L78">    };</span>
+<span class="line" id="L79">}</span>
+<span class="line" id="L80"></span>
+<span class="line" id="L81"><span class="tok-comment">/// Uses `backing_allocator` to acquire a buffer large enough to allocate</span></span>
+<span class="line" id="L82"><span class="tok-comment">///  at least `allocatable_size` bytes.  Note that if all allocations are</span></span>
+<span class="line" id="L83"><span class="tok-comment">///  not exactly multiples of `block_size`, this allocator will likely fail</span></span>
+<span class="line" id="L84"><span class="tok-comment">///  before actually allocating `allocatable_size`.</span></span>
+<span class="line" id="L85"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">initAlloc</span>(backing_allocator: Allocator, block_size: <span class="tok-type">usize</span>, allocatable_size: <span class="tok-type">usize</span>) !Self {</span>
+<span class="line" id="L86">    std.debug.assert(block_size &gt;= <span class="tok-number">1</span>);</span>
+<span class="line" id="L87">    std.debug.assert(allocatable_size &gt;= block_size);</span>
+<span class="line" id="L88"></span>
+<span class="line" id="L89">    <span class="tok-kw">const</span> n_blocks_desired = common.divideRoundUp(allocatable_size, block_size);</span>
+<span class="line" id="L90">    <span class="tok-kw">const</span> buf_len = bufferSizeRequired(block_size, n_blocks_desired);</span>
+<span class="line" id="L91">    <span class="tok-kw">return</span> init(</span>
+<span class="line" id="L92">        <span class="tok-kw">try</span> backing_allocator.alloc(<span class="tok-type">u8</span>, buf_len),</span>
+<span class="line" id="L93">        block_size,</span>
+<span class="line" id="L94">        n_blocks_desired,</span>
+<span class="line" id="L95">    );</span>
+<span class="line" id="L96">}</span>
+<span class="line" id="L97"></span>
+<span class="line" id="L98"><span class="tok-comment">///</span></span>
+<span class="line" id="L99"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">deinit</span>(self: *Self) <span class="tok-type">void</span> {</span>
+<span class="line" id="L100">    <span class="tok-comment">// We don't actually need to clean anything up</span>
 </span>
-<span class="line" id="L75">    <span class="tok-comment">//  because the more blocks, the bigger in_use_bitmap needs to be which</span>
-</span>
-<span class="line" id="L76">    <span class="tok-comment">//  consumes more of buffer, leaving less for blocks...</span>
-</span>
-<span class="line" id="L77">    <span class="tok-kw">return</span> .{</span>
-<span class="line" id="L78">        .in_use_bitmap = BitSet.initEmpty(fba.allocator(), n_blocks_desired) <span class="tok-kw">catch</span> <span class="tok-kw">unreachable</span>,</span>
-<span class="line" id="L79">        .allocations = buffer[fba.end_index..],</span>
-<span class="line" id="L80">        .block_size = block_size,</span>
-<span class="line" id="L81">        .first_available_block = <span class="tok-number">0</span>,</span>
-<span class="line" id="L82">    };</span>
-<span class="line" id="L83">}</span>
-<span class="line" id="L84"></span>
-<span class="line" id="L85"><span class="tok-comment">/// Uses `backing_allocator` to acquire a buffer large enough to allocate</span></span>
-<span class="line" id="L86"><span class="tok-comment">///  at least `allocatable_size` bytes.  Note that if all allocations are</span></span>
-<span class="line" id="L87"><span class="tok-comment">///  exactly multiples of `block_size`, this allocator will likely fail</span></span>
-<span class="line" id="L88"><span class="tok-comment">///  before actually allocating `allocatable_size`.</span></span>
-<span class="line" id="L89"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">initAlloc</span>(backing_allocator: Allocator, block_size: <span class="tok-type">usize</span>, allocatable_size: <span class="tok-type">usize</span>) !Self {</span>
-<span class="line" id="L90">    std.debug.assert(block_size &gt;= <span class="tok-number">1</span>);</span>
-<span class="line" id="L91">    std.debug.assert(allocatable_size &gt;= block_size);</span>
-<span class="line" id="L92"></span>
-<span class="line" id="L93">    <span class="tok-kw">const</span> n_blocks_desired = common.divideRoundUp(allocatable_size, block_size);</span>
-<span class="line" id="L94">    <span class="tok-kw">const</span> buf_len = bufferSizeRequired(block_size, n_blocks_desired);</span>
-<span class="line" id="L95">    <span class="tok-kw">return</span> init(</span>
-<span class="line" id="L96">        <span class="tok-kw">try</span> backing_allocator.alloc(<span class="tok-type">u8</span>, buf_len),</span>
-<span class="line" id="L97">        block_size,</span>
-<span class="line" id="L98">        n_blocks_desired,</span>
-<span class="line" id="L99">    );</span>
-<span class="line" id="L100">}</span>
-<span class="line" id="L101"></span>
-<span class="line" id="L102"><span class="tok-comment">///</span></span>
-<span class="line" id="L103"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">deinit</span>(self: *Self) <span class="tok-type">void</span> {</span>
-<span class="line" id="L104">    <span class="tok-comment">// We don't actually need to clean anything up</span>
-</span>
-<span class="line" id="L105">    _=self;</span>
-<span class="line" id="L106">}</span>
-<span class="line" id="L107"></span>
-<span class="line" id="L108"><span class="tok-comment">///</span></span>
-<span class="line" id="L109"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">allocator</span>(self: *Self) Allocator {</span>
-<span class="line" id="L110">    <span class="tok-kw">return</span> Allocator{</span>
-<span class="line" id="L111">        .ptr = self,</span>
-<span class="line" id="L112">        .vtable = &amp;.{</span>
-<span class="line" id="L113">            .alloc = alloc,</span>
-<span class="line" id="L114">            .resize = resize,</span>
-<span class="line" id="L115">            .free = free</span>
-<span class="line" id="L116">        },</span>
-<span class="line" id="L117">    };</span>
-<span class="line" id="L118">}</span>
-<span class="line" id="L119"></span>
-<span class="line" id="L120"><span class="tok-comment">/// Returns true if the pointer points to memory under this allocator's control</span></span>
-<span class="line" id="L121"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">ownsPtr</span>(self: *Self, ptr: [*]<span class="tok-type">u8</span>) <span class="tok-type">bool</span> {</span>
-<span class="line" id="L122">    <span class="tok-kw">return</span> common.sliceContainsPtr(self.allocations, ptr);</span>
-<span class="line" id="L123">}</span>
-<span class="line" id="L124"></span>
-<span class="line" id="L125"><span class="tok-comment">/// Return true if the slice is part of the memory under this allocator's control</span></span>
-<span class="line" id="L126"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">ownsSlice</span>(self: *Self, slice: []<span class="tok-type">u8</span>) <span class="tok-type">bool</span> {</span>
-<span class="line" id="L127">    <span class="tok-kw">return</span> common.sliceContainsSlice(self.allocations, slice);</span>
-<span class="line" id="L128">}</span>
-<span class="line" id="L129"></span>
-<span class="line" id="L130"><span class="tok-comment">/// Because this allocator uses part of the supplied buffer for bookkeeping,</span></span>
-<span class="line" id="L131"><span class="tok-comment">///  use this function to determine how large of a buffer is needed to supply a</span></span>
-<span class="line" id="L132"><span class="tok-comment">///  desired number of blocks.</span></span>
-<span class="line" id="L133"><span class="tok-comment">/// Returns number of bytes required.</span></span>
-<span class="line" id="L134"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">bufferSizeRequired</span>(block_size: <span class="tok-type">usize</span>, n_blocks_desired: <span class="tok-type">usize</span>) <span class="tok-type">usize</span> {</span>
-<span class="line" id="L135">    <span class="tok-kw">return</span> bitmapBytesRequired(n_blocks_desired) + n_blocks_desired * block_size;</span>
-<span class="line" id="L136">}</span>
-<span class="line" id="L137"></span>
-<span class="line" id="L138"><span class="tok-comment">///</span></span>
-<span class="line" id="L139"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">blockSize</span>(self: Self) <span class="tok-type">usize</span> {</span>
-<span class="line" id="L140">    <span class="tok-kw">return</span> self.block_size;</span>
-<span class="line" id="L141">}</span>
-<span class="line" id="L142"></span>
-<span class="line" id="L143"><span class="tok-comment">///</span></span>
-<span class="line" id="L144"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> Usage = <span class="tok-kw">struct</span> {</span>
-<span class="line" id="L145">    <span class="tok-comment">///</span></span>
-<span class="line" id="L146">    used_blocks: <span class="tok-type">usize</span>,</span>
-<span class="line" id="L147">    <span class="tok-comment">///</span></span>
-<span class="line" id="L148">    free_blocks: <span class="tok-type">usize</span>,</span>
+<span class="line" id="L101">    _=self;</span>
+<span class="line" id="L102">}</span>
+<span class="line" id="L103"></span>
+<span class="line" id="L104"><span class="tok-comment">///</span></span>
+<span class="line" id="L105"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">allocator</span>(self: *Self) Allocator {</span>
+<span class="line" id="L106">    <span class="tok-kw">return</span> Allocator{</span>
+<span class="line" id="L107">        .ptr = self,</span>
+<span class="line" id="L108">        .vtable = &amp;.{</span>
+<span class="line" id="L109">            .alloc = alloc,</span>
+<span class="line" id="L110">            .resize = resize,</span>
+<span class="line" id="L111">            .free = free</span>
+<span class="line" id="L112">        },</span>
+<span class="line" id="L113">    };</span>
+<span class="line" id="L114">}</span>
+<span class="line" id="L115"></span>
+<span class="line" id="L116"><span class="tok-comment">/// Returns true if the pointer points to memory under this allocator's control</span></span>
+<span class="line" id="L117"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">ownsPtr</span>(self: *Self, ptr: [*]<span class="tok-type">u8</span>) <span class="tok-type">bool</span> {</span>
+<span class="line" id="L118">    <span class="tok-kw">return</span> common.sliceContainsPtr(self.allocations, ptr);</span>
+<span class="line" id="L119">}</span>
+<span class="line" id="L120"></span>
+<span class="line" id="L121"><span class="tok-comment">/// Return true if the slice is part of the memory under this allocator's control</span></span>
+<span class="line" id="L122"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">ownsSlice</span>(self: *Self, slice: []<span class="tok-type">u8</span>) <span class="tok-type">bool</span> {</span>
+<span class="line" id="L123">    <span class="tok-kw">return</span> common.sliceContainsSlice(self.allocations, slice);</span>
+<span class="line" id="L124">}</span>
+<span class="line" id="L125"></span>
+<span class="line" id="L126"><span class="tok-comment">/// Because this allocator uses part of the supplied buffer for bookkeeping,</span></span>
+<span class="line" id="L127"><span class="tok-comment">///  use this function to determine how large of a buffer is needed to supply a</span></span>
+<span class="line" id="L128"><span class="tok-comment">///  desired number of blocks.</span></span>
+<span class="line" id="L129"><span class="tok-comment">///</span></span>
+<span class="line" id="L130"><span class="tok-comment">/// Returns number of bytes required.</span></span>
+<span class="line" id="L131"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">bufferSizeRequired</span>(block_size: <span class="tok-type">usize</span>, n_blocks_desired: <span class="tok-type">usize</span>) <span class="tok-type">usize</span> {</span>
+<span class="line" id="L132">    <span class="tok-kw">return</span> bitmapBytesRequired(n_blocks_desired) + n_blocks_desired * block_size;</span>
+<span class="line" id="L133">}</span>
+<span class="line" id="L134"></span>
+<span class="line" id="L135"><span class="tok-comment">///</span></span>
+<span class="line" id="L136"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">blockSize</span>(self: Self) <span class="tok-type">usize</span> {</span>
+<span class="line" id="L137">    <span class="tok-kw">return</span> self.block_size;</span>
+<span class="line" id="L138">}</span>
+<span class="line" id="L139"></span>
+<span class="line" id="L140"><span class="tok-comment">///</span></span>
+<span class="line" id="L141"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> Usage = <span class="tok-kw">struct</span> {</span>
+<span class="line" id="L142">    <span class="tok-comment">///</span></span>
+<span class="line" id="L143">    used_blocks: <span class="tok-type">usize</span>,</span>
+<span class="line" id="L144">    <span class="tok-comment">///</span></span>
+<span class="line" id="L145">    free_blocks: <span class="tok-type">usize</span>,</span>
+<span class="line" id="L146">    <span class="tok-comment">///</span></span>
+<span class="line" id="L147">    block_size: <span class="tok-type">usize</span>,</span>
+<span class="line" id="L148"></span>
 <span class="line" id="L149">    <span class="tok-comment">///</span></span>
-<span class="line" id="L150">    block_size: <span class="tok-type">usize</span>,</span>
-<span class="line" id="L151"></span>
-<span class="line" id="L152">    <span class="tok-comment">///</span></span>
-<span class="line" id="L153">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">usedBytes</span>(self: Usage) <span class="tok-type">usize</span> {</span>
-<span class="line" id="L154">        <span class="tok-kw">return</span> self.used_blocks * self.block_size;</span>
-<span class="line" id="L155">    }</span>
-<span class="line" id="L156"></span>
-<span class="line" id="L157">    <span class="tok-comment">///</span></span>
-<span class="line" id="L158">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">freeBytes</span>(self: Usage) <span class="tok-type">usize</span> {</span>
-<span class="line" id="L159">        <span class="tok-kw">return</span> self.free_blocks * self.block_size;</span>
-<span class="line" id="L160">    }</span>
-<span class="line" id="L161">};</span>
-<span class="line" id="L162"></span>
-<span class="line" id="L163"><span class="tok-comment">/// Returns information about free and used blocks/bytes</span></span>
-<span class="line" id="L164"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">getUsage</span>(self: Self) Usage {</span>
-<span class="line" id="L165">    <span class="tok-kw">const</span> used = self.in_use_bitmap.count();</span>
-<span class="line" id="L166">    <span class="tok-kw">return</span> .{</span>
-<span class="line" id="L167">        .used_blocks = used,</span>
-<span class="line" id="L168">        .free_blocks = self.in_use_bitmap.capacity() - used,</span>
-<span class="line" id="L169">        .block_size = self.block_size,</span>
-<span class="line" id="L170">    };</span>
-<span class="line" id="L171">}</span>
-<span class="line" id="L172"></span>
-<span class="line" id="L173"><span class="tok-comment">/// Marks all blocks as available</span></span>
-<span class="line" id="L174"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">freeAll</span>(self: *Self) <span class="tok-type">void</span> {</span>
-<span class="line" id="L175">    self.in_use_bitmap.setRangeValue(</span>
-<span class="line" id="L176">        .{ .start = <span class="tok-number">0</span>, .end = self.in_use_bitmap.capacity() },</span>
-<span class="line" id="L177">        <span class="tok-null">false</span></span>
-<span class="line" id="L178">    );</span>
-<span class="line" id="L179">}</span>
-<span class="line" id="L180"></span>
-<span class="line" id="L181"><span class="tok-kw">fn</span> <span class="tok-fn">alloc</span>(ctx: *<span class="tok-type">anyopaque</span>, n: <span class="tok-type">usize</span>, log2_ptr_align: <span class="tok-type">u8</span>, ra: <span class="tok-type">usize</span>) ?[*]<span class="tok-type">u8</span> {</span>
-<span class="line" id="L182">    <span class="tok-kw">const</span> self = <span class="tok-builtin">@ptrCast</span>(*Self, <span class="tok-builtin">@alignCast</span>(<span class="tok-builtin">@alignOf</span>(Self), ctx));</span>
-<span class="line" id="L183">    <span class="tok-kw">const</span> ptr_align = <span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">1</span>) &lt;&lt; <span class="tok-builtin">@intCast</span>(Allocator.Log2Align, log2_ptr_align);</span>
-<span class="line" id="L184">    _ = ra;</span>
-<span class="line" id="L185"></span>
-<span class="line" id="L186">    <span class="tok-kw">var</span> index = self.first_available_block;</span>
-<span class="line" id="L187">    <span class="tok-kw">while</span> (index &lt; self.in_use_bitmap.capacity()) : (index += <span class="tok-number">1</span>) {</span>
-<span class="line" id="L188">        <span class="tok-kw">if</span> (self.in_use_bitmap.isSet(index)) <span class="tok-kw">continue</span>;</span>
+<span class="line" id="L150">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">usedBytes</span>(self: Usage) <span class="tok-type">usize</span> {</span>
+<span class="line" id="L151">        <span class="tok-kw">return</span> self.used_blocks * self.block_size;</span>
+<span class="line" id="L152">    }</span>
+<span class="line" id="L153"></span>
+<span class="line" id="L154">    <span class="tok-comment">///</span></span>
+<span class="line" id="L155">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">freeBytes</span>(self: Usage) <span class="tok-type">usize</span> {</span>
+<span class="line" id="L156">        <span class="tok-kw">return</span> self.free_blocks * self.block_size;</span>
+<span class="line" id="L157">    }</span>
+<span class="line" id="L158">};</span>
+<span class="line" id="L159"></span>
+<span class="line" id="L160"><span class="tok-comment">/// Returns information about free and used blocks/bytes</span></span>
+<span class="line" id="L161"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">getUsage</span>(self: Self) Usage {</span>
+<span class="line" id="L162">    <span class="tok-kw">const</span> used = self.in_use_bitmap.count();</span>
+<span class="line" id="L163">    <span class="tok-kw">return</span> .{</span>
+<span class="line" id="L164">        .used_blocks = used,</span>
+<span class="line" id="L165">        .free_blocks = self.in_use_bitmap.capacity() - used,</span>
+<span class="line" id="L166">        .block_size = self.block_size,</span>
+<span class="line" id="L167">    };</span>
+<span class="line" id="L168">}</span>
+<span class="line" id="L169"></span>
+<span class="line" id="L170"><span class="tok-comment">/// Marks all blocks as available</span></span>
+<span class="line" id="L171"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">freeAll</span>(self: *Self) <span class="tok-type">void</span> {</span>
+<span class="line" id="L172">    self.in_use_bitmap.setRangeValue(</span>
+<span class="line" id="L173">        .{ .start = <span class="tok-number">0</span>, .end = self.in_use_bitmap.capacity() },</span>
+<span class="line" id="L174">        <span class="tok-null">false</span></span>
+<span class="line" id="L175">    );</span>
+<span class="line" id="L176">}</span>
+<span class="line" id="L177"></span>
+<span class="line" id="L178"><span class="tok-kw">fn</span> <span class="tok-fn">alloc</span>(ctx: *<span class="tok-type">anyopaque</span>, n: <span class="tok-type">usize</span>, log2_ptr_align: <span class="tok-type">u8</span>, ra: <span class="tok-type">usize</span>) ?[*]<span class="tok-type">u8</span> {</span>
+<span class="line" id="L179">    <span class="tok-kw">const</span> self = <span class="tok-builtin">@ptrCast</span>(*Self, <span class="tok-builtin">@alignCast</span>(<span class="tok-builtin">@alignOf</span>(Self), ctx));</span>
+<span class="line" id="L180">    <span class="tok-kw">const</span> ptr_align = <span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">1</span>) &lt;&lt; <span class="tok-builtin">@intCast</span>(Allocator.Log2Align, log2_ptr_align);</span>
+<span class="line" id="L181">    _ = ra;</span>
+<span class="line" id="L182"></span>
+<span class="line" id="L183">    <span class="tok-kw">var</span> index = self.first_available_block;</span>
+<span class="line" id="L184">    <span class="tok-kw">while</span> (index &lt; self.in_use_bitmap.capacity()) : (index += <span class="tok-number">1</span>) {</span>
+<span class="line" id="L185">        <span class="tok-kw">if</span> (self.in_use_bitmap.isSet(index)) <span class="tok-kw">continue</span>;</span>
+<span class="line" id="L186"></span>
+<span class="line" id="L187">        <span class="tok-kw">var</span> block = self.getBlock(index);</span>
+<span class="line" id="L188">        <span class="tok-kw">const</span> add_to_align = std.mem.alignForward(<span class="tok-builtin">@ptrToInt</span>(block.ptr), ptr_align) - <span class="tok-builtin">@ptrToInt</span>(block.ptr);</span>
 <span class="line" id="L189"></span>
-<span class="line" id="L190">        <span class="tok-kw">var</span> block = self.getBlock(index);</span>
-<span class="line" id="L191">        <span class="tok-kw">const</span> add_to_align = std.mem.alignForward(<span class="tok-builtin">@ptrToInt</span>(block.ptr), ptr_align) - <span class="tok-builtin">@ptrToInt</span>(block.ptr);</span>
-<span class="line" id="L192"></span>
-<span class="line" id="L193">        <span class="tok-comment">// How many total sequential blocks do we need to fit this request?</span>
+<span class="line" id="L190">        <span class="tok-comment">// How many total sequential blocks do we need to fit this request?</span>
 </span>
-<span class="line" id="L194">        <span class="tok-kw">const</span> bytes_needed = add_to_align + n;</span>
-<span class="line" id="L195">        <span class="tok-kw">const</span> blocks_needed = common.divideRoundUp(bytes_needed, self.block_size);</span>
-<span class="line" id="L196"></span>
+<span class="line" id="L191">        <span class="tok-kw">const</span> bytes_needed = add_to_align + n;</span>
+<span class="line" id="L192">        <span class="tok-kw">const</span> blocks_needed = common.divideRoundUp(bytes_needed, self.block_size);</span>
+<span class="line" id="L193"></span>
+<span class="line" id="L194"></span>
+<span class="line" id="L195">        <span class="tok-comment">// Do we have that many available blocks starting with this one?</span>
+</span>
+<span class="line" id="L196">        <span class="tok-kw">const</span> available_blocks = self.countAvailableBlocks(index, blocks_needed);</span>
 <span class="line" id="L197"></span>
-<span class="line" id="L198">        <span class="tok-comment">// Do we have that many available blocks starting with this one?</span>
+<span class="line" id="L198">        <span class="tok-comment">// If not enough blocks, jump index to the end of the searched sequence</span>
 </span>
-<span class="line" id="L199">        <span class="tok-kw">const</span> available_blocks = self.countAvailableBlocks(index, blocks_needed);</span>
-<span class="line" id="L200"></span>
-<span class="line" id="L201">        <span class="tok-comment">// If not enough blocks, jump index to the end of the searched sequence</span>
+<span class="line" id="L199">        <span class="tok-comment">//  and keep looking</span>
 </span>
-<span class="line" id="L202">        <span class="tok-comment">//  and keep looking</span>
+<span class="line" id="L200">        <span class="tok-kw">if</span> (available_blocks &lt; blocks_needed) {</span>
+<span class="line" id="L201">            index += available_blocks;</span>
+<span class="line" id="L202">            <span class="tok-kw">continue</span>;</span>
+<span class="line" id="L203">        }</span>
+<span class="line" id="L204"></span>
+<span class="line" id="L205">        <span class="tok-comment">// If we got here then we have a suitable sequence of blocks.</span>
 </span>
-<span class="line" id="L203">        <span class="tok-kw">if</span> (available_blocks &lt; blocks_needed) {</span>
-<span class="line" id="L204">            index += available_blocks;</span>
-<span class="line" id="L205">            <span class="tok-kw">continue</span>;</span>
-<span class="line" id="L206">        }</span>
-<span class="line" id="L207"></span>
-<span class="line" id="L208">        <span class="tok-comment">// If we got here then we have a suitable sequence of blocks.</span>
+<span class="line" id="L206">        <span class="tok-comment">// Claim them and return the pointer</span>
 </span>
-<span class="line" id="L209">        <span class="tok-comment">// Claim them and return the pointer</span>
+<span class="line" id="L207">        <span class="tok-kw">if</span> (debug_output) std.debug.print(<span class="tok-str">&quot;Claiming {} blocks for allocation, n = {}\n&quot;</span>, .{blocks_needed, n});</span>
+<span class="line" id="L208">        self.markBlocks(index, blocks_needed, <span class="tok-null">true</span>);</span>
+<span class="line" id="L209">        <span class="tok-kw">const</span> s = index * self.block_size + add_to_align;</span>
+<span class="line" id="L210">        <span class="tok-kw">return</span> self.allocations[s .. s + n].ptr;</span>
+<span class="line" id="L211">    }</span>
+<span class="line" id="L212"></span>
+<span class="line" id="L213">    <span class="tok-comment">// We failed to find a long-enough sequence of available blocks</span>
 </span>
-<span class="line" id="L210">        <span class="tok-kw">if</span> (debug_output) std.debug.print(<span class="tok-str">&quot;Claiming {} blocks for allocation, n = {}\n&quot;</span>, .{blocks_needed, n});</span>
-<span class="line" id="L211">        self.markBlocks(index, blocks_needed, <span class="tok-null">true</span>);</span>
-<span class="line" id="L212">        <span class="tok-kw">const</span> s = index * self.block_size + add_to_align;</span>
-<span class="line" id="L213">        <span class="tok-kw">return</span> self.allocations[s .. s + n].ptr;</span>
-<span class="line" id="L214">    }</span>
-<span class="line" id="L215"></span>
-<span class="line" id="L216">    <span class="tok-comment">// We failed to find a long-enough sequence of available blocks</span>
+<span class="line" id="L214">    <span class="tok-kw">return</span> <span class="tok-null">null</span>;</span>
+<span class="line" id="L215">}</span>
+<span class="line" id="L216"></span>
+<span class="line" id="L217"><span class="tok-kw">fn</span> <span class="tok-fn">resize</span>(ctx: *<span class="tok-type">anyopaque</span>, buf: []<span class="tok-type">u8</span>, buf_align: <span class="tok-type">u8</span>, new_size: <span class="tok-type">usize</span>, ra: <span class="tok-type">usize</span>) <span class="tok-type">bool</span> {</span>
+<span class="line" id="L218">    <span class="tok-kw">const</span> self = <span class="tok-builtin">@ptrCast</span>(*Self, <span class="tok-builtin">@alignCast</span>(<span class="tok-builtin">@alignOf</span>(Self), ctx));</span>
+<span class="line" id="L219">    _=buf_align;</span>
+<span class="line" id="L220">    _=ra;</span>
+<span class="line" id="L221"></span>
+<span class="line" id="L222">    std.debug.assert(self.ownsSlice(buf));</span>
+<span class="line" id="L223"></span>
+<span class="line" id="L224">    <span class="tok-comment">// Same size, do nothing</span>
 </span>
-<span class="line" id="L217">    <span class="tok-kw">return</span> <span class="tok-null">null</span>;</span>
-<span class="line" id="L218">}</span>
-<span class="line" id="L219"></span>
-<span class="line" id="L220"><span class="tok-kw">fn</span> <span class="tok-fn">resize</span>(ctx: *<span class="tok-type">anyopaque</span>, buf: []<span class="tok-type">u8</span>, buf_align: <span class="tok-type">u8</span>, new_size: <span class="tok-type">usize</span>, ra: <span class="tok-type">usize</span>) <span class="tok-type">bool</span> {</span>
-<span class="line" id="L221">    <span class="tok-kw">const</span> self = <span class="tok-builtin">@ptrCast</span>(*Self, <span class="tok-builtin">@alignCast</span>(<span class="tok-builtin">@alignOf</span>(Self), ctx));</span>
-<span class="line" id="L222">    _=buf_align;</span>
-<span class="line" id="L223">    _=ra;</span>
-<span class="line" id="L224"></span>
-<span class="line" id="L225">    std.debug.assert(self.ownsSlice(buf));</span>
+<span class="line" id="L225">    <span class="tok-kw">if</span> (new_size == buf.len) <span class="tok-kw">return</span> <span class="tok-null">true</span>;</span>
 <span class="line" id="L226"></span>
-<span class="line" id="L227">    <span class="tok-comment">// Same size, do nothing</span>
+<span class="line" id="L227">    <span class="tok-comment">// Is this a shrink request?</span>
 </span>
-<span class="line" id="L228">    <span class="tok-kw">if</span> (new_size == buf.len) <span class="tok-kw">return</span> <span class="tok-null">true</span>;</span>
-<span class="line" id="L229"></span>
-<span class="line" id="L230">    <span class="tok-comment">// Is this a shrink request?</span>
+<span class="line" id="L228">    <span class="tok-kw">if</span> (new_size &lt; buf.len) {</span>
+<span class="line" id="L229">        <span class="tok-kw">return</span> self.shrink(buf, new_size);</span>
+<span class="line" id="L230">    }</span>
+<span class="line" id="L231"></span>
+<span class="line" id="L232">    <span class="tok-comment">// Find the index of the buffer's end block</span>
 </span>
-<span class="line" id="L231">    <span class="tok-kw">if</span> (new_size &lt; buf.len) {</span>
-<span class="line" id="L232">        <span class="tok-kw">return</span> self.shrink(buf, new_size);</span>
-<span class="line" id="L233">    }</span>
+<span class="line" id="L233">    <span class="tok-kw">const</span> index = self.getIndex(<span class="tok-kw">if</span> (buf.len &gt; <span class="tok-number">0</span>) &amp;buf[buf.len-<span class="tok-number">1</span>] <span class="tok-kw">else</span> <span class="tok-builtin">@ptrCast</span>(*<span class="tok-type">u8</span>, buf.ptr));</span>
 <span class="line" id="L234"></span>
-<span class="line" id="L235">    <span class="tok-comment">// Find the index of the buffer's end block</span>
+<span class="line" id="L235">    <span class="tok-comment">// How many additional blocks do we need?</span>
 </span>
-<span class="line" id="L236">    <span class="tok-kw">const</span> index = self.getIndex(<span class="tok-kw">if</span> (buf.len &gt; <span class="tok-number">0</span>) &amp;buf[buf.len-<span class="tok-number">1</span>] <span class="tok-kw">else</span> <span class="tok-builtin">@ptrCast</span>(*<span class="tok-type">u8</span>, buf.ptr));</span>
+<span class="line" id="L236">    <span class="tok-kw">const</span> blocks_needed = common.divideRoundUp(new_size - buf.len, self.block_size);</span>
 <span class="line" id="L237"></span>
-<span class="line" id="L238">    <span class="tok-comment">// How many additional blocks do we need?</span>
+<span class="line" id="L238">    <span class="tok-comment">// Are enough blocks immediately available after the current blocks to extend?</span>
 </span>
-<span class="line" id="L239">    <span class="tok-kw">const</span> blocks_needed = common.divideRoundUp(new_size - buf.len, self.block_size);</span>
-<span class="line" id="L240"></span>
-<span class="line" id="L241">    <span class="tok-comment">// Are enough blocks immediately available after the current blocks to extend?</span>
+<span class="line" id="L239">    <span class="tok-kw">var</span> available_blocks = self.countAvailableBlocks(index, blocks_needed);</span>
+<span class="line" id="L240">    <span class="tok-kw">if</span> (available_blocks &lt; blocks_needed) <span class="tok-kw">return</span> <span class="tok-null">false</span>;</span>
+<span class="line" id="L241"></span>
+<span class="line" id="L242">    <span class="tok-comment">// Claim the additional block and return the grown slice</span>
 </span>
-<span class="line" id="L242">    <span class="tok-kw">var</span> available_blocks = self.countAvailableBlocks(index, blocks_needed);</span>
-<span class="line" id="L243">    <span class="tok-kw">if</span> (available_blocks &lt; blocks_needed) <span class="tok-kw">return</span> <span class="tok-null">false</span>;</span>
-<span class="line" id="L244"></span>
-<span class="line" id="L245">    <span class="tok-comment">// Claim the additional block and return the grown slice</span>
+<span class="line" id="L243">    self.markBlocks(index, blocks_needed, <span class="tok-null">true</span>);</span>
+<span class="line" id="L244">    <span class="tok-kw">return</span> <span class="tok-null">true</span>;</span>
+<span class="line" id="L245">}</span>
+<span class="line" id="L246"></span>
+<span class="line" id="L247"><span class="tok-kw">fn</span> <span class="tok-fn">shrink</span>(self: *Self, buf: []<span class="tok-type">u8</span>, new_size: <span class="tok-type">usize</span>) <span class="tok-type">bool</span> {</span>
+<span class="line" id="L248">    std.debug.assert(new_size &gt; <span class="tok-number">0</span>);</span>
+<span class="line" id="L249">    std.debug.assert(buf.len &gt; <span class="tok-number">0</span>);</span>
+<span class="line" id="L250">    std.debug.assert(buf.len &gt; new_size);</span>
+<span class="line" id="L251"></span>
+<span class="line" id="L252">    <span class="tok-comment">// Find the current end block index</span>
 </span>
-<span class="line" id="L246">    self.markBlocks(index, blocks_needed, <span class="tok-null">true</span>);</span>
-<span class="line" id="L247">    <span class="tok-kw">return</span> <span class="tok-null">true</span>;</span>
-<span class="line" id="L248">}</span>
-<span class="line" id="L249"></span>
-<span class="line" id="L250"><span class="tok-kw">fn</span> <span class="tok-fn">shrink</span>(self: *Self, buf: []<span class="tok-type">u8</span>, new_size: <span class="tok-type">usize</span>) <span class="tok-type">bool</span> {</span>
-<span class="line" id="L251">    std.debug.assert(new_size &gt; <span class="tok-number">0</span>);</span>
-<span class="line" id="L252">    std.debug.assert(buf.len &gt; <span class="tok-number">0</span>);</span>
-<span class="line" id="L253">    std.debug.assert(buf.len &gt; new_size);</span>
-<span class="line" id="L254"></span>
-<span class="line" id="L255">    <span class="tok-comment">// Find the current end block index</span>
+<span class="line" id="L253">    <span class="tok-kw">const</span> end_index = self.getIndex(&amp;buf[buf.len-<span class="tok-number">1</span>]);</span>
+<span class="line" id="L254">    <span class="tok-comment">// and the index of the proposed new end index</span>
 </span>
-<span class="line" id="L256">    <span class="tok-kw">const</span> end_index = self.getIndex(&amp;buf[buf.len-<span class="tok-number">1</span>]);</span>
-<span class="line" id="L257">    <span class="tok-comment">// and the index of the proposed new end index</span>
+<span class="line" id="L255">    <span class="tok-kw">const</span> new_end_index = self.getIndex(&amp;buf[new_size]);</span>
+<span class="line" id="L256"></span>
+<span class="line" id="L257">    <span class="tok-comment">// Shrinking doesn't free any blocks; succeed but don't change anything</span>
 </span>
-<span class="line" id="L258">    <span class="tok-kw">const</span> new_end_index = self.getIndex(&amp;buf[new_size]);</span>
+<span class="line" id="L258">    <span class="tok-kw">if</span> (end_index == new_end_index) <span class="tok-kw">return</span> <span class="tok-null">true</span>;</span>
 <span class="line" id="L259"></span>
-<span class="line" id="L260">    <span class="tok-comment">// Shrinking doesn't free any blocks; succeed but don't change anything</span>
+<span class="line" id="L260">    <span class="tok-comment">// new_end_index is included in the retained section, but we can free</span>
 </span>
-<span class="line" id="L261">    <span class="tok-kw">if</span> (end_index == new_end_index) <span class="tok-kw">return</span> <span class="tok-null">true</span>;</span>
-<span class="line" id="L262"></span>
-<span class="line" id="L263">    <span class="tok-comment">// new_end_index is included in the retained section, but we can free</span>
+<span class="line" id="L261">    <span class="tok-comment">//  all blocks from after it up to and including end_index</span>
 </span>
-<span class="line" id="L264">    <span class="tok-comment">//  all blocks from after it up to and including end_index</span>
-</span>
-<span class="line" id="L265">    self.markBlocks(new_end_index + <span class="tok-number">1</span>, end_index - new_end_index, <span class="tok-null">false</span>);</span>
-<span class="line" id="L266">    <span class="tok-kw">return</span> <span class="tok-null">true</span>;</span>
-<span class="line" id="L267">}</span>
-<span class="line" id="L268"></span>
-<span class="line" id="L269"><span class="tok-kw">fn</span> <span class="tok-fn">free</span>(ctx: *<span class="tok-type">anyopaque</span>, buf: []<span class="tok-type">u8</span>, buf_align: <span class="tok-type">u8</span>, ret_addr: <span class="tok-type">usize</span>) <span class="tok-type">void</span> {</span>
-<span class="line" id="L270">    <span class="tok-kw">const</span> self = <span class="tok-builtin">@ptrCast</span>(*Self, <span class="tok-builtin">@alignCast</span>(<span class="tok-builtin">@alignOf</span>(Self), ctx));</span>
-<span class="line" id="L271">    _=buf_align;</span>
-<span class="line" id="L272">    _=ret_addr;</span>
+<span class="line" id="L262">    self.markBlocks(new_end_index + <span class="tok-number">1</span>, end_index - new_end_index, <span class="tok-null">false</span>);</span>
+<span class="line" id="L263">    <span class="tok-kw">return</span> <span class="tok-null">true</span>;</span>
+<span class="line" id="L264">}</span>
+<span class="line" id="L265"></span>
+<span class="line" id="L266"><span class="tok-kw">fn</span> <span class="tok-fn">free</span>(ctx: *<span class="tok-type">anyopaque</span>, buf: []<span class="tok-type">u8</span>, buf_align: <span class="tok-type">u8</span>, ret_addr: <span class="tok-type">usize</span>) <span class="tok-type">void</span> {</span>
+<span class="line" id="L267">    <span class="tok-kw">const</span> self = <span class="tok-builtin">@ptrCast</span>(*Self, <span class="tok-builtin">@alignCast</span>(<span class="tok-builtin">@alignOf</span>(Self), ctx));</span>
+<span class="line" id="L268">    _=buf_align;</span>
+<span class="line" id="L269">    _=ret_addr;</span>
+<span class="line" id="L270"></span>
+<span class="line" id="L271">    <span class="tok-kw">const</span> start_index = self.getIndex(<span class="tok-builtin">@ptrCast</span>(*<span class="tok-type">u8</span>, buf.ptr));</span>
+<span class="line" id="L272">    <span class="tok-kw">const</span> end_index = self.getIndex(<span class="tok-kw">if</span> (buf.len &gt; <span class="tok-number">0</span>) &amp;buf[buf.len-<span class="tok-number">1</span>] <span class="tok-kw">else</span> <span class="tok-builtin">@ptrCast</span>(*<span class="tok-type">u8</span>, buf.ptr));</span>
 <span class="line" id="L273"></span>
-<span class="line" id="L274">    <span class="tok-kw">const</span> start_index = self.getIndex(<span class="tok-builtin">@ptrCast</span>(*<span class="tok-type">u8</span>, buf.ptr));</span>
-<span class="line" id="L275">    <span class="tok-kw">const</span> end_index = self.getIndex(<span class="tok-kw">if</span> (buf.len &gt; <span class="tok-number">0</span>) &amp;buf[buf.len-<span class="tok-number">1</span>] <span class="tok-kw">else</span> <span class="tok-builtin">@ptrCast</span>(*<span class="tok-type">u8</span>, buf.ptr));</span>
-<span class="line" id="L276"></span>
-<span class="line" id="L277">    <span class="tok-comment">// Add one because we want to include end_index</span>
+<span class="line" id="L274">    <span class="tok-comment">// Add one because we want to include end_index</span>
 </span>
-<span class="line" id="L278">    self.markBlocks(start_index, end_index - start_index + <span class="tok-number">1</span>, <span class="tok-null">false</span>);</span>
-<span class="line" id="L279">}</span>
-<span class="line" id="L280"></span>
-<span class="line" id="L281"><span class="tok-kw">fn</span> <span class="tok-fn">getBlock</span>(self: *Self, index: <span class="tok-type">usize</span>) []<span class="tok-type">u8</span> {</span>
-<span class="line" id="L282">    <span class="tok-kw">const</span> s = self.block_size * index;</span>
-<span class="line" id="L283">    <span class="tok-kw">return</span> self.allocations[s .. s + self.block_size];</span>
-<span class="line" id="L284">}</span>
-<span class="line" id="L285"></span>
-<span class="line" id="L286"><span class="tok-kw">fn</span> <span class="tok-fn">getIndex</span>(self: *Self, ptr: *<span class="tok-type">u8</span>) <span class="tok-type">usize</span> {</span>
-<span class="line" id="L287">    <span class="tok-kw">return</span> (<span class="tok-builtin">@ptrToInt</span>(ptr) - <span class="tok-builtin">@ptrToInt</span>(self.allocations.ptr)) / self.block_size;</span>
-<span class="line" id="L288">}</span>
-<span class="line" id="L289"></span>
-<span class="line" id="L290"><span class="tok-comment">// Returns the number of available blocks starting from `index`.</span>
+<span class="line" id="L275">    self.markBlocks(start_index, end_index - start_index + <span class="tok-number">1</span>, <span class="tok-null">false</span>);</span>
+<span class="line" id="L276">}</span>
+<span class="line" id="L277"></span>
+<span class="line" id="L278"><span class="tok-kw">fn</span> <span class="tok-fn">getBlock</span>(self: *Self, index: <span class="tok-type">usize</span>) []<span class="tok-type">u8</span> {</span>
+<span class="line" id="L279">    <span class="tok-kw">const</span> s = self.block_size * index;</span>
+<span class="line" id="L280">    <span class="tok-kw">return</span> self.allocations[s .. s + self.block_size];</span>
+<span class="line" id="L281">}</span>
+<span class="line" id="L282"></span>
+<span class="line" id="L283"><span class="tok-kw">fn</span> <span class="tok-fn">getIndex</span>(self: *Self, ptr: *<span class="tok-type">u8</span>) <span class="tok-type">usize</span> {</span>
+<span class="line" id="L284">    <span class="tok-kw">return</span> (<span class="tok-builtin">@ptrToInt</span>(ptr) - <span class="tok-builtin">@ptrToInt</span>(self.allocations.ptr)) / self.block_size;</span>
+<span class="line" id="L285">}</span>
+<span class="line" id="L286"></span>
+<span class="line" id="L287"><span class="tok-comment">// Returns the number of available blocks starting from `index`.</span>
 </span>
-<span class="line" id="L291"><span class="tok-comment">// Assumes the block at `index` is available.</span>
+<span class="line" id="L288"><span class="tok-comment">// Assumes the block at `index` is available.</span>
 </span>
-<span class="line" id="L292"><span class="tok-comment">// Exits early if `up_to` count is reached.</span>
+<span class="line" id="L289"><span class="tok-comment">// Exits early if `up_to` count is reached.</span>
 </span>
-<span class="line" id="L293"><span class="tok-kw">fn</span> <span class="tok-fn">countAvailableBlocks</span>(self: *<span class="tok-kw">const</span> Self, index: <span class="tok-type">usize</span>, up_to: <span class="tok-type">usize</span>) <span class="tok-type">usize</span> {</span>
-<span class="line" id="L294">    std.debug.assert(index &lt; self.in_use_bitmap.capacity());</span>
+<span class="line" id="L290"><span class="tok-kw">fn</span> <span class="tok-fn">countAvailableBlocks</span>(self: *<span class="tok-kw">const</span> Self, index: <span class="tok-type">usize</span>, up_to: <span class="tok-type">usize</span>) <span class="tok-type">usize</span> {</span>
+<span class="line" id="L291">    std.debug.assert(index &lt; self.in_use_bitmap.capacity());</span>
+<span class="line" id="L292"></span>
+<span class="line" id="L293">    <span class="tok-comment">// Ensure we don't try to go past the end of the bitmap</span>
+</span>
+<span class="line" id="L294">    <span class="tok-kw">const</span> max_len = std.math.min(up_to, self.in_use_bitmap.capacity() - index);</span>
 <span class="line" id="L295"></span>
-<span class="line" id="L296">    <span class="tok-comment">// Ensure we don't try to go past the end of the bitmap</span>
+<span class="line" id="L296">    <span class="tok-kw">var</span> available_blocks: <span class="tok-type">usize</span> = <span class="tok-number">1</span>;</span>
+<span class="line" id="L297">    <span class="tok-kw">while</span> (available_blocks &lt; max_len) : (available_blocks += <span class="tok-number">1</span>) {</span>
+<span class="line" id="L298">        <span class="tok-comment">// If we find a used block while searching, skip the iterator</span>
 </span>
-<span class="line" id="L297">    <span class="tok-kw">const</span> max_len = std.math.min(up_to, self.in_use_bitmap.capacity() - index);</span>
-<span class="line" id="L298"></span>
-<span class="line" id="L299">    <span class="tok-kw">var</span> available_blocks: <span class="tok-type">usize</span> = <span class="tok-number">1</span>;</span>
-<span class="line" id="L300">    <span class="tok-kw">while</span> (available_blocks &lt; max_len) : (available_blocks += <span class="tok-number">1</span>) {</span>
-<span class="line" id="L301">        <span class="tok-comment">// If we find a used block while searching, skip the iterator</span>
+<span class="line" id="L299">        <span class="tok-comment">//  forward to after this position and start searching again</span>
 </span>
-<span class="line" id="L302">        <span class="tok-comment">//  forward to after this position and start searching again</span>
+<span class="line" id="L300">        <span class="tok-kw">if</span> (self.in_use_bitmap.isSet(index + available_blocks)) {</span>
+<span class="line" id="L301">            <span class="tok-kw">break</span>;</span>
+<span class="line" id="L302">        }</span>
+<span class="line" id="L303">    }</span>
+<span class="line" id="L304">    <span class="tok-kw">return</span> available_blocks;</span>
+<span class="line" id="L305">}</span>
+<span class="line" id="L306"></span>
+<span class="line" id="L307"><span class="tok-comment">// Modifies the in_use_bitmap, setting the bits from start up to start+len</span>
 </span>
-<span class="line" id="L303">        <span class="tok-kw">if</span> (self.in_use_bitmap.isSet(index + available_blocks)) {</span>
-<span class="line" id="L304">            <span class="tok-kw">break</span>;</span>
-<span class="line" id="L305">        }</span>
-<span class="line" id="L306">    }</span>
-<span class="line" id="L307">    <span class="tok-kw">return</span> available_blocks;</span>
-<span class="line" id="L308">}</span>
-<span class="line" id="L309"></span>
-<span class="line" id="L310"><span class="tok-comment">// Modifies the in_use_bitmap, setting the bits from start up to start+len</span>
+<span class="line" id="L308"><span class="tok-comment">//  to `as` (true = in use, false = available).</span>
 </span>
-<span class="line" id="L311"><span class="tok-comment">//  to `as` (true = in use, false = available).</span>
+<span class="line" id="L309"><span class="tok-comment">// Also updates the `first_available_block` field.</span>
 </span>
-<span class="line" id="L312"><span class="tok-comment">// Also updates the `first_available_block` field.</span>
+<span class="line" id="L310"><span class="tok-kw">fn</span> <span class="tok-fn">markBlocks</span>(self: *Self, start: <span class="tok-type">usize</span>, len: <span class="tok-type">usize</span>, as: <span class="tok-type">bool</span>) <span class="tok-type">void</span> {</span>
+<span class="line" id="L311"></span>
+<span class="line" id="L312">    <span class="tok-kw">const</span> old_first_avail = self.first_available_block;</span>
+<span class="line" id="L313">    <span class="tok-kw">defer</span> {</span>
+<span class="line" id="L314">        <span class="tok-kw">if</span> (debug_output)</span>
+<span class="line" id="L315">            std.debug.print(<span class="tok-str">&quot;Moved first_available_block from {} to {}; start={}, len={}\n&quot;</span>,</span>
+<span class="line" id="L316">                            .{ old_first_avail, self.first_available_block, start, len });</span>
+<span class="line" id="L317">    }</span>
+<span class="line" id="L318"></span>
+<span class="line" id="L319">    std.debug.assert(start + len &lt; self.in_use_bitmap.capacity());</span>
+<span class="line" id="L320">    <span class="tok-kw">var</span> index: <span class="tok-type">usize</span> = <span class="tok-number">0</span>;</span>
+<span class="line" id="L321">    <span class="tok-kw">while</span> (index &lt; len) : (index += <span class="tok-number">1</span>) {</span>
+<span class="line" id="L322">        std.debug.assert(self.in_use_bitmap.isSet(start + index) != as);</span>
+<span class="line" id="L323"></span>
+<span class="line" id="L324">        <span class="tok-kw">if</span> (as) {</span>
+<span class="line" id="L325">            self.in_use_bitmap.set(start + index);</span>
+<span class="line" id="L326">        } <span class="tok-kw">else</span> {</span>
+<span class="line" id="L327">            self.in_use_bitmap.unset(start + index);</span>
+<span class="line" id="L328">        }</span>
+<span class="line" id="L329">    }</span>
+<span class="line" id="L330"></span>
+<span class="line" id="L331">    <span class="tok-comment">// Update first_available_block</span>
 </span>
-<span class="line" id="L313"><span class="tok-kw">fn</span> <span class="tok-fn">markBlocks</span>(self: *Self, start: <span class="tok-type">usize</span>, len: <span class="tok-type">usize</span>, as: <span class="tok-type">bool</span>) <span class="tok-type">void</span> {</span>
-<span class="line" id="L314"></span>
-<span class="line" id="L315">    <span class="tok-kw">const</span> old_first_avail = self.first_available_block;</span>
-<span class="line" id="L316">    <span class="tok-kw">defer</span> {</span>
-<span class="line" id="L317">        <span class="tok-kw">if</span> (debug_output)</span>
-<span class="line" id="L318">            std.debug.print(<span class="tok-str">&quot;Moved first_available_block from {} to {}; start={}, len={}\n&quot;</span>,</span>
-<span class="line" id="L319">                            .{ old_first_avail, self.first_available_block, start, len });</span>
-<span class="line" id="L320">    }</span>
-<span class="line" id="L321"></span>
-<span class="line" id="L322">    std.debug.assert(start + len &lt; self.in_use_bitmap.capacity());</span>
-<span class="line" id="L323">    <span class="tok-kw">var</span> index: <span class="tok-type">usize</span> = <span class="tok-number">0</span>;</span>
-<span class="line" id="L324">    <span class="tok-kw">while</span> (index &lt; len) : (index += <span class="tok-number">1</span>) {</span>
-<span class="line" id="L325">        std.debug.assert(self.in_use_bitmap.isSet(start + index) != as);</span>
-<span class="line" id="L326"></span>
-<span class="line" id="L327">        <span class="tok-kw">if</span> (as) {</span>
-<span class="line" id="L328">            self.in_use_bitmap.set(start + index);</span>
-<span class="line" id="L329">        } <span class="tok-kw">else</span> {</span>
-<span class="line" id="L330">            self.in_use_bitmap.unset(start + index);</span>
-<span class="line" id="L331">        }</span>
-<span class="line" id="L332">    }</span>
-<span class="line" id="L333"></span>
-<span class="line" id="L334">    <span class="tok-comment">// Update first_available_block</span>
+<span class="line" id="L332">    <span class="tok-kw">if</span> (as <span class="tok-kw">and</span> start &gt;= self.first_available_block <span class="tok-kw">and</span> self.first_available_block &lt; start + len) {</span>
+<span class="line" id="L333">        <span class="tok-comment">// We were marking blocks as claimed and the current first_available_block</span>
 </span>
-<span class="line" id="L335">    <span class="tok-kw">if</span> (as <span class="tok-kw">and</span> start &gt;= self.first_available_block <span class="tok-kw">and</span> self.first_available_block &lt; start + len) {</span>
-<span class="line" id="L336">        <span class="tok-comment">// We were marking blocks as claimed and the current first_available_block</span>
+<span class="line" id="L334">        <span class="tok-comment">//  was just marked; find a new first block by searching after index</span>
 </span>
-<span class="line" id="L337">        <span class="tok-comment">//  was just marked; find a new first block by searching after index</span>
+<span class="line" id="L335">        self.first_available_block = start + len;</span>
+<span class="line" id="L336">        <span class="tok-kw">while</span> (self.first_available_block &lt; self.in_use_bitmap.capacity() <span class="tok-kw">and</span></span>
+<span class="line" id="L337">               self.in_use_bitmap.isSet(self.first_available_block)) {</span>
+<span class="line" id="L338">            self.first_available_block += <span class="tok-number">1</span>;</span>
+<span class="line" id="L339">        }</span>
+<span class="line" id="L340"></span>
+<span class="line" id="L341">    } <span class="tok-kw">else</span> <span class="tok-kw">if</span> (!as <span class="tok-kw">and</span> start &lt; self.first_available_block) {</span>
+<span class="line" id="L342">        <span class="tok-comment">// We were freeing blocks and start was before first_available_block</span>
 </span>
-<span class="line" id="L338">        self.first_available_block = start + len;</span>
-<span class="line" id="L339">        <span class="tok-kw">while</span> (self.first_available_block &lt; self.in_use_bitmap.capacity() <span class="tok-kw">and</span></span>
-<span class="line" id="L340">               self.in_use_bitmap.isSet(self.first_available_block)) {</span>
-<span class="line" id="L341">            self.first_available_block += <span class="tok-number">1</span>;</span>
-<span class="line" id="L342">        }</span>
-<span class="line" id="L343"></span>
-<span class="line" id="L344">    } <span class="tok-kw">else</span> <span class="tok-kw">if</span> (!as <span class="tok-kw">and</span> start &lt; self.first_available_block) {</span>
-<span class="line" id="L345">        <span class="tok-comment">// We were freeing blocks and start was before first_available_block</span>
+<span class="line" id="L343">        self.first_available_block = start;</span>
+<span class="line" id="L344">    }</span>
+<span class="line" id="L345">}</span>
+<span class="line" id="L346"></span>
+<span class="line" id="L347"><span class="tok-kw">fn</span> <span class="tok-fn">bitmapBytesRequired</span>(n_blocks_desired: <span class="tok-type">usize</span>) <span class="tok-type">usize</span> {</span>
+<span class="line" id="L348">    <span class="tok-comment">// Note that DynamicBitSetUnmanaged actually allocates one additional</span>
 </span>
-<span class="line" id="L346">        self.first_available_block = start;</span>
-<span class="line" id="L347">    }</span>
-<span class="line" id="L348">}</span>
-<span class="line" id="L349"></span>
-<span class="line" id="L350"><span class="tok-kw">fn</span> <span class="tok-fn">bitmapBytesRequired</span>(n_blocks_desired: <span class="tok-type">usize</span>) <span class="tok-type">usize</span> {</span>
-<span class="line" id="L351">    <span class="tok-comment">// Note that DynamicBitSetUnmanaged actually allocates one additional</span>
+<span class="line" id="L349">    <span class="tok-comment">//  usize to store allocation size.</span>
 </span>
-<span class="line" id="L352">    <span class="tok-comment">//  usize to store allocation size.</span>
+<span class="line" id="L350">    <span class="tok-comment">// Unfortunately this means that the accuracy of this function is linked</span>
 </span>
-<span class="line" id="L353">    <span class="tok-comment">// Unfortunately this means that the accuracy of this function is linked</span>
+<span class="line" id="L351">    <span class="tok-comment">//  to implementation details of std.bit_set.DynamicBitSetUnmanaged.</span>
 </span>
-<span class="line" id="L354">    <span class="tok-comment">//  to implementation details of std.bit_set.DynamicBitSetUnmanaged.</span>
+<span class="line" id="L352">    <span class="tok-kw">const</span> words_needed = common.divideRoundUp(n_blocks_desired, <span class="tok-builtin">@bitSizeOf</span>(<span class="tok-type">usize</span>));</span>
+<span class="line" id="L353">    <span class="tok-kw">return</span> words_needed * usize_bytes + usize_bytes;</span>
+<span class="line" id="L354">}</span>
+<span class="line" id="L355"></span>
+<span class="line" id="L356"><span class="tok-kw">test</span> <span class="tok-str">&quot;BitmapBlockAllocator&quot;</span> {</span>
+<span class="line" id="L357">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">2</span> * usize_bytes + <span class="tok-number">2</span> * <span class="tok-number">16</span>), Self.bufferSizeRequired(<span class="tok-number">16</span>, <span class="tok-number">2</span>));</span>
+<span class="line" id="L358">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">1024</span>), Self.bufferSizeRequired(<span class="tok-number">16</span>, <span class="tok-number">63</span>));</span>
+<span class="line" id="L359">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">4088</span>), Self.bufferSizeRequired(<span class="tok-number">16</span>, <span class="tok-number">253</span>));</span>
+<span class="line" id="L360"></span>
+<span class="line" id="L361">    <span class="tok-kw">var</span> buffer: [<span class="tok-number">1024</span>]<span class="tok-type">u8</span> = <span class="tok-null">undefined</span>;</span>
+<span class="line" id="L362">    <span class="tok-kw">var</span> bba = Self.init(&amp;buffer, <span class="tok-number">16</span>, <span class="tok-number">63</span>);</span>
+<span class="line" id="L363">    <span class="tok-kw">var</span> ally = bba.allocator();</span>
+<span class="line" id="L364">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">4</span>), std.fmt.count(<span class="tok-str">&quot;{}&quot;</span>, .{<span class="tok-number">1000</span>}));</span>
+<span class="line" id="L365">    <span class="tok-kw">const</span> first_alloc = <span class="tok-kw">try</span> std.fmt.allocPrint(ally, <span class="tok-str">&quot;{}&quot;</span>, .{ <span class="tok-number">1000</span> });</span>
+<span class="line" id="L366">    <span class="tok-kw">try</span> std.testing.expectEqualStrings(<span class="tok-str">&quot;1000&quot;</span>, bba.allocations[<span class="tok-number">0</span>..<span class="tok-number">4</span>]);</span>
+<span class="line" id="L367">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">1</span>), bba.first_available_block);</span>
+<span class="line" id="L368">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">1</span>), bba.in_use_bitmap.count());</span>
+<span class="line" id="L369"></span>
+<span class="line" id="L370">    <span class="tok-comment">//                                      012345678901234567</span>
 </span>
-<span class="line" id="L355">    <span class="tok-kw">const</span> words_needed = common.divideRoundUp(n_blocks_desired, <span class="tok-builtin">@bitSizeOf</span>(<span class="tok-type">usize</span>));</span>
-<span class="line" id="L356">    <span class="tok-kw">return</span> words_needed * usize_bytes + usize_bytes;</span>
-<span class="line" id="L357">}</span>
-<span class="line" id="L358"></span>
-<span class="line" id="L359"><span class="tok-kw">test</span> <span class="tok-str">&quot;BitmapBlockAllocator&quot;</span> {</span>
-<span class="line" id="L360">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">2</span> * usize_bytes + <span class="tok-number">2</span> * <span class="tok-number">16</span>), Self.bufferSizeRequired(<span class="tok-number">16</span>, <span class="tok-number">2</span>));</span>
-<span class="line" id="L361">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">1024</span>), Self.bufferSizeRequired(<span class="tok-number">16</span>, <span class="tok-number">63</span>));</span>
-<span class="line" id="L362">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">4088</span>), Self.bufferSizeRequired(<span class="tok-number">16</span>, <span class="tok-number">253</span>));</span>
-<span class="line" id="L363"></span>
-<span class="line" id="L364">    <span class="tok-kw">var</span> buffer: [<span class="tok-number">1024</span>]<span class="tok-type">u8</span> = <span class="tok-null">undefined</span>;</span>
-<span class="line" id="L365">    <span class="tok-kw">var</span> bba = Self.init(&amp;buffer, <span class="tok-number">16</span>, <span class="tok-number">63</span>);</span>
-<span class="line" id="L366">    <span class="tok-kw">var</span> ally = bba.allocator();</span>
-<span class="line" id="L367">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">4</span>), std.fmt.count(<span class="tok-str">&quot;{}&quot;</span>, .{<span class="tok-number">1000</span>}));</span>
-<span class="line" id="L368">    <span class="tok-kw">const</span> first_alloc = <span class="tok-kw">try</span> std.fmt.allocPrint(ally, <span class="tok-str">&quot;{}&quot;</span>, .{ <span class="tok-number">1000</span> });</span>
-<span class="line" id="L369">    <span class="tok-kw">try</span> std.testing.expectEqualStrings(<span class="tok-str">&quot;1000&quot;</span>, bba.allocations[<span class="tok-number">0</span>..<span class="tok-number">4</span>]);</span>
-<span class="line" id="L370">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">1</span>), bba.first_available_block);</span>
-<span class="line" id="L371">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">1</span>), bba.in_use_bitmap.count());</span>
-<span class="line" id="L372"></span>
-<span class="line" id="L373">    <span class="tok-comment">//                                      012345678901234567</span>
+<span class="line" id="L371">    <span class="tok-kw">const</span> second_alloc = <span class="tok-kw">try</span> ally.dupe(<span class="tok-type">u8</span>, <span class="tok-str">&quot;This is seventeen!&quot;</span>);</span>
+<span class="line" id="L372">    <span class="tok-kw">try</span> std.testing.expectEqualStrings(<span class="tok-str">&quot;This is seventeen!&quot;</span>, bba.allocations[<span class="tok-number">16</span>..<span class="tok-number">16</span>+<span class="tok-number">18</span>]);</span>
+<span class="line" id="L373">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">3</span>), bba.first_available_block);</span>
+<span class="line" id="L374">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">3</span>), bba.in_use_bitmap.count());</span>
+<span class="line" id="L375"></span>
+<span class="line" id="L376">    ally.free(first_alloc);</span>
+<span class="line" id="L377">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">0</span>), bba.first_available_block);</span>
+<span class="line" id="L378">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">2</span>), bba.in_use_bitmap.count());</span>
+<span class="line" id="L379"></span>
+<span class="line" id="L380">    ally.free(second_alloc);</span>
+<span class="line" id="L381">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">0</span>), bba.first_available_block);</span>
+<span class="line" id="L382">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">0</span>), bba.in_use_bitmap.count());</span>
+<span class="line" id="L383"></span>
+<span class="line" id="L384">    <span class="tok-comment">// Ensure alignment works correctly (single block)</span>
 </span>
-<span class="line" id="L374">    <span class="tok-kw">const</span> second_alloc = <span class="tok-kw">try</span> ally.dupe(<span class="tok-type">u8</span>, <span class="tok-str">&quot;This is seventeen!&quot;</span>);</span>
-<span class="line" id="L375">    <span class="tok-kw">try</span> std.testing.expectEqualStrings(<span class="tok-str">&quot;This is seventeen!&quot;</span>, bba.allocations[<span class="tok-number">16</span>..<span class="tok-number">16</span>+<span class="tok-number">18</span>]);</span>
-<span class="line" id="L376">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">3</span>), bba.first_available_block);</span>
-<span class="line" id="L377">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">3</span>), bba.in_use_bitmap.count());</span>
-<span class="line" id="L378"></span>
-<span class="line" id="L379">    ally.free(first_alloc);</span>
-<span class="line" id="L380">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">0</span>), bba.first_available_block);</span>
-<span class="line" id="L381">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">2</span>), bba.in_use_bitmap.count());</span>
-<span class="line" id="L382"></span>
-<span class="line" id="L383">    ally.free(second_alloc);</span>
-<span class="line" id="L384">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">0</span>), bba.first_available_block);</span>
-<span class="line" id="L385">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">0</span>), bba.in_use_bitmap.count());</span>
-<span class="line" id="L386"></span>
-<span class="line" id="L387">    <span class="tok-comment">// Ensure alignment works correctly (single block)</span>
-</span>
-<span class="line" id="L388">    _  = <span class="tok-kw">try</span> ally.alignedAlloc(<span class="tok-type">u64</span>, <span class="tok-number">2</span>, <span class="tok-number">1</span>);</span>
-<span class="line" id="L389">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">1</span>), bba.first_available_block);</span>
-<span class="line" id="L390">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">1</span>), bba.in_use_bitmap.count());</span>
-<span class="line" id="L391"></span>
-<span class="line" id="L392">    <span class="tok-kw">var</span> usage = bba.getUsage();</span>
-<span class="line" id="L393">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">1</span>), usage.used_blocks);</span>
-<span class="line" id="L394">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">62</span>), usage.free_blocks);</span>
+<span class="line" id="L385">    _  = <span class="tok-kw">try</span> ally.alignedAlloc(<span class="tok-type">u64</span>, <span class="tok-number">2</span>, <span class="tok-number">1</span>);</span>
+<span class="line" id="L386">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">1</span>), bba.first_available_block);</span>
+<span class="line" id="L387">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">1</span>), bba.in_use_bitmap.count());</span>
+<span class="line" id="L388"></span>
+<span class="line" id="L389">    <span class="tok-kw">var</span> usage = bba.getUsage();</span>
+<span class="line" id="L390">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">1</span>), usage.used_blocks);</span>
+<span class="line" id="L391">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">62</span>), usage.free_blocks);</span>
+<span class="line" id="L392"></span>
+<span class="line" id="L393">    bba.freeAll();</span>
+<span class="line" id="L394">}</span>
 <span class="line" id="L395"></span>
-<span class="line" id="L396">    bba.freeAll();</span>
-<span class="line" id="L397">}</span>
-<span class="line" id="L398"></span>
-<span class="line" id="L399"><span class="tok-kw">test</span> <span class="tok-str">&quot;testAll&quot;</span> {</span>
-<span class="line" id="L400">    std.testing.refAllDeclsRecursive(<span class="tok-builtin">@This</span>());</span>
-<span class="line" id="L401">}</span>
-<span class="line" id="L402"></span>
+<span class="line" id="L396"><span class="tok-kw">test</span> <span class="tok-str">&quot;testAll&quot;</span> {</span>
+<span class="line" id="L397">    std.testing.refAllDeclsRecursive(<span class="tok-builtin">@This</span>());</span>
+<span class="line" id="L398">}</span>
+<span class="line" id="L399"></span>
 </code></pre></body>
 </html>
