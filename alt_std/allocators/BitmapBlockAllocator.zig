@@ -240,7 +240,7 @@ fn resize(ctx: *anyopaque, buf: []u8, buf_align: u8, new_size: usize, ra: usize)
     if (available_blocks < blocks_needed) return false;
 
     // Claim the additional block and return the grown slice
-    self.markBlocks(index, blocks_needed, true);
+    self.markBlocks(index+1, blocks_needed, true);
     return true;
 }
 
