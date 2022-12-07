@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>alt_std/allocators/stats_allocator.zig - source view</title>
+    <link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAgklEQVR4AWMYWuD7EllJIM4G4g4g5oIJ/odhOJ8wToOxSTXgNxDHoeiBMfA4+wGShjyYOCkG/IGqWQziEzYAoUAeiF9D5U+DxEg14DRU7jWIT5IBIOdCxf+A+CQZAAoopEB7QJwBCBwHiip8UYmRdrAlDpIMgApwQZNnNii5Dq0MBgCxxycBnwEd+wAAAABJRU5ErkJggg=="/>
+    <style>
+      body{
+        font-family: system-ui, -apple-system, Roboto, "Segoe UI", sans-serif;
+        margin: 0;
+        line-height: 1.5;
+      }
+
+      pre > code {
+        display: block;
+        overflow: auto;
+        line-height: normal;
+        margin: 0em;
+      }
+      .tok-kw {
+          color: #333;
+          font-weight: bold;
+      }
+      .tok-str {
+          color: #d14;
+      }
+      .tok-builtin {
+          color: #005C7A;
+      }
+      .tok-comment {
+          color: #545454;
+          font-style: italic;
+      }
+      .tok-fn {
+          color: #900;
+          font-weight: bold;
+      }
+      .tok-null {
+          color: #005C5C;
+      }
+      .tok-number {
+          color: #005C5C;
+      }
+      .tok-type {
+          color: #458;
+          font-weight: bold;
+      }
+      pre {
+        counter-reset: line;
+      }
+      pre .line:before {
+        counter-increment: line;
+        content: counter(line);
+        display: inline-block;
+        padding-right: 1em;
+        width: 2em;
+        text-align: right;
+        color: #999;
+      }
+      
+      .line {
+        width: 100%;
+        display: inline-block;
+      }
+      .line:target {
+        border-top: 1px solid #ccc;
+        border-bottom: 1px solid #ccc;
+        background: #fafafa;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        body{
+            background:#222;
+            color: #ccc;
+        }
+        pre > code {
+            color: #ccc;
+            background: #222;
+            border: unset;
+        }
+        .line:target {
+            border-top: 1px solid #444;
+            border-bottom: 1px solid #444;
+            background: #333;
+        }
+        .tok-kw {
+            color: #eee;
+        }
+        .tok-str {
+            color: #2e5;
+        }
+        .tok-builtin {
+            color: #ff894c;
+        }
+        .tok-comment {
+            color: #aa7;
+        }
+        .tok-fn {
+            color: #B1A0F8;
+        }
+        .tok-null {
+            color: #ff8080;
+        }
+        .tok-number {
+            color: #ff8080;
+        }
+        .tok-type {
+            color: #68f;
+        }
+      }
+    </style>
+</head>
+<body>
+<pre><code><span class="line" id="L1"></span>
+<span class="line" id="L2"><span class="tok-kw">const</span> std = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;std&quot;</span>);</span>
+<span class="line" id="L3"><span class="tok-kw">const</span> Allocator = std.mem.Allocator;</span>
+<span class="line" id="L4"></span>
+<span class="line" id="L5"><span class="tok-comment">/// Which statistics should be tracked.  By default all are false (do not track)</span></span>
+<span class="line" id="L6"><span class="tok-comment">///  to make positive selection easy, e.g. `.{ .allocs = true, .frees = true}`</span></span>
+<span class="line" id="L7"><span class="tok-comment">/// Use `Tracking.all()` to track all statistics.</span></span>
+<span class="line" id="L8"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> Tracking = <span class="tok-kw">struct</span> {</span>
+<span class="line" id="L9">    <span class="tok-comment">/// Track the number of calls to `alloc`</span></span>
+<span class="line" id="L10">    allocs: <span class="tok-type">bool</span> = <span class="tok-null">false</span>,</span>
+<span class="line" id="L11">    <span class="tok-comment">/// Track the number of calls to `resize`</span></span>
+<span class="line" id="L12">    resizes: <span class="tok-type">bool</span> = <span class="tok-null">false</span>,</span>
+<span class="line" id="L13">    <span class="tok-comment">/// Track the number of calls to `free`</span></span>
+<span class="line" id="L14">    frees: <span class="tok-type">bool</span> = <span class="tok-null">false</span>,</span>
+<span class="line" id="L15"></span>
+<span class="line" id="L16">    <span class="tok-comment">/// Track the number of failed calls to `alloc`</span></span>
+<span class="line" id="L17">    alloc_failures: <span class="tok-type">bool</span> = <span class="tok-null">false</span>,</span>
+<span class="line" id="L18">    <span class="tok-comment">/// Track the number of failed calls to `resize`</span></span>
+<span class="line" id="L19">    resize_failures: <span class="tok-type">bool</span> = <span class="tok-null">false</span>,</span>
+<span class="line" id="L20"></span>
+<span class="line" id="L21">    <span class="tok-comment">/// Track bytes requested by calls to `alloc`</span></span>
+<span class="line" id="L22">    bytes_requested: <span class="tok-type">bool</span> = <span class="tok-null">false</span>,</span>
+<span class="line" id="L23">    <span class="tok-comment">/// Track bytes successfully returned by `alloc`</span></span>
+<span class="line" id="L24">    bytes_allocated: <span class="tok-type">bool</span> = <span class="tok-null">false</span>,</span>
+<span class="line" id="L25">    <span class="tok-comment">/// Track bytes added by calls to `resize`</span></span>
+<span class="line" id="L26">    bytes_grown: <span class="tok-type">bool</span> = <span class="tok-null">false</span>,</span>
+<span class="line" id="L27">    <span class="tok-comment">/// Track bytes removed by calls to `resize`</span></span>
+<span class="line" id="L28">    bytes_shrunk: <span class="tok-type">bool</span> = <span class="tok-null">false</span>,</span>
+<span class="line" id="L29">    <span class="tok-comment">/// Track bytes removed by calls to `free`</span></span>
+<span class="line" id="L30">    bytes_freed: <span class="tok-type">bool</span> = <span class="tok-null">false</span>,</span>
+<span class="line" id="L31"></span>
+<span class="line" id="L32">    <span class="tok-comment">/// Track the maximum number of bytes allocated at a single time</span></span>
+<span class="line" id="L33">    bytes_high_water_mark: <span class="tok-type">bool</span> = <span class="tok-null">false</span>,</span>
+<span class="line" id="L34"></span>
+<span class="line" id="L35">    <span class="tok-comment">/// Returns a Tracking with all statistics enabled</span></span>
+<span class="line" id="L36">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">all</span>() Tracking {</span>
+<span class="line" id="L37">        <span class="tok-kw">var</span> ret: Tracking = .{};</span>
+<span class="line" id="L38">        <span class="tok-kw">inline</span> <span class="tok-kw">for</span> (<span class="tok-kw">comptime</span> std.meta.fieldNames(Tracking)) |name| {</span>
+<span class="line" id="L39">            <span class="tok-builtin">@field</span>(ret, name) = <span class="tok-null">true</span>;</span>
+<span class="line" id="L40">        }</span>
+<span class="line" id="L41">        <span class="tok-kw">return</span> ret;</span>
+<span class="line" id="L42">    }</span>
+<span class="line" id="L43"></span>
+<span class="line" id="L44">    <span class="tok-comment">/// Returns the number of statistics being tracked</span></span>
+<span class="line" id="L45">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">count</span>(self: Tracking) <span class="tok-type">usize</span> {</span>
+<span class="line" id="L46">        <span class="tok-kw">var</span> ret: <span class="tok-type">usize</span> = <span class="tok-number">0</span>;</span>
+<span class="line" id="L47">        <span class="tok-kw">inline</span> <span class="tok-kw">for</span> (<span class="tok-kw">comptime</span> std.meta.fieldNames(Tracking)) |name| {</span>
+<span class="line" id="L48">            <span class="tok-kw">if</span> (<span class="tok-builtin">@field</span>(self, name)) ret += <span class="tok-number">1</span>;</span>
+<span class="line" id="L49">        }</span>
+<span class="line" id="L50">        <span class="tok-kw">return</span> ret;</span>
+<span class="line" id="L51">    }</span>
+<span class="line" id="L52">};</span>
+<span class="line" id="L53"></span>
+<span class="line" id="L54"><span class="tok-comment">/// Holds counters for the statistics selected by `track`.</span></span>
+<span class="line" id="L55"><span class="tok-comment">/// Unwanted statistics have type `void` and use no memory.</span></span>
+<span class="line" id="L56"><span class="tok-comment">///</span></span>
+<span class="line" id="L57"><span class="tok-comment">/// You can determine whether a counter is active or not by checking via `tracking`:</span></span>
+<span class="line" id="L58"><span class="tok-comment">/// ```zig</span></span>
+<span class="line" id="L59"><span class="tok-comment">/// const MyStats = Stats(.{ .allocs = true });</span></span>
+<span class="line" id="L60"><span class="tok-comment">/// if (MyStats.tracking.allocs) {...}</span></span>
+<span class="line" id="L61"><span class="tok-comment">/// ```</span></span>
+<span class="line" id="L62"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">Stats</span>(<span class="tok-kw">comptime</span> track: Tracking) <span class="tok-type">type</span> {</span>
+<span class="line" id="L63">    <span class="tok-kw">return</span> <span class="tok-kw">struct</span> {</span>
+<span class="line" id="L64">        <span class="tok-kw">const</span> Self = <span class="tok-builtin">@This</span>();</span>
+<span class="line" id="L65"></span>
+<span class="line" id="L66">        <span class="tok-comment">///</span></span>
+<span class="line" id="L67">        <span class="tok-kw">pub</span> <span class="tok-kw">const</span> tracking = track;</span>
+<span class="line" id="L68"></span>
+<span class="line" id="L69">        <span class="tok-comment">/// The number of calls to `alloc`</span></span>
+<span class="line" id="L70">        allocs: <span class="tok-kw">if</span> (track.allocs) <span class="tok-type">usize</span> <span class="tok-kw">else</span> <span class="tok-type">void</span> = <span class="tok-kw">if</span> (track.allocs) <span class="tok-number">0</span> <span class="tok-kw">else</span> {},</span>
+<span class="line" id="L71">        <span class="tok-comment">/// The number of calls to `resize`</span></span>
+<span class="line" id="L72">        resizes: <span class="tok-kw">if</span> (track.resizes) <span class="tok-type">usize</span> <span class="tok-kw">else</span> <span class="tok-type">void</span> = <span class="tok-kw">if</span> (track.resizes) <span class="tok-number">0</span> <span class="tok-kw">else</span> {},</span>
+<span class="line" id="L73">        <span class="tok-comment">/// The number of calls to `free`</span></span>
+<span class="line" id="L74">        frees: <span class="tok-kw">if</span> (track.frees) <span class="tok-type">usize</span> <span class="tok-kw">else</span> <span class="tok-type">void</span> = <span class="tok-kw">if</span> (track.frees) <span class="tok-number">0</span> <span class="tok-kw">else</span> {},</span>
+<span class="line" id="L75"></span>
+<span class="line" id="L76">        <span class="tok-comment">/// The number of failed calls to `alloc`</span></span>
+<span class="line" id="L77">        alloc_failures: <span class="tok-kw">if</span> (track.alloc_failures) <span class="tok-type">usize</span> <span class="tok-kw">else</span> <span class="tok-type">void</span> = <span class="tok-kw">if</span> (track.alloc_failures) <span class="tok-number">0</span> <span class="tok-kw">else</span> {},</span>
+<span class="line" id="L78">        <span class="tok-comment">/// The number of failed calls to `resize`</span></span>
+<span class="line" id="L79">        resize_failures: <span class="tok-kw">if</span> (track.resize_failures) <span class="tok-type">usize</span> <span class="tok-kw">else</span> <span class="tok-type">void</span> = <span class="tok-kw">if</span> (track.resize_failures) <span class="tok-number">0</span> <span class="tok-kw">else</span> {},</span>
+<span class="line" id="L80"></span>
+<span class="line" id="L81">        <span class="tok-comment">/// Bytes requested by calls to `alloc`</span></span>
+<span class="line" id="L82">        bytes_requested: <span class="tok-kw">if</span> (track.bytes_requested) <span class="tok-type">usize</span> <span class="tok-kw">else</span> <span class="tok-type">void</span> = <span class="tok-kw">if</span> (track.bytes_requested) <span class="tok-number">0</span> <span class="tok-kw">else</span> {},</span>
+<span class="line" id="L83">        <span class="tok-comment">/// Bytes successfully returned by `alloc`</span></span>
+<span class="line" id="L84">        bytes_allocated: <span class="tok-kw">if</span> (track.bytes_allocated) <span class="tok-type">usize</span> <span class="tok-kw">else</span> <span class="tok-type">void</span> = <span class="tok-kw">if</span> (track.bytes_allocated) <span class="tok-number">0</span> <span class="tok-kw">else</span> {},</span>
+<span class="line" id="L85">        <span class="tok-comment">/// Bytes added by calls to `resize`</span></span>
+<span class="line" id="L86">        bytes_grown: <span class="tok-kw">if</span> (track.bytes_grown) <span class="tok-type">usize</span> <span class="tok-kw">else</span> <span class="tok-type">void</span> = <span class="tok-kw">if</span> (track.bytes_grown) <span class="tok-number">0</span> <span class="tok-kw">else</span> {},</span>
+<span class="line" id="L87">        <span class="tok-comment">/// Bytes removed by calls to `resize`</span></span>
+<span class="line" id="L88">        bytes_shrunk: <span class="tok-kw">if</span> (track.bytes_shrunk) <span class="tok-type">usize</span> <span class="tok-kw">else</span> <span class="tok-type">void</span> = <span class="tok-kw">if</span> (track.bytes_shrunk) <span class="tok-number">0</span> <span class="tok-kw">else</span> {},</span>
+<span class="line" id="L89">        <span class="tok-comment">/// Bytes removed by calls to `free`</span></span>
+<span class="line" id="L90">        bytes_freed: <span class="tok-kw">if</span> (track.bytes_freed) <span class="tok-type">usize</span> <span class="tok-kw">else</span> <span class="tok-type">void</span> = <span class="tok-kw">if</span> (track.bytes_freed) <span class="tok-number">0</span> <span class="tok-kw">else</span> {},</span>
+<span class="line" id="L91"></span>
+<span class="line" id="L92">        <span class="tok-comment">/// The maximum number of bytes allocated at a single time</span></span>
+<span class="line" id="L93">        <span class="tok-comment">/// Note that this will only work if also tracking bytes_allocated,</span></span>
+<span class="line" id="L94">        <span class="tok-comment">///  bytes_grown, bytes_shrunk, and bytes_freed</span></span>
+<span class="line" id="L95">        bytes_high_water_mark: <span class="tok-kw">if</span> (track.bytes_high_water_mark) <span class="tok-type">usize</span> <span class="tok-kw">else</span> <span class="tok-type">void</span> = <span class="tok-kw">if</span> (track.bytes_high_water_mark) <span class="tok-number">0</span> <span class="tok-kw">else</span> {},</span>
+<span class="line" id="L96"></span>
+<span class="line" id="L97">        <span class="tok-comment">/// Returns the number of bytes currently allocated, including those</span></span>
+<span class="line" id="L98">        <span class="tok-comment">///  claimed by calls to `resize`.  Note that this does not capture</span></span>
+<span class="line" id="L99">        <span class="tok-comment">///  additional memory that may be in use due to bookkeeping or alignment.</span></span>
+<span class="line" id="L100">        <span class="tok-comment">/// This method returns zero if any of the following are not tracked:</span></span>
+<span class="line" id="L101">        <span class="tok-comment">///  bytes_allocated, bytes_grown, bytes_shrunk, bytes_freed</span></span>
+<span class="line" id="L102">        <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">bytesInUse</span>(self: Self) <span class="tok-type">usize</span> {</span>
+<span class="line" id="L103">            <span class="tok-kw">const</span> tracking_needed = <span class="tok-kw">comptime</span> (</span>
+<span class="line" id="L104">                isTracking(<span class="tok-str">&quot;bytes_allocated&quot;</span>) <span class="tok-kw">and</span></span>
+<span class="line" id="L105">                isTracking(<span class="tok-str">&quot;bytes_grown&quot;</span>) <span class="tok-kw">and</span></span>
+<span class="line" id="L106">                isTracking(<span class="tok-str">&quot;bytes_shrunk&quot;</span>) <span class="tok-kw">and</span></span>
+<span class="line" id="L107">                isTracking(<span class="tok-str">&quot;bytes_freed&quot;</span>)</span>
+<span class="line" id="L108">            );</span>
+<span class="line" id="L109">            <span class="tok-kw">return</span> <span class="tok-kw">if</span> (<span class="tok-kw">comptime</span> tracking_needed)</span>
+<span class="line" id="L110">                self.bytes_allocated + self.bytes_grown - self.bytes_shrunk - self.bytes_freed</span>
+<span class="line" id="L111">            <span class="tok-kw">else</span> <span class="tok-number">0</span>;</span>
+<span class="line" id="L112">        }</span>
+<span class="line" id="L113"></span>
+<span class="line" id="L114">        <span class="tok-comment">/// Because fields are defined as `void` if not tracked, it may be</span></span>
+<span class="line" id="L115">        <span class="tok-comment">///  more convenient to use this method which will return zero if the</span></span>
+<span class="line" id="L116">        <span class="tok-comment">///  statistic was not tracked.</span></span>
+<span class="line" id="L117">        <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">get</span>(self: Self, <span class="tok-kw">comptime</span> counter_name: []<span class="tok-kw">const</span> <span class="tok-type">u8</span>) <span class="tok-type">usize</span> {</span>
+<span class="line" id="L118">            <span class="tok-kw">return</span> <span class="tok-kw">if</span> (<span class="tok-kw">comptime</span> isTracking(counter_name)) <span class="tok-builtin">@field</span>(self, counter_name) <span class="tok-kw">else</span> <span class="tok-number">0</span>;</span>
+<span class="line" id="L119">        }</span>
+<span class="line" id="L120"></span>
+<span class="line" id="L121">        <span class="tok-kw">fn</span> <span class="tok-fn">isTracking</span>(<span class="tok-kw">comptime</span> counter_name: []<span class="tok-kw">const</span> <span class="tok-type">u8</span>) <span class="tok-type">bool</span> {</span>
+<span class="line" id="L122">            <span class="tok-kw">return</span> <span class="tok-builtin">@field</span>(track, counter_name);</span>
+<span class="line" id="L123">        }</span>
+<span class="line" id="L124"></span>
+<span class="line" id="L125">        <span class="tok-kw">fn</span> <span class="tok-fn">maybeSetHWM</span>(self: *Self) <span class="tok-type">void</span> {</span>
+<span class="line" id="L126">            <span class="tok-kw">if</span> (<span class="tok-kw">comptime</span> isTracking(<span class="tok-str">&quot;bytes_high_water_mark&quot;</span>)) {</span>
+<span class="line" id="L127">                self.bytes_high_water_mark = std.math.max(self.bytes_high_water_mark, self.bytesInUse());</span>
+<span class="line" id="L128">            }</span>
+<span class="line" id="L129">        }</span>
+<span class="line" id="L130"></span>
+<span class="line" id="L131">        <span class="tok-kw">fn</span> <span class="tok-fn">add</span>(self: *Self, <span class="tok-kw">comptime</span> counter_name: []<span class="tok-kw">const</span> <span class="tok-type">u8</span>, amount: <span class="tok-type">usize</span>) <span class="tok-type">void</span> {</span>
+<span class="line" id="L132">            <span class="tok-comment">// If `counter_name` is not being tracked this function should become</span>
+</span>
+<span class="line" id="L133">            <span class="tok-comment">//  a noop and the call removed at compile-time.</span>
+</span>
+<span class="line" id="L134">            <span class="tok-kw">if</span> (<span class="tok-kw">comptime</span> isTracking(counter_name)) {</span>
+<span class="line" id="L135">                <span class="tok-builtin">@field</span>(self, counter_name) += amount;</span>
+<span class="line" id="L136">            }</span>
+<span class="line" id="L137">        }</span>
+<span class="line" id="L138">    };</span>
+<span class="line" id="L139">}</span>
+<span class="line" id="L140"></span>
+<span class="line" id="L141"><span class="tok-comment">/// This allocator wraps another allocator and forwards all requests to it,</span></span>
+<span class="line" id="L142"><span class="tok-comment">///  tracking various statistics.</span></span>
+<span class="line" id="L143"><span class="tok-comment">///</span></span>
+<span class="line" id="L144"><span class="tok-comment">/// The underlying allocator may use some bytes for bookkeeping or have &quot;slack&quot;</span></span>
+<span class="line" id="L145"><span class="tok-comment">///  bytes due to alignment requests: the tracking in this allocator is not</span></span>
+<span class="line" id="L146"><span class="tok-comment">///  aware of those bytes, it can only track the actual requests made.</span></span>
+<span class="line" id="L147"><span class="tok-comment">///</span></span>
+<span class="line" id="L148"><span class="tok-comment">/// Because each statistic tracked requires a `usize` counter, tracking all</span></span>
+<span class="line" id="L149"><span class="tok-comment">///  statistics leads to a rather heavy allocator--it's recommended that you</span></span>
+<span class="line" id="L150"><span class="tok-comment">///  request only the statistics that are useful to you.  Untracked statistics</span></span>
+<span class="line" id="L151"><span class="tok-comment">///  should have zero memory or CPU overhead at runtime.  A StatsAllocator</span></span>
+<span class="line" id="L152"><span class="tok-comment">///  with nothing tracked has zero overhead as the call to `allocator` simply</span></span>
+<span class="line" id="L153"><span class="tok-comment">///  returns the underlying backing allocator.</span></span>
+<span class="line" id="L154"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">StatsAllocator</span>(<span class="tok-kw">comptime</span> track: Tracking) <span class="tok-type">type</span> {</span>
+<span class="line" id="L155">    <span class="tok-kw">return</span> <span class="tok-kw">struct</span> {</span>
+<span class="line" id="L156">        <span class="tok-kw">const</span> Self = <span class="tok-builtin">@This</span>();</span>
+<span class="line" id="L157"></span>
+<span class="line" id="L158">        <span class="tok-comment">///</span></span>
+<span class="line" id="L159">        backing_allocator: Allocator,</span>
+<span class="line" id="L160"></span>
+<span class="line" id="L161">        <span class="tok-comment">///</span></span>
+<span class="line" id="L162">        stats: Stats(track),</span>
+<span class="line" id="L163"></span>
+<span class="line" id="L164"></span>
+<span class="line" id="L165">        <span class="tok-comment">///</span></span>
+<span class="line" id="L166">        <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">init</span>(backing_allocator: Allocator) Self {</span>
+<span class="line" id="L167">            <span class="tok-kw">return</span> .{</span>
+<span class="line" id="L168">                .backing_allocator = backing_allocator,</span>
+<span class="line" id="L169">                .stats = .{},</span>
+<span class="line" id="L170">            };</span>
+<span class="line" id="L171">        }</span>
+<span class="line" id="L172"></span>
+<span class="line" id="L173">        <span class="tok-comment">///</span></span>
+<span class="line" id="L174">        <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">allocator</span>(self: *Self) Allocator {</span>
+<span class="line" id="L175">            <span class="tok-comment">// As an optimization, if no statistics are being tracked simply</span>
+</span>
+<span class="line" id="L176">            <span class="tok-comment">//  return the backing allocator.  This allows us to avoid the</span>
+</span>
+<span class="line" id="L177">            <span class="tok-comment">//  overhead of another layer of function pointer indirection</span>
+</span>
+<span class="line" id="L178">            <span class="tok-kw">return</span> <span class="tok-kw">if</span> (<span class="tok-kw">comptime</span> track.count() == <span class="tok-number">0</span>)</span>
+<span class="line" id="L179">                       self.backing_allocator</span>
+<span class="line" id="L180">                   <span class="tok-kw">else</span></span>
+<span class="line" id="L181">                        Allocator{</span>
+<span class="line" id="L182">                            .ptr = self,</span>
+<span class="line" id="L183">                            .vtable = &amp;.{</span>
+<span class="line" id="L184">                                .alloc = alloc,</span>
+<span class="line" id="L185">                                .resize = resize,</span>
+<span class="line" id="L186">                                .free = free</span>
+<span class="line" id="L187">                            },</span>
+<span class="line" id="L188">                        };</span>
+<span class="line" id="L189">        }</span>
+<span class="line" id="L190"></span>
+<span class="line" id="L191">        <span class="tok-kw">fn</span> <span class="tok-fn">alloc</span>(ctx: *<span class="tok-type">anyopaque</span>, n: <span class="tok-type">usize</span>, log2_ptr_align: <span class="tok-type">u8</span>, ra: <span class="tok-type">usize</span>) ?[*]<span class="tok-type">u8</span> {</span>
+<span class="line" id="L192">            <span class="tok-kw">const</span> self = <span class="tok-builtin">@ptrCast</span>(*Self, <span class="tok-builtin">@alignCast</span>(<span class="tok-builtin">@alignOf</span>(Self), ctx));</span>
+<span class="line" id="L193"></span>
+<span class="line" id="L194">            self.stats.add(<span class="tok-str">&quot;allocs&quot;</span>, <span class="tok-number">1</span>);</span>
+<span class="line" id="L195">            self.stats.add(<span class="tok-str">&quot;bytes_requested&quot;</span>, n);</span>
+<span class="line" id="L196">            <span class="tok-kw">const</span> ret = self.backing_allocator.vtable.alloc(self.backing_allocator.ptr, n, log2_ptr_align, ra);</span>
+<span class="line" id="L197"></span>
+<span class="line" id="L198">            <span class="tok-kw">if</span> (ret == <span class="tok-null">null</span>) {</span>
+<span class="line" id="L199">                self.stats.add(<span class="tok-str">&quot;alloc_failures&quot;</span>, <span class="tok-number">1</span>);</span>
+<span class="line" id="L200">            } <span class="tok-kw">else</span> {</span>
+<span class="line" id="L201">                self.stats.add(<span class="tok-str">&quot;bytes_allocated&quot;</span>, n);</span>
+<span class="line" id="L202">                self.stats.maybeSetHWM();</span>
+<span class="line" id="L203">            }</span>
+<span class="line" id="L204"></span>
+<span class="line" id="L205">            <span class="tok-kw">return</span> ret;</span>
+<span class="line" id="L206">        }</span>
+<span class="line" id="L207"></span>
+<span class="line" id="L208">        <span class="tok-kw">fn</span> <span class="tok-fn">resize</span>(ctx: *<span class="tok-type">anyopaque</span>, buf: []<span class="tok-type">u8</span>, buf_align: <span class="tok-type">u8</span>, new_size: <span class="tok-type">usize</span>, ra: <span class="tok-type">usize</span>) <span class="tok-type">bool</span> {</span>
+<span class="line" id="L209">            <span class="tok-kw">const</span> self = <span class="tok-builtin">@ptrCast</span>(*Self, <span class="tok-builtin">@alignCast</span>(<span class="tok-builtin">@alignOf</span>(Self), ctx));</span>
+<span class="line" id="L210"></span>
+<span class="line" id="L211">            self.stats.add(<span class="tok-str">&quot;resizes&quot;</span>, <span class="tok-number">1</span>);</span>
+<span class="line" id="L212">            <span class="tok-kw">const</span> ret = self.backing_allocator.vtable.resize(self.backing_allocator.ptr, buf, buf_align, new_size, ra);</span>
+<span class="line" id="L213"></span>
+<span class="line" id="L214">            <span class="tok-kw">if</span> (ret) {</span>
+<span class="line" id="L215">                <span class="tok-kw">if</span> (new_size &gt; buf.len) {</span>
+<span class="line" id="L216">                    self.stats.add(<span class="tok-str">&quot;bytes_grown&quot;</span>, new_size - buf.len);</span>
+<span class="line" id="L217">                    self.stats.maybeSetHWM();</span>
+<span class="line" id="L218">                } <span class="tok-kw">else</span> {</span>
+<span class="line" id="L219">                    self.stats.add(<span class="tok-str">&quot;bytes_shrunk&quot;</span>, buf.len - new_size);</span>
+<span class="line" id="L220">                }</span>
+<span class="line" id="L221">            } <span class="tok-kw">else</span> {</span>
+<span class="line" id="L222">                self.stats.add(<span class="tok-str">&quot;resize_failures&quot;</span>, <span class="tok-number">1</span>);</span>
+<span class="line" id="L223">            }</span>
+<span class="line" id="L224"></span>
+<span class="line" id="L225">            <span class="tok-kw">return</span> ret;</span>
+<span class="line" id="L226">        }</span>
+<span class="line" id="L227"></span>
+<span class="line" id="L228">        <span class="tok-kw">fn</span> <span class="tok-fn">free</span>(ctx: *<span class="tok-type">anyopaque</span>, buf: []<span class="tok-type">u8</span>, buf_align: <span class="tok-type">u8</span>, ra: <span class="tok-type">usize</span>) <span class="tok-type">void</span> {</span>
+<span class="line" id="L229">            <span class="tok-kw">const</span> self = <span class="tok-builtin">@ptrCast</span>(*Self, <span class="tok-builtin">@alignCast</span>(<span class="tok-builtin">@alignOf</span>(Self), ctx));</span>
+<span class="line" id="L230">            self.stats.add(<span class="tok-str">&quot;frees&quot;</span>, <span class="tok-number">1</span>);</span>
+<span class="line" id="L231"></span>
+<span class="line" id="L232">            self.backing_allocator.vtable.free(self.backing_allocator.ptr, buf, buf_align, ra);</span>
+<span class="line" id="L233">            self.stats.add(<span class="tok-str">&quot;bytes_freed&quot;</span>, buf.len);</span>
+<span class="line" id="L234">        }</span>
+<span class="line" id="L235">    };</span>
+<span class="line" id="L236">}</span>
+<span class="line" id="L237"></span>
+<span class="line" id="L238"><span class="tok-kw">test</span> <span class="tok-str">&quot;StatsAllocator: no overhead&quot;</span> {</span>
+<span class="line" id="L239">    <span class="tok-kw">var</span> backing = std.heap.GeneralPurposeAllocator(.{}){};</span>
+<span class="line" id="L240">    <span class="tok-kw">var</span> statsAllocator = StatsAllocator(.{}).init(backing.allocator());</span>
+<span class="line" id="L241"></span>
+<span class="line" id="L242">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">0</span>), <span class="tok-builtin">@sizeOf</span>(<span class="tok-builtin">@TypeOf</span>(statsAllocator.stats)));</span>
+<span class="line" id="L243"></span>
+<span class="line" id="L244">    <span class="tok-kw">const</span> ally = statsAllocator.allocator();</span>
+<span class="line" id="L245">    <span class="tok-kw">const</span> alloc1 = <span class="tok-kw">try</span> ally.alloc(<span class="tok-type">u8</span>, <span class="tok-number">10</span>);</span>
+<span class="line" id="L246">    ally.free(alloc1);</span>
+<span class="line" id="L247">}</span>
+<span class="line" id="L248"></span>
+<span class="line" id="L249"><span class="tok-kw">test</span> <span class="tok-str">&quot;StatsAllocator: track all&quot;</span> {</span>
+<span class="line" id="L250">    <span class="tok-kw">var</span> backing = std.heap.GeneralPurposeAllocator(.{}){};</span>
+<span class="line" id="L251">    <span class="tok-kw">var</span> statsAllocator = StatsAllocator(Tracking.all()).init(backing.allocator());</span>
+<span class="line" id="L252"></span>
+<span class="line" id="L253">    <span class="tok-kw">const</span> ally = statsAllocator.allocator();</span>
+<span class="line" id="L254">    <span class="tok-kw">var</span> alloc1 = <span class="tok-kw">try</span> ally.alloc(<span class="tok-type">u8</span>, <span class="tok-number">10</span>);</span>
+<span class="line" id="L255">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">1</span>), statsAllocator.stats.allocs);</span>
+<span class="line" id="L256">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">10</span>), statsAllocator.stats.bytes_allocated);</span>
+<span class="line" id="L257">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">10</span>), statsAllocator.stats.bytesInUse());</span>
+<span class="line" id="L258"></span>
+<span class="line" id="L259">    <span class="tok-comment">// grow it</span>
+</span>
+<span class="line" id="L260">    <span class="tok-kw">try</span> std.testing.expect(ally.resize(alloc1, <span class="tok-number">15</span>));</span>
+<span class="line" id="L261">    alloc1 = alloc1.ptr[<span class="tok-number">0</span>..<span class="tok-number">15</span>];</span>
+<span class="line" id="L262">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">1</span>), statsAllocator.stats.resizes);</span>
+<span class="line" id="L263">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">5</span>), statsAllocator.stats.bytes_grown);</span>
+<span class="line" id="L264">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">15</span>), statsAllocator.stats.bytesInUse());</span>
+<span class="line" id="L265"></span>
+<span class="line" id="L266">    <span class="tok-comment">// shrink it</span>
+</span>
+<span class="line" id="L267">    <span class="tok-kw">try</span> std.testing.expect(ally.resize(alloc1, <span class="tok-number">5</span>));</span>
+<span class="line" id="L268">    alloc1 = alloc1.ptr[<span class="tok-number">0</span>..<span class="tok-number">5</span>];</span>
+<span class="line" id="L269">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">2</span>), statsAllocator.stats.resizes);</span>
+<span class="line" id="L270">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">10</span>), statsAllocator.stats.bytes_shrunk);</span>
+<span class="line" id="L271">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">5</span>), statsAllocator.stats.bytesInUse());</span>
+<span class="line" id="L272"></span>
+<span class="line" id="L273">    <span class="tok-comment">// free it</span>
+</span>
+<span class="line" id="L274">    ally.free(alloc1);</span>
+<span class="line" id="L275">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">1</span>), statsAllocator.stats.frees);</span>
+<span class="line" id="L276">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">5</span>), statsAllocator.stats.bytes_freed);</span>
+<span class="line" id="L277">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">0</span>), statsAllocator.stats.bytesInUse());</span>
+<span class="line" id="L278"></span>
+<span class="line" id="L279">    <span class="tok-comment">// High water mark?</span>
+</span>
+<span class="line" id="L280">    <span class="tok-kw">try</span> std.testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">15</span>), statsAllocator.stats.bytes_high_water_mark);</span>
+<span class="line" id="L281">}</span>
+<span class="line" id="L282"></span>
+</code></pre></body>
+</html>

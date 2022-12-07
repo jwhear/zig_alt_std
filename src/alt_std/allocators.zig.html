@@ -116,5 +116,17 @@
 <span class="line" id="L3"><span class="tok-comment">///</span></span>
 <span class="line" id="L4"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> BucketingAllocator = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;allocators/BucketingAllocator.zig&quot;</span>);</span>
 <span class="line" id="L5"></span>
+<span class="line" id="L6"><span class="tok-kw">const</span> stats = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;allocators/stats_allocator.zig&quot;</span>);</span>
+<span class="line" id="L7"><span class="tok-comment">///</span></span>
+<span class="line" id="L8"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> StatsAllocator = stats.StatsAllocator;</span>
+<span class="line" id="L9"><span class="tok-comment">///</span></span>
+<span class="line" id="L10"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> Tracking = stats.Tracking;</span>
+<span class="line" id="L11"></span>
+<span class="line" id="L12"><span class="tok-kw">test</span> <span class="tok-str">&quot;run all tests&quot;</span> {</span>
+<span class="line" id="L13">    <span class="tok-kw">comptime</span> {</span>
+<span class="line" id="L14">        <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;std&quot;</span>).testing.refAllDeclsRecursive(<span class="tok-builtin">@This</span>());</span>
+<span class="line" id="L15">    }</span>
+<span class="line" id="L16">}</span>
+<span class="line" id="L17"></span>
 </code></pre></body>
 </html>
