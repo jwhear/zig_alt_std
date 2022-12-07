@@ -221,26 +221,45 @@ fn resize(ctx: *anyopaque, buf: []u8, buf_align: u8, new_size: usize, ra: usize)
 
     std.debug.assert(self.ownsSlice(buf));
 
-    // Same size, do nothing
-    if (new_size == buf.len) return true;
-
     // Is this a shrink request?
     if (new_size < buf.len) {
         return self.shrink(buf, new_size);
     }
 
-    // Find the index of the buffer's end block
-    const index = self.getIndex(if (buf.len > 0) &buf[buf.len-1] else @ptrCast(*u8, buf.ptr));
+    const additional_bytes_needed = new_size - buf.len;
+
+    // Same size?  Do nothing
+    if (additional_bytes_needed == 0) return true;
 
     // How many additional blocks do we need?
-    const blocks_needed = common.divideRoundUp(new_size - buf.len, self.block_size);
+    // First we need to look at what's actually being used
+    const start_block_index = self.getIndex(@ptrCast(*u8, buf.ptr));
+    const start_block_offset = @ptrToInt(buf.ptr) - @ptrToInt(self.getBlock(start_block_index).ptr);
+    const end_block_index = self.getIndex(if (buf.len > 0) &buf[buf.len-1] else @ptrCast(*u8, buf.ptr));
+    const blocks_claimed = end_block_index - start_block_index + 1;
+
+    // Now we can determine how many spare bytes are available at the end of the
+    //  current end block
+    const available_in_end_block = (blocks_claimed * self.block_size) - (start_block_offset + buf.len);
+
+    // Can this request be accommodated without claiming any additional blocks?
+    if (available_in_end_block >= additional_bytes_needed)
+        return true;
+
+    // At this point we need to determine how many additional blocks we need
+    const blocks_needed = common.divideRoundUp(additional_bytes_needed - available_in_end_block, self.block_size);
+    if (end_block_index + blocks_needed >= self.in_use_bitmap.capacity())
+        return false;
 
     // Are enough blocks immediately available after the current blocks to extend?
-    var available_blocks = self.countAvailableBlocks(index, blocks_needed);
+    // countAvailableBlocks assumes that the index passed is available, check that:
+    if (self.in_use_bitmap.isSet(end_block_index + 1))
+        return false;
+    const available_blocks = self.countAvailableBlocks(end_block_index+1, blocks_needed);
     if (available_blocks < blocks_needed) return false;
 
-    // Claim the additional block and return the grown slice
-    self.markBlocks(index+1, blocks_needed, true);
+    // Claim the additional block(s) and return the grown slice
+    self.markBlocks(end_block_index + 1, blocks_needed, true);
     return true;
 }
 
@@ -284,9 +303,9 @@ fn getIndex(self: *Self, ptr: *u8) usize {
     return (@ptrToInt(ptr) - @ptrToInt(self.allocations.ptr)) / self.block_size;
 }
 
-// Returns the number of available blocks starting from `index`.
-// Assumes the block at `index` is available.
-// Exits early if `up_to` count is reached.
+/// Returns the number of available blocks starting from `index`.
+/// Assumes the block at `index` is available.
+/// Exits early if `up_to` count is reached.
 fn countAvailableBlocks(self: *const Self, index: usize, up_to: usize) usize {
     std.debug.assert(index < self.in_use_bitmap.capacity());
 
@@ -304,9 +323,9 @@ fn countAvailableBlocks(self: *const Self, index: usize, up_to: usize) usize {
     return available_blocks;
 }
 
-// Modifies the in_use_bitmap, setting the bits from start up to start+len
-//  to `as` (true = in use, false = available).
-// Also updates the `first_available_block` field.
+/// Modifies the in_use_bitmap, setting the bits from start up to start+len
+///  to `as` (true = in use, false = available).
+/// Also updates the `first_available_block` field.
 fn markBlocks(self: *Self, start: usize, len: usize, as: bool) void {
 
     const old_first_avail = self.first_available_block;
@@ -395,4 +414,43 @@ test "BitmapBlockAllocator" {
 
 test "testAll" {
     std.testing.refAllDeclsRecursive(@This());
+}
+
+test "resize" {
+    var small_buf: [1024]u8 = undefined;
+    var small = Self.init(&small_buf, 8, 125);
+    var ally = small.allocator();
+
+    var alloc1 = try std.fmt.allocPrint(ally, "Tiny", .{});
+
+    // This should succeed, one block used
+    try std.testing.expect(ally.resize(alloc1, 7));
+    alloc1 = alloc1.ptr[0..7];
+    try std.testing.expectEqual(@as(usize, 1), small.getUsage().used_blocks);
+
+    // This should succeed, two blocks used
+    try std.testing.expect(ally.resize(alloc1, 9));
+    alloc1 = alloc1.ptr[0..9];
+    try std.testing.expectEqual(@as(usize, 2), small.getUsage().used_blocks);
+
+    // Make another allocation to prevent future growth of alloc1
+    const alloc2 = try std.fmt.allocPrint(ally, "Second", .{});
+    try std.testing.expectEqual(@as(usize, 3), small.getUsage().used_blocks);
+
+    // Resize alloc1 to use more of its two blocks, this should succeed
+    try std.testing.expect(ally.resize(alloc1, 12));
+    alloc1 = alloc1.ptr[0..12];
+    try std.testing.expectEqual(@as(usize, 3), small.getUsage().used_blocks);
+
+    // Resize alloc1 to use more blocks, this should fail
+    try std.testing.expect(!ally.resize(alloc1, 17));
+    try std.testing.expectEqual(@as(usize, 3), small.getUsage().used_blocks);
+
+    // Freeing alloc1 should free its two blocks
+    ally.free(alloc1);
+    try std.testing.expectEqual(@as(usize, 1), small.getUsage().used_blocks);
+
+    // Freeing alloc2 should make used_blocks be zero
+    ally.free(alloc2);
+    try std.testing.expectEqual(@as(usize, 0), small.getUsage().used_blocks);
 }
