@@ -120,13 +120,15 @@
 <span class="line" id="L7"><span class="tok-comment">///</span></span>
 <span class="line" id="L8"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> StatsAllocator = stats.StatsAllocator;</span>
 <span class="line" id="L9"><span class="tok-comment">///</span></span>
-<span class="line" id="L10"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> Tracking = stats.Tracking;</span>
-<span class="line" id="L11"></span>
-<span class="line" id="L12"><span class="tok-kw">test</span> <span class="tok-str">&quot;run all tests&quot;</span> {</span>
-<span class="line" id="L13">    <span class="tok-kw">comptime</span> {</span>
-<span class="line" id="L14">        <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;std&quot;</span>).testing.refAllDeclsRecursive(<span class="tok-builtin">@This</span>());</span>
-<span class="line" id="L15">    }</span>
-<span class="line" id="L16">}</span>
-<span class="line" id="L17"></span>
+<span class="line" id="L10"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> Stats = stats.Stats;</span>
+<span class="line" id="L11"><span class="tok-comment">///</span></span>
+<span class="line" id="L12"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> Tracking = stats.Tracking;</span>
+<span class="line" id="L13"></span>
+<span class="line" id="L14"><span class="tok-kw">test</span> <span class="tok-str">&quot;run all tests&quot;</span> {</span>
+<span class="line" id="L15">    <span class="tok-kw">comptime</span> {</span>
+<span class="line" id="L16">        <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;std&quot;</span>).testing.refAllDeclsRecursive(<span class="tok-builtin">@This</span>());</span>
+<span class="line" id="L17">    }</span>
+<span class="line" id="L18">}</span>
+<span class="line" id="L19"></span>
 </code></pre></body>
 </html>
