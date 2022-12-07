@@ -7,6 +7,8 @@ const stats = @import("allocators/stats_allocator.zig");
 ///
 pub const StatsAllocator = stats.StatsAllocator;
 ///
+pub const Stats = stats.Stats;
+///
 pub const Tracking = stats.Tracking;
 
 test "run all tests" {
