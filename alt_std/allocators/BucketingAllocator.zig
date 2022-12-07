@@ -38,13 +38,17 @@ buckets: []Bucket,
 
 /// Takes a slice of `Bucket`.  The buckets should not overlap, i.e. multiple
 ///  buckets should not accept the same request size.
+/// Because the Allocator interface does not expose a method for deiniting,
+///  this allocator does not have a `deinit` method.  The caller is responsible
+///  for any cleanup of the allocator within the buckets.
 pub fn init(buckets: []Bucket) Self {
     return .{
         .buckets = buckets,
     };
 }
 
-///
+/// Returns the bucket responsible for allocations of `size`.
+/// Returns null if no such bucket has been defined.
 pub fn getBucketFor(self: *Self, size: usize) ?Bucket {
     for (self.buckets) |bucket| {
         if (bucket.accepts(size)) return bucket;
