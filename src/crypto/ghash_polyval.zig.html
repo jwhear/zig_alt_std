@@ -145,9 +145,9 @@
 <span class="line" id="L32">        <span class="tok-kw">pub</span> <span class="tok-kw">const</span> key_length = <span class="tok-number">16</span>;</span>
 <span class="line" id="L33"></span>
 <span class="line" id="L34">        <span class="tok-kw">const</span> pc_count = <span class="tok-kw">if</span> (builtin.mode != .ReleaseSmall) <span class="tok-number">16</span> <span class="tok-kw">else</span> <span class="tok-number">2</span>;</span>
-<span class="line" id="L35">        <span class="tok-kw">const</span> agg_4_treshold = <span class="tok-number">22</span>;</span>
-<span class="line" id="L36">        <span class="tok-kw">const</span> agg_8_treshold = <span class="tok-number">84</span>;</span>
-<span class="line" id="L37">        <span class="tok-kw">const</span> agg_16_treshold = <span class="tok-number">328</span>;</span>
+<span class="line" id="L35">        <span class="tok-kw">const</span> agg_4_threshold = <span class="tok-number">22</span>;</span>
+<span class="line" id="L36">        <span class="tok-kw">const</span> agg_8_threshold = <span class="tok-number">84</span>;</span>
+<span class="line" id="L37">        <span class="tok-kw">const</span> agg_16_threshold = <span class="tok-number">328</span>;</span>
 <span class="line" id="L38"></span>
 <span class="line" id="L39">        <span class="tok-comment">// Before the Haswell architecture, the carryless multiplication instruction was</span>
 </span>
@@ -188,7 +188,7 @@
 </span>
 <span class="line" id="L67">                hx[<span class="tok-number">3</span>] = reduce(clsq128(hx[<span class="tok-number">1</span>])); <span class="tok-comment">// h^4 = h^2^2</span>
 </span>
-<span class="line" id="L68">                <span class="tok-kw">if</span> (block_count &gt;= agg_8_treshold) {</span>
+<span class="line" id="L68">                <span class="tok-kw">if</span> (block_count &gt;= agg_8_threshold) {</span>
 <span class="line" id="L69">                    hx[<span class="tok-number">4</span>] = reduce(clmul128(hx[<span class="tok-number">3</span>], h)); <span class="tok-comment">// h^5</span>
 </span>
 <span class="line" id="L70">                    hx[<span class="tok-number">5</span>] = reduce(clsq128(hx[<span class="tok-number">2</span>])); <span class="tok-comment">// h^6 = h^3^2</span>
@@ -198,7 +198,7 @@
 <span class="line" id="L72">                    hx[<span class="tok-number">7</span>] = reduce(clsq128(hx[<span class="tok-number">3</span>])); <span class="tok-comment">// h^8 = h^4^2</span>
 </span>
 <span class="line" id="L73">                }</span>
-<span class="line" id="L74">                <span class="tok-kw">if</span> (block_count &gt;= agg_16_treshold) {</span>
+<span class="line" id="L74">                <span class="tok-kw">if</span> (block_count &gt;= agg_16_threshold) {</span>
 <span class="line" id="L75">                    <span class="tok-kw">var</span> i: <span class="tok-type">usize</span> = <span class="tok-number">8</span>;</span>
 <span class="line" id="L76">                    <span class="tok-kw">while</span> (i &lt; <span class="tok-number">16</span>) : (i += <span class="tok-number">2</span>) {</span>
 <span class="line" id="L77">                        hx[i] = reduce(clmul128(hx[i - <span class="tok-number">1</span>], h));</span>
@@ -406,7 +406,7 @@
 <span class="line" id="L263"></span>
 <span class="line" id="L264">            <span class="tok-kw">var</span> i: <span class="tok-type">usize</span> = <span class="tok-number">0</span>;</span>
 <span class="line" id="L265"></span>
-<span class="line" id="L266">            <span class="tok-kw">if</span> (builtin.mode != .ReleaseSmall <span class="tok-kw">and</span> msg.len &gt;= agg_16_treshold * block_length) {</span>
+<span class="line" id="L266">            <span class="tok-kw">if</span> (builtin.mode != .ReleaseSmall <span class="tok-kw">and</span> msg.len &gt;= agg_16_threshold * block_length) {</span>
 <span class="line" id="L267">                <span class="tok-comment">// 16-blocks aggregated reduction</span>
 </span>
 <span class="line" id="L268">                <span class="tok-kw">while</span> (i + <span class="tok-number">256</span> &lt;= msg.len) : (i += <span class="tok-number">256</span>) {</span>
@@ -417,7 +417,7 @@
 <span class="line" id="L273">                    }</span>
 <span class="line" id="L274">                    acc = reduce(u);</span>
 <span class="line" id="L275">                }</span>
-<span class="line" id="L276">            } <span class="tok-kw">else</span> <span class="tok-kw">if</span> (builtin.mode != .ReleaseSmall <span class="tok-kw">and</span> msg.len &gt;= agg_8_treshold * block_length) {</span>
+<span class="line" id="L276">            } <span class="tok-kw">else</span> <span class="tok-kw">if</span> (builtin.mode != .ReleaseSmall <span class="tok-kw">and</span> msg.len &gt;= agg_8_threshold * block_length) {</span>
 <span class="line" id="L277">                <span class="tok-comment">// 8-blocks aggregated reduction</span>
 </span>
 <span class="line" id="L278">                <span class="tok-kw">while</span> (i + <span class="tok-number">128</span> &lt;= msg.len) : (i += <span class="tok-number">128</span>) {</span>
@@ -428,7 +428,7 @@
 <span class="line" id="L283">                    }</span>
 <span class="line" id="L284">                    acc = reduce(u);</span>
 <span class="line" id="L285">                }</span>
-<span class="line" id="L286">            } <span class="tok-kw">else</span> <span class="tok-kw">if</span> (builtin.mode != .ReleaseSmall <span class="tok-kw">and</span> msg.len &gt;= agg_4_treshold * block_length) {</span>
+<span class="line" id="L286">            } <span class="tok-kw">else</span> <span class="tok-kw">if</span> (builtin.mode != .ReleaseSmall <span class="tok-kw">and</span> msg.len &gt;= agg_4_threshold * block_length) {</span>
 <span class="line" id="L287">                <span class="tok-comment">// 4-blocks aggregated reduction</span>
 </span>
 <span class="line" id="L288">                <span class="tok-kw">while</span> (i + <span class="tok-number">64</span> &lt;= msg.len) : (i += <span class="tok-number">64</span>) {</span>

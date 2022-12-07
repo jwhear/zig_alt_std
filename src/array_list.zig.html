@@ -238,7 +238,7 @@
 <span class="line" id="L125">        }</span>
 <span class="line" id="L126"></span>
 <span class="line" id="L127">        <span class="tok-comment">/// Creates a copy of this ArrayList, using the same allocator.</span></span>
-<span class="line" id="L128">        <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">clone</span>(self: *Self) Allocator.Error!Self {</span>
+<span class="line" id="L128">        <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">clone</span>(self: Self) Allocator.Error!Self {</span>
 <span class="line" id="L129">            <span class="tok-kw">var</span> cloned = <span class="tok-kw">try</span> Self.initCapacity(self.allocator, self.capacity);</span>
 <span class="line" id="L130">            cloned.appendSliceAssumeCapacity(self.items);</span>
 <span class="line" id="L131">            <span class="tok-kw">return</span> cloned;</span>
@@ -680,7 +680,7 @@
 <span class="line" id="L560">        }</span>
 <span class="line" id="L561"></span>
 <span class="line" id="L562">        <span class="tok-comment">/// Creates a copy of this ArrayList.</span></span>
-<span class="line" id="L563">        <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">clone</span>(self: *Self, allocator: Allocator) Allocator.Error!Self {</span>
+<span class="line" id="L563">        <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">clone</span>(self: Self, allocator: Allocator) Allocator.Error!Self {</span>
 <span class="line" id="L564">            <span class="tok-kw">var</span> cloned = <span class="tok-kw">try</span> Self.initCapacity(allocator, self.capacity);</span>
 <span class="line" id="L565">            cloned.appendSliceAssumeCapacity(self.items);</span>
 <span class="line" id="L566">            <span class="tok-kw">return</span> cloned;</span>

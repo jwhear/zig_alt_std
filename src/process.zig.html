@@ -481,7 +481,7 @@
 <span class="line" id="L355">};</span>
 <span class="line" id="L356"></span>
 <span class="line" id="L357"><span class="tok-comment">/// Caller must free returned memory.</span></span>
-<span class="line" id="L358"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">getEnvVarOwned</span>(allocator: mem.Allocator, key: []<span class="tok-kw">const</span> <span class="tok-type">u8</span>) GetEnvVarOwnedError![]<span class="tok-type">u8</span> {</span>
+<span class="line" id="L358"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">getEnvVarOwned</span>(allocator: Allocator, key: []<span class="tok-kw">const</span> <span class="tok-type">u8</span>) GetEnvVarOwnedError![]<span class="tok-type">u8</span> {</span>
 <span class="line" id="L359">    <span class="tok-kw">if</span> (builtin.os.tag == .windows) {</span>
 <span class="line" id="L360">        <span class="tok-kw">const</span> result_w = blk: {</span>
 <span class="line" id="L361">            <span class="tok-kw">const</span> key_w = <span class="tok-kw">try</span> std.unicode.utf8ToUtf16LeWithNull(allocator, key);</span>
@@ -556,7 +556,7 @@
 <span class="line" id="L430">};</span>
 <span class="line" id="L431"></span>
 <span class="line" id="L432"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> ArgIteratorWasi = <span class="tok-kw">struct</span> {</span>
-<span class="line" id="L433">    allocator: mem.Allocator,</span>
+<span class="line" id="L433">    allocator: Allocator,</span>
 <span class="line" id="L434">    index: <span class="tok-type">usize</span>,</span>
 <span class="line" id="L435">    args: [][:<span class="tok-number">0</span>]<span class="tok-type">u8</span>,</span>
 <span class="line" id="L436"></span>
@@ -564,7 +564,7 @@
 <span class="line" id="L438"></span>
 <span class="line" id="L439">    <span class="tok-comment">/// You must call deinit to free the internal buffer of the</span></span>
 <span class="line" id="L440">    <span class="tok-comment">/// iterator after you are done.</span></span>
-<span class="line" id="L441">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">init</span>(allocator: mem.Allocator) InitError!ArgIteratorWasi {</span>
+<span class="line" id="L441">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">init</span>(allocator: Allocator) InitError!ArgIteratorWasi {</span>
 <span class="line" id="L442">        <span class="tok-kw">const</span> fetched_args = <span class="tok-kw">try</span> ArgIteratorWasi.internalInit(allocator);</span>
 <span class="line" id="L443">        <span class="tok-kw">return</span> ArgIteratorWasi{</span>
 <span class="line" id="L444">            .allocator = allocator,</span>
@@ -573,7 +573,7 @@
 <span class="line" id="L447">        };</span>
 <span class="line" id="L448">    }</span>
 <span class="line" id="L449"></span>
-<span class="line" id="L450">    <span class="tok-kw">fn</span> <span class="tok-fn">internalInit</span>(allocator: mem.Allocator) InitError![][:<span class="tok-number">0</span>]<span class="tok-type">u8</span> {</span>
+<span class="line" id="L450">    <span class="tok-kw">fn</span> <span class="tok-fn">internalInit</span>(allocator: Allocator) InitError![][:<span class="tok-number">0</span>]<span class="tok-type">u8</span> {</span>
 <span class="line" id="L451">        <span class="tok-kw">const</span> w = os.wasi;</span>
 <span class="line" id="L452">        <span class="tok-kw">var</span> count: <span class="tok-type">usize</span> = <span class="tok-null">undefined</span>;</span>
 <span class="line" id="L453">        <span class="tok-kw">var</span> buf_size: <span class="tok-type">usize</span> = <span class="tok-null">undefined</span>;</span>
@@ -890,7 +890,7 @@
 <span class="line" id="L760">    };</span>
 <span class="line" id="L761"></span>
 <span class="line" id="L762">    <span class="tok-comment">/// You must deinitialize iterator's internal buffers by calling `deinit` when done.</span></span>
-<span class="line" id="L763">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">initWithAllocator</span>(allocator: mem.Allocator) InitError!ArgIterator {</span>
+<span class="line" id="L763">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">initWithAllocator</span>(allocator: Allocator) InitError!ArgIterator {</span>
 <span class="line" id="L764">        <span class="tok-kw">if</span> (builtin.os.tag == .wasi <span class="tok-kw">and</span> !builtin.link_libc) {</span>
 <span class="line" id="L765">            <span class="tok-kw">return</span> ArgIterator{ .inner = <span class="tok-kw">try</span> InnerType.init(allocator) };</span>
 <span class="line" id="L766">        }</span>
@@ -935,7 +935,7 @@
 <span class="line" id="L804">}</span>
 <span class="line" id="L805"></span>
 <span class="line" id="L806"><span class="tok-comment">/// You must deinitialize iterator's internal buffers by calling `deinit` when done.</span></span>
-<span class="line" id="L807"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">argsWithAllocator</span>(allocator: mem.Allocator) ArgIterator.InitError!ArgIterator {</span>
+<span class="line" id="L807"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">argsWithAllocator</span>(allocator: Allocator) ArgIterator.InitError!ArgIterator {</span>
 <span class="line" id="L808">    <span class="tok-kw">return</span> ArgIterator.initWithAllocator(allocator);</span>
 <span class="line" id="L809">}</span>
 <span class="line" id="L810"></span>
@@ -959,7 +959,7 @@
 <span class="line" id="L827">}</span>
 <span class="line" id="L828"></span>
 <span class="line" id="L829"><span class="tok-comment">/// Caller must call argsFree on result.</span></span>
-<span class="line" id="L830"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">argsAlloc</span>(allocator: mem.Allocator) ![][:<span class="tok-number">0</span>]<span class="tok-type">u8</span> {</span>
+<span class="line" id="L830"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">argsAlloc</span>(allocator: Allocator) ![][:<span class="tok-number">0</span>]<span class="tok-type">u8</span> {</span>
 <span class="line" id="L831">    <span class="tok-comment">// TODO refactor to only make 1 allocation.</span>
 </span>
 <span class="line" id="L832">    <span class="tok-kw">var</span> it = <span class="tok-kw">try</span> argsWithAllocator(allocator);</span>
@@ -997,7 +997,7 @@
 <span class="line" id="L864">    <span class="tok-kw">return</span> result_slice_list;</span>
 <span class="line" id="L865">}</span>
 <span class="line" id="L866"></span>
-<span class="line" id="L867"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">argsFree</span>(allocator: mem.Allocator, args_alloc: []<span class="tok-kw">const</span> [:<span class="tok-number">0</span>]<span class="tok-type">u8</span>) <span class="tok-type">void</span> {</span>
+<span class="line" id="L867"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">argsFree</span>(allocator: Allocator, args_alloc: []<span class="tok-kw">const</span> [:<span class="tok-number">0</span>]<span class="tok-type">u8</span>) <span class="tok-type">void</span> {</span>
 <span class="line" id="L868">    <span class="tok-kw">var</span> total_bytes: <span class="tok-type">usize</span> = <span class="tok-number">0</span>;</span>
 <span class="line" id="L869">    <span class="tok-kw">for</span> (args_alloc) |arg| {</span>
 <span class="line" id="L870">        total_bytes += <span class="tok-builtin">@sizeOf</span>([]<span class="tok-type">u8</span>) + arg.len + <span class="tok-number">1</span>;</span>
@@ -1235,7 +1235,7 @@
 <span class="line" id="L1089"><span class="tok-comment">/// This function also uses the PATH environment variable to get the full path to the executable.</span></span>
 <span class="line" id="L1090"><span class="tok-comment">/// Due to the heap-allocation, it is illegal to call this function in a fork() child.</span></span>
 <span class="line" id="L1091"><span class="tok-comment">/// For that use case, use the `std.os` functions directly.</span></span>
-<span class="line" id="L1092"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">execv</span>(allocator: mem.Allocator, argv: []<span class="tok-kw">const</span> []<span class="tok-kw">const</span> <span class="tok-type">u8</span>) ExecvError {</span>
+<span class="line" id="L1092"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">execv</span>(allocator: Allocator, argv: []<span class="tok-kw">const</span> []<span class="tok-kw">const</span> <span class="tok-type">u8</span>) ExecvError {</span>
 <span class="line" id="L1093">    <span class="tok-kw">return</span> execve(allocator, argv, <span class="tok-null">null</span>);</span>
 <span class="line" id="L1094">}</span>
 <span class="line" id="L1095"></span>
@@ -1248,7 +1248,7 @@
 <span class="line" id="L1102"><span class="tok-comment">/// Due to the heap-allocation, it is illegal to call this function in a fork() child.</span></span>
 <span class="line" id="L1103"><span class="tok-comment">/// For that use case, use the `std.os` functions directly.</span></span>
 <span class="line" id="L1104"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">execve</span>(</span>
-<span class="line" id="L1105">    allocator: mem.Allocator,</span>
+<span class="line" id="L1105">    allocator: Allocator,</span>
 <span class="line" id="L1106">    argv: []<span class="tok-kw">const</span> []<span class="tok-kw">const</span> <span class="tok-type">u8</span>,</span>
 <span class="line" id="L1107">    env_map: ?*<span class="tok-kw">const</span> EnvMap,</span>
 <span class="line" id="L1108">) ExecvError {</span>
