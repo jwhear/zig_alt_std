@@ -335,7 +335,7 @@ fn markBlocks(self: *Self, start: usize, len: usize, as: bool) void {
                             .{ old_first_avail, self.first_available_block, start, len });
     }
 
-    std.debug.assert(start + len < self.in_use_bitmap.capacity());
+    std.debug.assert(start + len <= self.in_use_bitmap.capacity());
     var index: usize = 0;
     while (index < len) : (index += 1) {
         std.debug.assert(self.in_use_bitmap.isSet(start + index) != as);
