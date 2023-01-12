@@ -24,12 +24,19 @@ fn local_swap(comptime T: type, a: *T, b: *T) void {
 }
 const swap = if (trackSwaps) local_swap else std.mem.swap;
 
+// This was removed from std.meta
+fn FnPtr(comptime Fn: type) type {
+    return if (@import("builtin").zig_backend != .stage1)
+        *const Fn
+    else
+        Fn;
+}
 
 ///
 pub fn Predicate(comptime T: type) type {
     // Use std.meta.FnPtr to work around stage1/2 differences:
     //  https://github.com/ziglang/zig/wiki/Self-Hosted-Compiler-Upgrade-Guide#function-pointers
-    return std.meta.FnPtr(fn (T) bool);
+    return FnPtr(fn (T) bool);
 }
 
 
@@ -267,7 +274,7 @@ pub const partition = stablePartition;
 //}
 
 /// Inverts function `fun`
-pub fn not(comptime Arg: type, comptime fun: std.meta.FnPtr(fn(Arg) bool)) fn(Arg) bool {
+pub fn not(comptime Arg: type, comptime fun: FnPtr(fn(Arg) bool)) fn(Arg) bool {
     return struct {
         pub fn f(arg: Arg) bool {
             return !fun(arg);
