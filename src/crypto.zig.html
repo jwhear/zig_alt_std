@@ -289,10 +289,10 @@
 <span class="line" id="L176"></span>
 <span class="line" id="L177"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> errors = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;crypto/errors.zig&quot;</span>);</span>
 <span class="line" id="L178"></span>
-<span class="line" id="L179"><span class="tok-kw">test</span> {</span>
-<span class="line" id="L180">    <span class="tok-kw">const</span> please_windows_dont_oom = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;builtin&quot;</span>).os.tag == .windows;</span>
-<span class="line" id="L181">    <span class="tok-kw">if</span> (please_windows_dont_oom) <span class="tok-kw">return</span> <span class="tok-kw">error</span>.SkipZigTest;</span>
-<span class="line" id="L182"></span>
+<span class="line" id="L179"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> tls = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;crypto/tls.zig&quot;</span>);</span>
+<span class="line" id="L180"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> Certificate = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;crypto/Certificate.zig&quot;</span>);</span>
+<span class="line" id="L181"></span>
+<span class="line" id="L182"><span class="tok-kw">test</span> {</span>
 <span class="line" id="L183">    _ = aead.aegis.Aegis128L;</span>
 <span class="line" id="L184">    _ = aead.aegis.Aegis256;</span>
 <span class="line" id="L185"></span>
@@ -380,53 +380,55 @@
 <span class="line" id="L267">    _ = utils;</span>
 <span class="line" id="L268">    _ = random;</span>
 <span class="line" id="L269">    _ = errors;</span>
-<span class="line" id="L270">}</span>
-<span class="line" id="L271"></span>
-<span class="line" id="L272"><span class="tok-kw">test</span> <span class="tok-str">&quot;CSPRNG&quot;</span> {</span>
-<span class="line" id="L273">    <span class="tok-kw">const</span> a = random.int(<span class="tok-type">u64</span>);</span>
-<span class="line" id="L274">    <span class="tok-kw">const</span> b = random.int(<span class="tok-type">u64</span>);</span>
-<span class="line" id="L275">    <span class="tok-kw">const</span> c = random.int(<span class="tok-type">u64</span>);</span>
-<span class="line" id="L276">    <span class="tok-kw">try</span> std.testing.expect(a ^ b ^ c != <span class="tok-number">0</span>);</span>
-<span class="line" id="L277">}</span>
-<span class="line" id="L278"></span>
-<span class="line" id="L279"><span class="tok-kw">test</span> <span class="tok-str">&quot;issue #4532: no index out of bounds&quot;</span> {</span>
-<span class="line" id="L280">    <span class="tok-kw">const</span> types = [_]<span class="tok-type">type</span>{</span>
-<span class="line" id="L281">        hash.Md5,</span>
-<span class="line" id="L282">        hash.Sha1,</span>
-<span class="line" id="L283">        hash.sha2.Sha224,</span>
-<span class="line" id="L284">        hash.sha2.Sha256,</span>
-<span class="line" id="L285">        hash.sha2.Sha384,</span>
-<span class="line" id="L286">        hash.sha2.Sha512,</span>
-<span class="line" id="L287">        hash.sha3.Sha3_224,</span>
-<span class="line" id="L288">        hash.sha3.Sha3_256,</span>
-<span class="line" id="L289">        hash.sha3.Sha3_384,</span>
-<span class="line" id="L290">        hash.sha3.Sha3_512,</span>
-<span class="line" id="L291">        hash.blake2.Blake2s128,</span>
-<span class="line" id="L292">        hash.blake2.Blake2s224,</span>
-<span class="line" id="L293">        hash.blake2.Blake2s256,</span>
-<span class="line" id="L294">        hash.blake2.Blake2b128,</span>
-<span class="line" id="L295">        hash.blake2.Blake2b256,</span>
-<span class="line" id="L296">        hash.blake2.Blake2b384,</span>
-<span class="line" id="L297">        hash.blake2.Blake2b512,</span>
-<span class="line" id="L298">        hash.Gimli,</span>
-<span class="line" id="L299">    };</span>
-<span class="line" id="L300"></span>
-<span class="line" id="L301">    <span class="tok-kw">inline</span> <span class="tok-kw">for</span> (types) |Hasher| {</span>
-<span class="line" id="L302">        <span class="tok-kw">var</span> block = [_]<span class="tok-type">u8</span>{<span class="tok-str">'#'</span>} ** Hasher.block_length;</span>
-<span class="line" id="L303">        <span class="tok-kw">var</span> out1: [Hasher.digest_length]<span class="tok-type">u8</span> = <span class="tok-null">undefined</span>;</span>
-<span class="line" id="L304">        <span class="tok-kw">var</span> out2: [Hasher.digest_length]<span class="tok-type">u8</span> = <span class="tok-null">undefined</span>;</span>
-<span class="line" id="L305">        <span class="tok-kw">const</span> h0 = Hasher.init(.{});</span>
-<span class="line" id="L306">        <span class="tok-kw">var</span> h = h0;</span>
-<span class="line" id="L307">        h.update(block[<span class="tok-number">0</span>..]);</span>
-<span class="line" id="L308">        h.final(&amp;out1);</span>
-<span class="line" id="L309">        h = h0;</span>
-<span class="line" id="L310">        h.update(block[<span class="tok-number">0</span>..<span class="tok-number">1</span>]);</span>
-<span class="line" id="L311">        h.update(block[<span class="tok-number">1</span>..]);</span>
-<span class="line" id="L312">        h.final(&amp;out2);</span>
-<span class="line" id="L313"></span>
-<span class="line" id="L314">        <span class="tok-kw">try</span> std.testing.expectEqual(out1, out2);</span>
-<span class="line" id="L315">    }</span>
-<span class="line" id="L316">}</span>
-<span class="line" id="L317"></span>
+<span class="line" id="L270">    _ = tls;</span>
+<span class="line" id="L271">    _ = Certificate;</span>
+<span class="line" id="L272">}</span>
+<span class="line" id="L273"></span>
+<span class="line" id="L274"><span class="tok-kw">test</span> <span class="tok-str">&quot;CSPRNG&quot;</span> {</span>
+<span class="line" id="L275">    <span class="tok-kw">const</span> a = random.int(<span class="tok-type">u64</span>);</span>
+<span class="line" id="L276">    <span class="tok-kw">const</span> b = random.int(<span class="tok-type">u64</span>);</span>
+<span class="line" id="L277">    <span class="tok-kw">const</span> c = random.int(<span class="tok-type">u64</span>);</span>
+<span class="line" id="L278">    <span class="tok-kw">try</span> std.testing.expect(a ^ b ^ c != <span class="tok-number">0</span>);</span>
+<span class="line" id="L279">}</span>
+<span class="line" id="L280"></span>
+<span class="line" id="L281"><span class="tok-kw">test</span> <span class="tok-str">&quot;issue #4532: no index out of bounds&quot;</span> {</span>
+<span class="line" id="L282">    <span class="tok-kw">const</span> types = [_]<span class="tok-type">type</span>{</span>
+<span class="line" id="L283">        hash.Md5,</span>
+<span class="line" id="L284">        hash.Sha1,</span>
+<span class="line" id="L285">        hash.sha2.Sha224,</span>
+<span class="line" id="L286">        hash.sha2.Sha256,</span>
+<span class="line" id="L287">        hash.sha2.Sha384,</span>
+<span class="line" id="L288">        hash.sha2.Sha512,</span>
+<span class="line" id="L289">        hash.sha3.Sha3_224,</span>
+<span class="line" id="L290">        hash.sha3.Sha3_256,</span>
+<span class="line" id="L291">        hash.sha3.Sha3_384,</span>
+<span class="line" id="L292">        hash.sha3.Sha3_512,</span>
+<span class="line" id="L293">        hash.blake2.Blake2s128,</span>
+<span class="line" id="L294">        hash.blake2.Blake2s224,</span>
+<span class="line" id="L295">        hash.blake2.Blake2s256,</span>
+<span class="line" id="L296">        hash.blake2.Blake2b128,</span>
+<span class="line" id="L297">        hash.blake2.Blake2b256,</span>
+<span class="line" id="L298">        hash.blake2.Blake2b384,</span>
+<span class="line" id="L299">        hash.blake2.Blake2b512,</span>
+<span class="line" id="L300">        hash.Gimli,</span>
+<span class="line" id="L301">    };</span>
+<span class="line" id="L302"></span>
+<span class="line" id="L303">    <span class="tok-kw">inline</span> <span class="tok-kw">for</span> (types) |Hasher| {</span>
+<span class="line" id="L304">        <span class="tok-kw">var</span> block = [_]<span class="tok-type">u8</span>{<span class="tok-str">'#'</span>} ** Hasher.block_length;</span>
+<span class="line" id="L305">        <span class="tok-kw">var</span> out1: [Hasher.digest_length]<span class="tok-type">u8</span> = <span class="tok-null">undefined</span>;</span>
+<span class="line" id="L306">        <span class="tok-kw">var</span> out2: [Hasher.digest_length]<span class="tok-type">u8</span> = <span class="tok-null">undefined</span>;</span>
+<span class="line" id="L307">        <span class="tok-kw">const</span> h0 = Hasher.init(.{});</span>
+<span class="line" id="L308">        <span class="tok-kw">var</span> h = h0;</span>
+<span class="line" id="L309">        h.update(block[<span class="tok-number">0</span>..]);</span>
+<span class="line" id="L310">        h.final(&amp;out1);</span>
+<span class="line" id="L311">        h = h0;</span>
+<span class="line" id="L312">        h.update(block[<span class="tok-number">0</span>..<span class="tok-number">1</span>]);</span>
+<span class="line" id="L313">        h.update(block[<span class="tok-number">1</span>..]);</span>
+<span class="line" id="L314">        h.final(&amp;out2);</span>
+<span class="line" id="L315"></span>
+<span class="line" id="L316">        <span class="tok-kw">try</span> std.testing.expectEqual(out1, out2);</span>
+<span class="line" id="L317">    }</span>
+<span class="line" id="L318">}</span>
+<span class="line" id="L319"></span>
 </code></pre></body>
 </html>

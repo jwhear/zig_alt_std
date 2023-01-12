@@ -295,7 +295,7 @@
 <span class="line" id="L164"></span>
 <span class="line" id="L165">    <span class="tok-comment">// Check against the reference</span>
 </span>
-<span class="line" id="L166">    <span class="tok-kw">try</span> testing.expectEqualSlices(<span class="tok-type">u8</span>, buf, expected);</span>
+<span class="line" id="L166">    <span class="tok-kw">try</span> testing.expectEqualSlices(<span class="tok-type">u8</span>, expected, buf);</span>
 <span class="line" id="L167">}</span>
 <span class="line" id="L168"></span>
 <span class="line" id="L169"><span class="tok-comment">// All the test cases are obtained by compressing the RFC1952 text</span>
@@ -308,8 +308,8 @@
 </span>
 <span class="line" id="L173"><span class="tok-kw">test</span> <span class="tok-str">&quot;compressed data&quot;</span> {</span>
 <span class="line" id="L174">    <span class="tok-kw">try</span> testReader(</span>
-<span class="line" id="L175">        <span class="tok-builtin">@embedFile</span>(<span class="tok-str">&quot;rfc1952.txt.gz&quot;</span>),</span>
-<span class="line" id="L176">        <span class="tok-builtin">@embedFile</span>(<span class="tok-str">&quot;rfc1952.txt&quot;</span>),</span>
+<span class="line" id="L175">        <span class="tok-builtin">@embedFile</span>(<span class="tok-str">&quot;testdata/rfc1952.txt.gz&quot;</span>),</span>
+<span class="line" id="L176">        <span class="tok-builtin">@embedFile</span>(<span class="tok-str">&quot;testdata/rfc1952.txt&quot;</span>),</span>
 <span class="line" id="L177">    );</span>
 <span class="line" id="L178">}</span>
 <span class="line" id="L179"></span>

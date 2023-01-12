@@ -1532,7 +1532,7 @@
 <span class="line" id="L1362">            <span class="tok-kw">if</span> (unionInfo.tag_type) |_| {</span>
 <span class="line" id="L1363">                <span class="tok-kw">var</span> errors = <span class="tok-kw">error</span>{NoUnionMembersMatched};</span>
 <span class="line" id="L1364">                <span class="tok-kw">for</span> (unionInfo.fields) |u_field| {</span>
-<span class="line" id="L1365">                    errors = errors || ParseInternalErrorImpl(u_field.field_type, inferred_types ++ [_]<span class="tok-type">type</span>{T});</span>
+<span class="line" id="L1365">                    errors = errors || ParseInternalErrorImpl(u_field.<span class="tok-type">type</span>, inferred_types ++ [_]<span class="tok-type">type</span>{T});</span>
 <span class="line" id="L1366">                }</span>
 <span class="line" id="L1367">                <span class="tok-kw">return</span> errors;</span>
 <span class="line" id="L1368">            } <span class="tok-kw">else</span> {</span>
@@ -1549,7 +1549,7 @@
 <span class="line" id="L1379">                MissingField,</span>
 <span class="line" id="L1380">            } || SkipValueError || TokenStream.Error;</span>
 <span class="line" id="L1381">            <span class="tok-kw">for</span> (structInfo.fields) |field| {</span>
-<span class="line" id="L1382">                errors = errors || ParseInternalErrorImpl(field.field_type, inferred_types ++ [_]<span class="tok-type">type</span>{T});</span>
+<span class="line" id="L1382">                errors = errors || ParseInternalErrorImpl(field.<span class="tok-type">type</span>, inferred_types ++ [_]<span class="tok-type">type</span>{T});</span>
 <span class="line" id="L1383">            }</span>
 <span class="line" id="L1384">            <span class="tok-kw">return</span> errors;</span>
 <span class="line" id="L1385">        },</span>
@@ -1663,7 +1663,7 @@
 <span class="line" id="L1492">                    <span class="tok-comment">// take a copy of tokens so we can withhold mutations until success</span>
 </span>
 <span class="line" id="L1493">                    <span class="tok-kw">var</span> tokens_copy = tokens.*;</span>
-<span class="line" id="L1494">                    <span class="tok-kw">if</span> (parseInternal(u_field.field_type, token, &amp;tokens_copy, options)) |value| {</span>
+<span class="line" id="L1494">                    <span class="tok-kw">if</span> (parseInternal(u_field.<span class="tok-type">type</span>, token, &amp;tokens_copy, options)) |value| {</span>
 <span class="line" id="L1495">                        tokens.* = tokens_copy;</span>
 <span class="line" id="L1496">                        <span class="tok-kw">return</span> <span class="tok-builtin">@unionInit</span>(T, u_field.name, value);</span>
 <span class="line" id="L1497">                    } <span class="tok-kw">else</span> |err| {</span>
@@ -1696,7 +1696,7 @@
 <span class="line" id="L1519">            <span class="tok-kw">errdefer</span> {</span>
 <span class="line" id="L1520">                <span class="tok-kw">inline</span> <span class="tok-kw">for</span> (structInfo.fields) |field, i| {</span>
 <span class="line" id="L1521">                    <span class="tok-kw">if</span> (fields_seen[i] <span class="tok-kw">and</span> !field.is_comptime) {</span>
-<span class="line" id="L1522">                        parseFree(field.field_type, <span class="tok-builtin">@field</span>(r, field.name), options);</span>
+<span class="line" id="L1522">                        parseFree(field.<span class="tok-type">type</span>, <span class="tok-builtin">@field</span>(r, field.name), options);</span>
 <span class="line" id="L1523">                    }</span>
 <span class="line" id="L1524">                }</span>
 <span class="line" id="L1525">            }</span>
@@ -1735,24 +1735,24 @@
 <span class="line" id="L1548">                                    <span class="tok-kw">if</span> (options.duplicate_field_behavior == .UseFirst) {</span>
 <span class="line" id="L1549">                                        <span class="tok-comment">// unconditonally ignore value. for comptime fields, this skips check against default_value</span>
 </span>
-<span class="line" id="L1550">                                        parseFree(field.field_type, <span class="tok-kw">try</span> parse(field.field_type, tokens, child_options), child_options);</span>
+<span class="line" id="L1550">                                        parseFree(field.<span class="tok-type">type</span>, <span class="tok-kw">try</span> parse(field.<span class="tok-type">type</span>, tokens, child_options), child_options);</span>
 <span class="line" id="L1551">                                        found = <span class="tok-null">true</span>;</span>
 <span class="line" id="L1552">                                        <span class="tok-kw">break</span>;</span>
 <span class="line" id="L1553">                                    } <span class="tok-kw">else</span> <span class="tok-kw">if</span> (options.duplicate_field_behavior == .Error) {</span>
 <span class="line" id="L1554">                                        <span class="tok-kw">return</span> <span class="tok-kw">error</span>.DuplicateJSONField;</span>
 <span class="line" id="L1555">                                    } <span class="tok-kw">else</span> <span class="tok-kw">if</span> (options.duplicate_field_behavior == .UseLast) {</span>
 <span class="line" id="L1556">                                        <span class="tok-kw">if</span> (!field.is_comptime) {</span>
-<span class="line" id="L1557">                                            parseFree(field.field_type, <span class="tok-builtin">@field</span>(r, field.name), child_options);</span>
+<span class="line" id="L1557">                                            parseFree(field.<span class="tok-type">type</span>, <span class="tok-builtin">@field</span>(r, field.name), child_options);</span>
 <span class="line" id="L1558">                                        }</span>
 <span class="line" id="L1559">                                        fields_seen[i] = <span class="tok-null">false</span>;</span>
 <span class="line" id="L1560">                                    }</span>
 <span class="line" id="L1561">                                }</span>
 <span class="line" id="L1562">                                <span class="tok-kw">if</span> (field.is_comptime) {</span>
-<span class="line" id="L1563">                                    <span class="tok-kw">if</span> (!<span class="tok-kw">try</span> parsesTo(field.field_type, <span class="tok-builtin">@ptrCast</span>(*<span class="tok-kw">align</span>(<span class="tok-number">1</span>) <span class="tok-kw">const</span> field.field_type, field.default_value.?).*, tokens, child_options)) {</span>
+<span class="line" id="L1563">                                    <span class="tok-kw">if</span> (!<span class="tok-kw">try</span> parsesTo(field.<span class="tok-type">type</span>, <span class="tok-builtin">@ptrCast</span>(*<span class="tok-kw">align</span>(<span class="tok-number">1</span>) <span class="tok-kw">const</span> field.<span class="tok-type">type</span>, field.default_value.?).*, tokens, child_options)) {</span>
 <span class="line" id="L1564">                                        <span class="tok-kw">return</span> <span class="tok-kw">error</span>.UnexpectedValue;</span>
 <span class="line" id="L1565">                                    }</span>
 <span class="line" id="L1566">                                } <span class="tok-kw">else</span> {</span>
-<span class="line" id="L1567">                                    <span class="tok-builtin">@field</span>(r, field.name) = <span class="tok-kw">try</span> parse(field.field_type, tokens, child_options);</span>
+<span class="line" id="L1567">                                    <span class="tok-builtin">@field</span>(r, field.name) = <span class="tok-kw">try</span> parse(field.<span class="tok-type">type</span>, tokens, child_options);</span>
 <span class="line" id="L1568">                                }</span>
 <span class="line" id="L1569">                                fields_seen[i] = <span class="tok-null">true</span>;</span>
 <span class="line" id="L1570">                                found = <span class="tok-null">true</span>;</span>
@@ -1775,7 +1775,7 @@
 <span class="line" id="L1587">                <span class="tok-kw">if</span> (!fields_seen[i]) {</span>
 <span class="line" id="L1588">                    <span class="tok-kw">if</span> (field.default_value) |default_ptr| {</span>
 <span class="line" id="L1589">                        <span class="tok-kw">if</span> (!field.is_comptime) {</span>
-<span class="line" id="L1590">                            <span class="tok-kw">const</span> default = <span class="tok-builtin">@ptrCast</span>(*<span class="tok-kw">align</span>(<span class="tok-number">1</span>) <span class="tok-kw">const</span> field.field_type, default_ptr).*;</span>
+<span class="line" id="L1590">                            <span class="tok-kw">const</span> default = <span class="tok-builtin">@ptrCast</span>(*<span class="tok-kw">align</span>(<span class="tok-number">1</span>) <span class="tok-kw">const</span> field.<span class="tok-type">type</span>, default_ptr).*;</span>
 <span class="line" id="L1591">                            <span class="tok-builtin">@field</span>(r, field.name) = default;</span>
 <span class="line" id="L1592">                        }</span>
 <span class="line" id="L1593">                    } <span class="tok-kw">else</span> {</span>
@@ -1921,7 +1921,7 @@
 <span class="line" id="L1732">            <span class="tok-kw">if</span> (unionInfo.tag_type) |UnionTagType| {</span>
 <span class="line" id="L1733">                <span class="tok-kw">inline</span> <span class="tok-kw">for</span> (unionInfo.fields) |u_field| {</span>
 <span class="line" id="L1734">                    <span class="tok-kw">if</span> (value == <span class="tok-builtin">@field</span>(UnionTagType, u_field.name)) {</span>
-<span class="line" id="L1735">                        parseFree(u_field.field_type, <span class="tok-builtin">@field</span>(value, u_field.name), options);</span>
+<span class="line" id="L1735">                        parseFree(u_field.<span class="tok-type">type</span>, <span class="tok-builtin">@field</span>(value, u_field.name), options);</span>
 <span class="line" id="L1736">                        <span class="tok-kw">break</span>;</span>
 <span class="line" id="L1737">                    }</span>
 <span class="line" id="L1738">                }</span>
@@ -1932,7 +1932,7 @@
 <span class="line" id="L1743">        .Struct =&gt; |structInfo| {</span>
 <span class="line" id="L1744">            <span class="tok-kw">inline</span> <span class="tok-kw">for</span> (structInfo.fields) |field| {</span>
 <span class="line" id="L1745">                <span class="tok-kw">if</span> (!field.is_comptime) {</span>
-<span class="line" id="L1746">                    parseFree(field.field_type, <span class="tok-builtin">@field</span>(value, field.name), options);</span>
+<span class="line" id="L1746">                    parseFree(field.<span class="tok-type">type</span>, <span class="tok-builtin">@field</span>(value, field.name), options);</span>
 <span class="line" id="L1747">                }</span>
 <span class="line" id="L1748">            }</span>
 <span class="line" id="L1749">        },</span>
@@ -2485,13 +2485,13 @@
 <span class="line" id="L2271">            <span class="tok-kw">inline</span> <span class="tok-kw">for</span> (S.fields) |Field| {</span>
 <span class="line" id="L2272">                <span class="tok-comment">// don't include void fields</span>
 </span>
-<span class="line" id="L2273">                <span class="tok-kw">if</span> (Field.field_type == <span class="tok-type">void</span>) <span class="tok-kw">continue</span>;</span>
+<span class="line" id="L2273">                <span class="tok-kw">if</span> (Field.<span class="tok-type">type</span> == <span class="tok-type">void</span>) <span class="tok-kw">continue</span>;</span>
 <span class="line" id="L2274"></span>
 <span class="line" id="L2275">                <span class="tok-kw">var</span> emit_field = <span class="tok-null">true</span>;</span>
 <span class="line" id="L2276"></span>
 <span class="line" id="L2277">                <span class="tok-comment">// don't include optional fields that are null when emit_null_optional_fields is set to false</span>
 </span>
-<span class="line" id="L2278">                <span class="tok-kw">if</span> (<span class="tok-builtin">@typeInfo</span>(Field.field_type) == .Optional) {</span>
+<span class="line" id="L2278">                <span class="tok-kw">if</span> (<span class="tok-builtin">@typeInfo</span>(Field.<span class="tok-type">type</span>) == .Optional) {</span>
 <span class="line" id="L2279">                    <span class="tok-kw">if</span> (options.emit_null_optional_fields == <span class="tok-null">false</span>) {</span>
 <span class="line" id="L2280">                        <span class="tok-kw">if</span> (<span class="tok-builtin">@field</span>(value, Field.name) == <span class="tok-null">null</span>) {</span>
 <span class="line" id="L2281">                            emit_field = <span class="tok-null">false</span>;</span>
@@ -2593,351 +2593,347 @@
 <span class="line" id="L2373">}</span>
 <span class="line" id="L2374"></span>
 <span class="line" id="L2375"><span class="tok-kw">test</span> {</span>
-<span class="line" id="L2376">    <span class="tok-kw">if</span> (builtin.zig_backend != .stage1) {</span>
-<span class="line" id="L2377">        <span class="tok-comment">// https://github.com/ziglang/zig/issues/8442</span>
+<span class="line" id="L2376">    _ = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;json/test.zig&quot;</span>);</span>
+<span class="line" id="L2377">    _ = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;json/write_stream.zig&quot;</span>);</span>
+<span class="line" id="L2378">}</span>
+<span class="line" id="L2379"></span>
+<span class="line" id="L2380"><span class="tok-kw">test</span> <span class="tok-str">&quot;stringify null optional fields&quot;</span> {</span>
+<span class="line" id="L2381">    <span class="tok-kw">const</span> MyStruct = <span class="tok-kw">struct</span> {</span>
+<span class="line" id="L2382">        optional: ?[]<span class="tok-kw">const</span> <span class="tok-type">u8</span> = <span class="tok-null">null</span>,</span>
+<span class="line" id="L2383">        required: []<span class="tok-kw">const</span> <span class="tok-type">u8</span> = <span class="tok-str">&quot;something&quot;</span>,</span>
+<span class="line" id="L2384">        another_optional: ?[]<span class="tok-kw">const</span> <span class="tok-type">u8</span> = <span class="tok-null">null</span>,</span>
+<span class="line" id="L2385">        another_required: []<span class="tok-kw">const</span> <span class="tok-type">u8</span> = <span class="tok-str">&quot;something else&quot;</span>,</span>
+<span class="line" id="L2386">    };</span>
+<span class="line" id="L2387">    <span class="tok-kw">try</span> teststringify(</span>
+<span class="line" id="L2388">        <span class="tok-str">\\{&quot;optional&quot;:null,&quot;required&quot;:&quot;something&quot;,&quot;another_optional&quot;:null,&quot;another_required&quot;:&quot;something else&quot;}</span></span>
+
+<span class="line" id="L2389">    ,</span>
+<span class="line" id="L2390">        MyStruct{},</span>
+<span class="line" id="L2391">        StringifyOptions{},</span>
+<span class="line" id="L2392">    );</span>
+<span class="line" id="L2393">    <span class="tok-kw">try</span> teststringify(</span>
+<span class="line" id="L2394">        <span class="tok-str">\\{&quot;required&quot;:&quot;something&quot;,&quot;another_required&quot;:&quot;something else&quot;}</span></span>
+
+<span class="line" id="L2395">    ,</span>
+<span class="line" id="L2396">        MyStruct{},</span>
+<span class="line" id="L2397">        StringifyOptions{ .emit_null_optional_fields = <span class="tok-null">false</span> },</span>
+<span class="line" id="L2398">    );</span>
+<span class="line" id="L2399"></span>
+<span class="line" id="L2400">    <span class="tok-kw">var</span> ts = TokenStream.init(</span>
+<span class="line" id="L2401">        <span class="tok-str">\\{&quot;required&quot;:&quot;something&quot;,&quot;another_required&quot;:&quot;something else&quot;}</span></span>
+
+<span class="line" id="L2402">    );</span>
+<span class="line" id="L2403">    <span class="tok-kw">try</span> std.testing.expect(<span class="tok-kw">try</span> parsesTo(MyStruct, MyStruct{}, &amp;ts, .{</span>
+<span class="line" id="L2404">        .allocator = std.testing.allocator,</span>
+<span class="line" id="L2405">    }));</span>
+<span class="line" id="L2406">}</span>
+<span class="line" id="L2407"></span>
+<span class="line" id="L2408"><span class="tok-kw">test</span> <span class="tok-str">&quot;skipValue&quot;</span> {</span>
+<span class="line" id="L2409">    <span class="tok-kw">var</span> ts = TokenStream.init(<span class="tok-str">&quot;false&quot;</span>);</span>
+<span class="line" id="L2410">    <span class="tok-kw">try</span> skipValue(&amp;ts);</span>
+<span class="line" id="L2411">    ts = TokenStream.init(<span class="tok-str">&quot;true&quot;</span>);</span>
+<span class="line" id="L2412">    <span class="tok-kw">try</span> skipValue(&amp;ts);</span>
+<span class="line" id="L2413">    ts = TokenStream.init(<span class="tok-str">&quot;null&quot;</span>);</span>
+<span class="line" id="L2414">    <span class="tok-kw">try</span> skipValue(&amp;ts);</span>
+<span class="line" id="L2415">    ts = TokenStream.init(<span class="tok-str">&quot;42&quot;</span>);</span>
+<span class="line" id="L2416">    <span class="tok-kw">try</span> skipValue(&amp;ts);</span>
+<span class="line" id="L2417">    ts = TokenStream.init(<span class="tok-str">&quot;42.0&quot;</span>);</span>
+<span class="line" id="L2418">    <span class="tok-kw">try</span> skipValue(&amp;ts);</span>
+<span class="line" id="L2419">    ts = TokenStream.init(<span class="tok-str">&quot;\&quot;foo\&quot;&quot;</span>);</span>
+<span class="line" id="L2420">    <span class="tok-kw">try</span> skipValue(&amp;ts);</span>
+<span class="line" id="L2421">    ts = TokenStream.init(<span class="tok-str">&quot;[101, 111, 121]&quot;</span>);</span>
+<span class="line" id="L2422">    <span class="tok-kw">try</span> skipValue(&amp;ts);</span>
+<span class="line" id="L2423">    ts = TokenStream.init(<span class="tok-str">&quot;{}&quot;</span>);</span>
+<span class="line" id="L2424">    <span class="tok-kw">try</span> skipValue(&amp;ts);</span>
+<span class="line" id="L2425">    ts = TokenStream.init(<span class="tok-str">&quot;{\&quot;foo\&quot;: \&quot;bar\&quot;}&quot;</span>);</span>
+<span class="line" id="L2426">    <span class="tok-kw">try</span> skipValue(&amp;ts);</span>
+<span class="line" id="L2427"></span>
+<span class="line" id="L2428">    { <span class="tok-comment">// An absurd number of nestings</span>
 </span>
-<span class="line" id="L2378">        _ = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;json/test.zig&quot;</span>);</span>
-<span class="line" id="L2379">    }</span>
-<span class="line" id="L2380">    _ = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;json/write_stream.zig&quot;</span>);</span>
-<span class="line" id="L2381">}</span>
-<span class="line" id="L2382"></span>
-<span class="line" id="L2383"><span class="tok-kw">test</span> <span class="tok-str">&quot;stringify null optional fields&quot;</span> {</span>
-<span class="line" id="L2384">    <span class="tok-kw">const</span> MyStruct = <span class="tok-kw">struct</span> {</span>
-<span class="line" id="L2385">        optional: ?[]<span class="tok-kw">const</span> <span class="tok-type">u8</span> = <span class="tok-null">null</span>,</span>
-<span class="line" id="L2386">        required: []<span class="tok-kw">const</span> <span class="tok-type">u8</span> = <span class="tok-str">&quot;something&quot;</span>,</span>
-<span class="line" id="L2387">        another_optional: ?[]<span class="tok-kw">const</span> <span class="tok-type">u8</span> = <span class="tok-null">null</span>,</span>
-<span class="line" id="L2388">        another_required: []<span class="tok-kw">const</span> <span class="tok-type">u8</span> = <span class="tok-str">&quot;something else&quot;</span>,</span>
-<span class="line" id="L2389">    };</span>
-<span class="line" id="L2390">    <span class="tok-kw">try</span> teststringify(</span>
-<span class="line" id="L2391">        <span class="tok-str">\\{&quot;optional&quot;:null,&quot;required&quot;:&quot;something&quot;,&quot;another_optional&quot;:null,&quot;another_required&quot;:&quot;something else&quot;}</span></span>
-
-<span class="line" id="L2392">    ,</span>
-<span class="line" id="L2393">        MyStruct{},</span>
-<span class="line" id="L2394">        StringifyOptions{},</span>
-<span class="line" id="L2395">    );</span>
-<span class="line" id="L2396">    <span class="tok-kw">try</span> teststringify(</span>
-<span class="line" id="L2397">        <span class="tok-str">\\{&quot;required&quot;:&quot;something&quot;,&quot;another_required&quot;:&quot;something else&quot;}</span></span>
-
-<span class="line" id="L2398">    ,</span>
-<span class="line" id="L2399">        MyStruct{},</span>
-<span class="line" id="L2400">        StringifyOptions{ .emit_null_optional_fields = <span class="tok-null">false</span> },</span>
-<span class="line" id="L2401">    );</span>
-<span class="line" id="L2402"></span>
-<span class="line" id="L2403">    <span class="tok-kw">var</span> ts = TokenStream.init(</span>
-<span class="line" id="L2404">        <span class="tok-str">\\{&quot;required&quot;:&quot;something&quot;,&quot;another_required&quot;:&quot;something else&quot;}</span></span>
-
-<span class="line" id="L2405">    );</span>
-<span class="line" id="L2406">    <span class="tok-kw">try</span> std.testing.expect(<span class="tok-kw">try</span> parsesTo(MyStruct, MyStruct{}, &amp;ts, .{</span>
-<span class="line" id="L2407">        .allocator = std.testing.allocator,</span>
-<span class="line" id="L2408">    }));</span>
-<span class="line" id="L2409">}</span>
-<span class="line" id="L2410"></span>
-<span class="line" id="L2411"><span class="tok-kw">test</span> <span class="tok-str">&quot;skipValue&quot;</span> {</span>
-<span class="line" id="L2412">    <span class="tok-kw">var</span> ts = TokenStream.init(<span class="tok-str">&quot;false&quot;</span>);</span>
-<span class="line" id="L2413">    <span class="tok-kw">try</span> skipValue(&amp;ts);</span>
-<span class="line" id="L2414">    ts = TokenStream.init(<span class="tok-str">&quot;true&quot;</span>);</span>
-<span class="line" id="L2415">    <span class="tok-kw">try</span> skipValue(&amp;ts);</span>
-<span class="line" id="L2416">    ts = TokenStream.init(<span class="tok-str">&quot;null&quot;</span>);</span>
-<span class="line" id="L2417">    <span class="tok-kw">try</span> skipValue(&amp;ts);</span>
-<span class="line" id="L2418">    ts = TokenStream.init(<span class="tok-str">&quot;42&quot;</span>);</span>
-<span class="line" id="L2419">    <span class="tok-kw">try</span> skipValue(&amp;ts);</span>
-<span class="line" id="L2420">    ts = TokenStream.init(<span class="tok-str">&quot;42.0&quot;</span>);</span>
-<span class="line" id="L2421">    <span class="tok-kw">try</span> skipValue(&amp;ts);</span>
-<span class="line" id="L2422">    ts = TokenStream.init(<span class="tok-str">&quot;\&quot;foo\&quot;&quot;</span>);</span>
-<span class="line" id="L2423">    <span class="tok-kw">try</span> skipValue(&amp;ts);</span>
-<span class="line" id="L2424">    ts = TokenStream.init(<span class="tok-str">&quot;[101, 111, 121]&quot;</span>);</span>
-<span class="line" id="L2425">    <span class="tok-kw">try</span> skipValue(&amp;ts);</span>
-<span class="line" id="L2426">    ts = TokenStream.init(<span class="tok-str">&quot;{}&quot;</span>);</span>
-<span class="line" id="L2427">    <span class="tok-kw">try</span> skipValue(&amp;ts);</span>
-<span class="line" id="L2428">    ts = TokenStream.init(<span class="tok-str">&quot;{\&quot;foo\&quot;: \&quot;bar\&quot;}&quot;</span>);</span>
-<span class="line" id="L2429">    <span class="tok-kw">try</span> skipValue(&amp;ts);</span>
+<span class="line" id="L2429">        <span class="tok-kw">const</span> nestings = StreamingParser.default_max_nestings + <span class="tok-number">1</span>;</span>
 <span class="line" id="L2430"></span>
-<span class="line" id="L2431">    { <span class="tok-comment">// An absurd number of nestings</span>
+<span class="line" id="L2431">        ts = TokenStream.init(<span class="tok-str">&quot;[&quot;</span> ** nestings ++ <span class="tok-str">&quot;]&quot;</span> ** nestings);</span>
+<span class="line" id="L2432">        <span class="tok-kw">try</span> testing.expectError(<span class="tok-kw">error</span>.TooManyNestedItems, skipValue(&amp;ts));</span>
+<span class="line" id="L2433">    }</span>
+<span class="line" id="L2434"></span>
+<span class="line" id="L2435">    { <span class="tok-comment">// Would a number token cause problems in a deeply-nested array?</span>
 </span>
-<span class="line" id="L2432">        <span class="tok-kw">const</span> nestings = StreamingParser.default_max_nestings + <span class="tok-number">1</span>;</span>
-<span class="line" id="L2433"></span>
-<span class="line" id="L2434">        ts = TokenStream.init(<span class="tok-str">&quot;[&quot;</span> ** nestings ++ <span class="tok-str">&quot;]&quot;</span> ** nestings);</span>
-<span class="line" id="L2435">        <span class="tok-kw">try</span> testing.expectError(<span class="tok-kw">error</span>.TooManyNestedItems, skipValue(&amp;ts));</span>
-<span class="line" id="L2436">    }</span>
-<span class="line" id="L2437"></span>
-<span class="line" id="L2438">    { <span class="tok-comment">// Would a number token cause problems in a deeply-nested array?</span>
-</span>
-<span class="line" id="L2439">        <span class="tok-kw">const</span> nestings = StreamingParser.default_max_nestings;</span>
-<span class="line" id="L2440">        <span class="tok-kw">const</span> deeply_nested_array = <span class="tok-str">&quot;[&quot;</span> ** nestings ++ <span class="tok-str">&quot;0.118, 999, 881.99, 911.9, 725, 3&quot;</span> ++ <span class="tok-str">&quot;]&quot;</span> ** nestings;</span>
+<span class="line" id="L2436">        <span class="tok-kw">const</span> nestings = StreamingParser.default_max_nestings;</span>
+<span class="line" id="L2437">        <span class="tok-kw">const</span> deeply_nested_array = <span class="tok-str">&quot;[&quot;</span> ** nestings ++ <span class="tok-str">&quot;0.118, 999, 881.99, 911.9, 725, 3&quot;</span> ++ <span class="tok-str">&quot;]&quot;</span> ** nestings;</span>
+<span class="line" id="L2438"></span>
+<span class="line" id="L2439">        ts = TokenStream.init(deeply_nested_array);</span>
+<span class="line" id="L2440">        <span class="tok-kw">try</span> skipValue(&amp;ts);</span>
 <span class="line" id="L2441"></span>
-<span class="line" id="L2442">        ts = TokenStream.init(deeply_nested_array);</span>
-<span class="line" id="L2443">        <span class="tok-kw">try</span> skipValue(&amp;ts);</span>
-<span class="line" id="L2444"></span>
-<span class="line" id="L2445">        ts = TokenStream.init(<span class="tok-str">&quot;[&quot;</span> ++ deeply_nested_array ++ <span class="tok-str">&quot;]&quot;</span>);</span>
-<span class="line" id="L2446">        <span class="tok-kw">try</span> testing.expectError(<span class="tok-kw">error</span>.TooManyNestedItems, skipValue(&amp;ts));</span>
-<span class="line" id="L2447">    }</span>
-<span class="line" id="L2448"></span>
-<span class="line" id="L2449">    <span class="tok-comment">// Mismatched brace/square bracket</span>
+<span class="line" id="L2442">        ts = TokenStream.init(<span class="tok-str">&quot;[&quot;</span> ++ deeply_nested_array ++ <span class="tok-str">&quot;]&quot;</span>);</span>
+<span class="line" id="L2443">        <span class="tok-kw">try</span> testing.expectError(<span class="tok-kw">error</span>.TooManyNestedItems, skipValue(&amp;ts));</span>
+<span class="line" id="L2444">    }</span>
+<span class="line" id="L2445"></span>
+<span class="line" id="L2446">    <span class="tok-comment">// Mismatched brace/square bracket</span>
 </span>
-<span class="line" id="L2450">    ts = TokenStream.init(<span class="tok-str">&quot;[102, 111, 111}&quot;</span>);</span>
-<span class="line" id="L2451">    <span class="tok-kw">try</span> testing.expectError(<span class="tok-kw">error</span>.UnexpectedClosingBrace, skipValue(&amp;ts));</span>
-<span class="line" id="L2452"></span>
-<span class="line" id="L2453">    { <span class="tok-comment">// should fail if no value found (e.g. immediate close of object)</span>
+<span class="line" id="L2447">    ts = TokenStream.init(<span class="tok-str">&quot;[102, 111, 111}&quot;</span>);</span>
+<span class="line" id="L2448">    <span class="tok-kw">try</span> testing.expectError(<span class="tok-kw">error</span>.UnexpectedClosingBrace, skipValue(&amp;ts));</span>
+<span class="line" id="L2449"></span>
+<span class="line" id="L2450">    { <span class="tok-comment">// should fail if no value found (e.g. immediate close of object)</span>
 </span>
-<span class="line" id="L2454">        <span class="tok-kw">var</span> empty_object = TokenStream.init(<span class="tok-str">&quot;{}&quot;</span>);</span>
-<span class="line" id="L2455">        assert(.ObjectBegin == (<span class="tok-kw">try</span> empty_object.next()).?);</span>
-<span class="line" id="L2456">        <span class="tok-kw">try</span> testing.expectError(<span class="tok-kw">error</span>.UnexpectedJsonDepth, skipValue(&amp;empty_object));</span>
-<span class="line" id="L2457"></span>
-<span class="line" id="L2458">        <span class="tok-kw">var</span> empty_array = TokenStream.init(<span class="tok-str">&quot;[]&quot;</span>);</span>
-<span class="line" id="L2459">        assert(.ArrayBegin == (<span class="tok-kw">try</span> empty_array.next()).?);</span>
-<span class="line" id="L2460">        <span class="tok-kw">try</span> testing.expectError(<span class="tok-kw">error</span>.UnexpectedJsonDepth, skipValue(&amp;empty_array));</span>
-<span class="line" id="L2461">    }</span>
-<span class="line" id="L2462">}</span>
-<span class="line" id="L2463"></span>
-<span class="line" id="L2464"><span class="tok-kw">test</span> <span class="tok-str">&quot;stringify basic types&quot;</span> {</span>
-<span class="line" id="L2465">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;false&quot;</span>, <span class="tok-null">false</span>, StringifyOptions{});</span>
-<span class="line" id="L2466">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;true&quot;</span>, <span class="tok-null">true</span>, StringifyOptions{});</span>
-<span class="line" id="L2467">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;null&quot;</span>, <span class="tok-builtin">@as</span>(?<span class="tok-type">u8</span>, <span class="tok-null">null</span>), StringifyOptions{});</span>
-<span class="line" id="L2468">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;null&quot;</span>, <span class="tok-builtin">@as</span>(?*<span class="tok-type">u32</span>, <span class="tok-null">null</span>), StringifyOptions{});</span>
-<span class="line" id="L2469">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;42&quot;</span>, <span class="tok-number">42</span>, StringifyOptions{});</span>
-<span class="line" id="L2470">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;4.2e+01&quot;</span>, <span class="tok-number">42.0</span>, StringifyOptions{});</span>
-<span class="line" id="L2471">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;42&quot;</span>, <span class="tok-builtin">@as</span>(<span class="tok-type">u8</span>, <span class="tok-number">42</span>), StringifyOptions{});</span>
-<span class="line" id="L2472">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;42&quot;</span>, <span class="tok-builtin">@as</span>(<span class="tok-type">u128</span>, <span class="tok-number">42</span>), StringifyOptions{});</span>
-<span class="line" id="L2473">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;4.2e+01&quot;</span>, <span class="tok-builtin">@as</span>(<span class="tok-type">f32</span>, <span class="tok-number">42</span>), StringifyOptions{});</span>
-<span class="line" id="L2474">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;4.2e+01&quot;</span>, <span class="tok-builtin">@as</span>(<span class="tok-type">f64</span>, <span class="tok-number">42</span>), StringifyOptions{});</span>
-<span class="line" id="L2475">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;ItBroke\&quot;&quot;</span>, <span class="tok-builtin">@as</span>(<span class="tok-type">anyerror</span>, <span class="tok-kw">error</span>.ItBroke), StringifyOptions{});</span>
-<span class="line" id="L2476">}</span>
-<span class="line" id="L2477"></span>
-<span class="line" id="L2478"><span class="tok-kw">test</span> <span class="tok-str">&quot;stringify string&quot;</span> {</span>
-<span class="line" id="L2479">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;hello\&quot;&quot;</span>, <span class="tok-str">&quot;hello&quot;</span>, StringifyOptions{});</span>
-<span class="line" id="L2480">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with\\nescapes\\r\&quot;&quot;</span>, <span class="tok-str">&quot;with\nescapes\r&quot;</span>, StringifyOptions{});</span>
-<span class="line" id="L2481">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with\\nescapes\\r\&quot;&quot;</span>, <span class="tok-str">&quot;with\nescapes\r&quot;</span>, StringifyOptions{ .string = .{ .String = .{ .escape_unicode = <span class="tok-null">true</span> } } });</span>
-<span class="line" id="L2482">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with unicode\\u0001\&quot;&quot;</span>, <span class="tok-str">&quot;with unicode\u{1}&quot;</span>, StringifyOptions{});</span>
-<span class="line" id="L2483">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with unicode\\u0001\&quot;&quot;</span>, <span class="tok-str">&quot;with unicode\u{1}&quot;</span>, StringifyOptions{ .string = .{ .String = .{ .escape_unicode = <span class="tok-null">true</span> } } });</span>
-<span class="line" id="L2484">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with unicode\u{80}\&quot;&quot;</span>, <span class="tok-str">&quot;with unicode\u{80}&quot;</span>, StringifyOptions{});</span>
-<span class="line" id="L2485">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with unicode\\u0080\&quot;&quot;</span>, <span class="tok-str">&quot;with unicode\u{80}&quot;</span>, StringifyOptions{ .string = .{ .String = .{ .escape_unicode = <span class="tok-null">true</span> } } });</span>
-<span class="line" id="L2486">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with unicode\u{FF}\&quot;&quot;</span>, <span class="tok-str">&quot;with unicode\u{FF}&quot;</span>, StringifyOptions{});</span>
-<span class="line" id="L2487">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with unicode\\u00ff\&quot;&quot;</span>, <span class="tok-str">&quot;with unicode\u{FF}&quot;</span>, StringifyOptions{ .string = .{ .String = .{ .escape_unicode = <span class="tok-null">true</span> } } });</span>
-<span class="line" id="L2488">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with unicode\u{100}\&quot;&quot;</span>, <span class="tok-str">&quot;with unicode\u{100}&quot;</span>, StringifyOptions{});</span>
-<span class="line" id="L2489">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with unicode\\u0100\&quot;&quot;</span>, <span class="tok-str">&quot;with unicode\u{100}&quot;</span>, StringifyOptions{ .string = .{ .String = .{ .escape_unicode = <span class="tok-null">true</span> } } });</span>
-<span class="line" id="L2490">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with unicode\u{800}\&quot;&quot;</span>, <span class="tok-str">&quot;with unicode\u{800}&quot;</span>, StringifyOptions{});</span>
-<span class="line" id="L2491">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with unicode\\u0800\&quot;&quot;</span>, <span class="tok-str">&quot;with unicode\u{800}&quot;</span>, StringifyOptions{ .string = .{ .String = .{ .escape_unicode = <span class="tok-null">true</span> } } });</span>
-<span class="line" id="L2492">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with unicode\u{8000}\&quot;&quot;</span>, <span class="tok-str">&quot;with unicode\u{8000}&quot;</span>, StringifyOptions{});</span>
-<span class="line" id="L2493">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with unicode\\u8000\&quot;&quot;</span>, <span class="tok-str">&quot;with unicode\u{8000}&quot;</span>, StringifyOptions{ .string = .{ .String = .{ .escape_unicode = <span class="tok-null">true</span> } } });</span>
-<span class="line" id="L2494">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with unicode\u{D799}\&quot;&quot;</span>, <span class="tok-str">&quot;with unicode\u{D799}&quot;</span>, StringifyOptions{});</span>
-<span class="line" id="L2495">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with unicode\\ud799\&quot;&quot;</span>, <span class="tok-str">&quot;with unicode\u{D799}&quot;</span>, StringifyOptions{ .string = .{ .String = .{ .escape_unicode = <span class="tok-null">true</span> } } });</span>
-<span class="line" id="L2496">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with unicode\u{10000}\&quot;&quot;</span>, <span class="tok-str">&quot;with unicode\u{10000}&quot;</span>, StringifyOptions{});</span>
-<span class="line" id="L2497">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with unicode\\ud800\\udc00\&quot;&quot;</span>, <span class="tok-str">&quot;with unicode\u{10000}&quot;</span>, StringifyOptions{ .string = .{ .String = .{ .escape_unicode = <span class="tok-null">true</span> } } });</span>
-<span class="line" id="L2498">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with unicode\u{10FFFF}\&quot;&quot;</span>, <span class="tok-str">&quot;with unicode\u{10FFFF}&quot;</span>, StringifyOptions{});</span>
-<span class="line" id="L2499">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with unicode\\udbff\\udfff\&quot;&quot;</span>, <span class="tok-str">&quot;with unicode\u{10FFFF}&quot;</span>, StringifyOptions{ .string = .{ .String = .{ .escape_unicode = <span class="tok-null">true</span> } } });</span>
-<span class="line" id="L2500">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;/\&quot;&quot;</span>, <span class="tok-str">&quot;/&quot;</span>, StringifyOptions{});</span>
-<span class="line" id="L2501">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;\\/\&quot;&quot;</span>, <span class="tok-str">&quot;/&quot;</span>, StringifyOptions{ .string = .{ .String = .{ .escape_solidus = <span class="tok-null">true</span> } } });</span>
-<span class="line" id="L2502">}</span>
-<span class="line" id="L2503"></span>
-<span class="line" id="L2504"><span class="tok-kw">test</span> <span class="tok-str">&quot;stringify tagged unions&quot;</span> {</span>
-<span class="line" id="L2505">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;42&quot;</span>, <span class="tok-kw">union</span>(<span class="tok-kw">enum</span>) {</span>
-<span class="line" id="L2506">        Foo: <span class="tok-type">u32</span>,</span>
-<span class="line" id="L2507">        Bar: <span class="tok-type">bool</span>,</span>
-<span class="line" id="L2508">    }{ .Foo = <span class="tok-number">42</span> }, StringifyOptions{});</span>
-<span class="line" id="L2509">}</span>
-<span class="line" id="L2510"></span>
-<span class="line" id="L2511"><span class="tok-kw">test</span> <span class="tok-str">&quot;stringify struct&quot;</span> {</span>
-<span class="line" id="L2512">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;{\&quot;foo\&quot;:42}&quot;</span>, <span class="tok-kw">struct</span> {</span>
-<span class="line" id="L2513">        foo: <span class="tok-type">u32</span>,</span>
-<span class="line" id="L2514">    }{ .foo = <span class="tok-number">42</span> }, StringifyOptions{});</span>
-<span class="line" id="L2515">}</span>
-<span class="line" id="L2516"></span>
-<span class="line" id="L2517"><span class="tok-kw">test</span> <span class="tok-str">&quot;stringify struct with string as array&quot;</span> {</span>
-<span class="line" id="L2518">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;{\&quot;foo\&quot;:\&quot;bar\&quot;}&quot;</span>, .{ .foo = <span class="tok-str">&quot;bar&quot;</span> }, StringifyOptions{});</span>
-<span class="line" id="L2519">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;{\&quot;foo\&quot;:[98,97,114]}&quot;</span>, .{ .foo = <span class="tok-str">&quot;bar&quot;</span> }, StringifyOptions{ .string = .Array });</span>
-<span class="line" id="L2520">}</span>
-<span class="line" id="L2521"></span>
-<span class="line" id="L2522"><span class="tok-kw">test</span> <span class="tok-str">&quot;stringify struct with indentation&quot;</span> {</span>
-<span class="line" id="L2523">    <span class="tok-kw">try</span> teststringify(</span>
-<span class="line" id="L2524">        <span class="tok-str">\\{</span></span>
+<span class="line" id="L2451">        <span class="tok-kw">var</span> empty_object = TokenStream.init(<span class="tok-str">&quot;{}&quot;</span>);</span>
+<span class="line" id="L2452">        assert(.ObjectBegin == (<span class="tok-kw">try</span> empty_object.next()).?);</span>
+<span class="line" id="L2453">        <span class="tok-kw">try</span> testing.expectError(<span class="tok-kw">error</span>.UnexpectedJsonDepth, skipValue(&amp;empty_object));</span>
+<span class="line" id="L2454"></span>
+<span class="line" id="L2455">        <span class="tok-kw">var</span> empty_array = TokenStream.init(<span class="tok-str">&quot;[]&quot;</span>);</span>
+<span class="line" id="L2456">        assert(.ArrayBegin == (<span class="tok-kw">try</span> empty_array.next()).?);</span>
+<span class="line" id="L2457">        <span class="tok-kw">try</span> testing.expectError(<span class="tok-kw">error</span>.UnexpectedJsonDepth, skipValue(&amp;empty_array));</span>
+<span class="line" id="L2458">    }</span>
+<span class="line" id="L2459">}</span>
+<span class="line" id="L2460"></span>
+<span class="line" id="L2461"><span class="tok-kw">test</span> <span class="tok-str">&quot;stringify basic types&quot;</span> {</span>
+<span class="line" id="L2462">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;false&quot;</span>, <span class="tok-null">false</span>, StringifyOptions{});</span>
+<span class="line" id="L2463">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;true&quot;</span>, <span class="tok-null">true</span>, StringifyOptions{});</span>
+<span class="line" id="L2464">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;null&quot;</span>, <span class="tok-builtin">@as</span>(?<span class="tok-type">u8</span>, <span class="tok-null">null</span>), StringifyOptions{});</span>
+<span class="line" id="L2465">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;null&quot;</span>, <span class="tok-builtin">@as</span>(?*<span class="tok-type">u32</span>, <span class="tok-null">null</span>), StringifyOptions{});</span>
+<span class="line" id="L2466">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;42&quot;</span>, <span class="tok-number">42</span>, StringifyOptions{});</span>
+<span class="line" id="L2467">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;4.2e+01&quot;</span>, <span class="tok-number">42.0</span>, StringifyOptions{});</span>
+<span class="line" id="L2468">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;42&quot;</span>, <span class="tok-builtin">@as</span>(<span class="tok-type">u8</span>, <span class="tok-number">42</span>), StringifyOptions{});</span>
+<span class="line" id="L2469">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;42&quot;</span>, <span class="tok-builtin">@as</span>(<span class="tok-type">u128</span>, <span class="tok-number">42</span>), StringifyOptions{});</span>
+<span class="line" id="L2470">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;4.2e+01&quot;</span>, <span class="tok-builtin">@as</span>(<span class="tok-type">f32</span>, <span class="tok-number">42</span>), StringifyOptions{});</span>
+<span class="line" id="L2471">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;4.2e+01&quot;</span>, <span class="tok-builtin">@as</span>(<span class="tok-type">f64</span>, <span class="tok-number">42</span>), StringifyOptions{});</span>
+<span class="line" id="L2472">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;ItBroke\&quot;&quot;</span>, <span class="tok-builtin">@as</span>(<span class="tok-type">anyerror</span>, <span class="tok-kw">error</span>.ItBroke), StringifyOptions{});</span>
+<span class="line" id="L2473">}</span>
+<span class="line" id="L2474"></span>
+<span class="line" id="L2475"><span class="tok-kw">test</span> <span class="tok-str">&quot;stringify string&quot;</span> {</span>
+<span class="line" id="L2476">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;hello\&quot;&quot;</span>, <span class="tok-str">&quot;hello&quot;</span>, StringifyOptions{});</span>
+<span class="line" id="L2477">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with\\nescapes\\r\&quot;&quot;</span>, <span class="tok-str">&quot;with\nescapes\r&quot;</span>, StringifyOptions{});</span>
+<span class="line" id="L2478">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with\\nescapes\\r\&quot;&quot;</span>, <span class="tok-str">&quot;with\nescapes\r&quot;</span>, StringifyOptions{ .string = .{ .String = .{ .escape_unicode = <span class="tok-null">true</span> } } });</span>
+<span class="line" id="L2479">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with unicode\\u0001\&quot;&quot;</span>, <span class="tok-str">&quot;with unicode\u{1}&quot;</span>, StringifyOptions{});</span>
+<span class="line" id="L2480">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with unicode\\u0001\&quot;&quot;</span>, <span class="tok-str">&quot;with unicode\u{1}&quot;</span>, StringifyOptions{ .string = .{ .String = .{ .escape_unicode = <span class="tok-null">true</span> } } });</span>
+<span class="line" id="L2481">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with unicode\u{80}\&quot;&quot;</span>, <span class="tok-str">&quot;with unicode\u{80}&quot;</span>, StringifyOptions{});</span>
+<span class="line" id="L2482">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with unicode\\u0080\&quot;&quot;</span>, <span class="tok-str">&quot;with unicode\u{80}&quot;</span>, StringifyOptions{ .string = .{ .String = .{ .escape_unicode = <span class="tok-null">true</span> } } });</span>
+<span class="line" id="L2483">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with unicode\u{FF}\&quot;&quot;</span>, <span class="tok-str">&quot;with unicode\u{FF}&quot;</span>, StringifyOptions{});</span>
+<span class="line" id="L2484">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with unicode\\u00ff\&quot;&quot;</span>, <span class="tok-str">&quot;with unicode\u{FF}&quot;</span>, StringifyOptions{ .string = .{ .String = .{ .escape_unicode = <span class="tok-null">true</span> } } });</span>
+<span class="line" id="L2485">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with unicode\u{100}\&quot;&quot;</span>, <span class="tok-str">&quot;with unicode\u{100}&quot;</span>, StringifyOptions{});</span>
+<span class="line" id="L2486">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with unicode\\u0100\&quot;&quot;</span>, <span class="tok-str">&quot;with unicode\u{100}&quot;</span>, StringifyOptions{ .string = .{ .String = .{ .escape_unicode = <span class="tok-null">true</span> } } });</span>
+<span class="line" id="L2487">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with unicode\u{800}\&quot;&quot;</span>, <span class="tok-str">&quot;with unicode\u{800}&quot;</span>, StringifyOptions{});</span>
+<span class="line" id="L2488">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with unicode\\u0800\&quot;&quot;</span>, <span class="tok-str">&quot;with unicode\u{800}&quot;</span>, StringifyOptions{ .string = .{ .String = .{ .escape_unicode = <span class="tok-null">true</span> } } });</span>
+<span class="line" id="L2489">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with unicode\u{8000}\&quot;&quot;</span>, <span class="tok-str">&quot;with unicode\u{8000}&quot;</span>, StringifyOptions{});</span>
+<span class="line" id="L2490">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with unicode\\u8000\&quot;&quot;</span>, <span class="tok-str">&quot;with unicode\u{8000}&quot;</span>, StringifyOptions{ .string = .{ .String = .{ .escape_unicode = <span class="tok-null">true</span> } } });</span>
+<span class="line" id="L2491">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with unicode\u{D799}\&quot;&quot;</span>, <span class="tok-str">&quot;with unicode\u{D799}&quot;</span>, StringifyOptions{});</span>
+<span class="line" id="L2492">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with unicode\\ud799\&quot;&quot;</span>, <span class="tok-str">&quot;with unicode\u{D799}&quot;</span>, StringifyOptions{ .string = .{ .String = .{ .escape_unicode = <span class="tok-null">true</span> } } });</span>
+<span class="line" id="L2493">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with unicode\u{10000}\&quot;&quot;</span>, <span class="tok-str">&quot;with unicode\u{10000}&quot;</span>, StringifyOptions{});</span>
+<span class="line" id="L2494">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with unicode\\ud800\\udc00\&quot;&quot;</span>, <span class="tok-str">&quot;with unicode\u{10000}&quot;</span>, StringifyOptions{ .string = .{ .String = .{ .escape_unicode = <span class="tok-null">true</span> } } });</span>
+<span class="line" id="L2495">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with unicode\u{10FFFF}\&quot;&quot;</span>, <span class="tok-str">&quot;with unicode\u{10FFFF}&quot;</span>, StringifyOptions{});</span>
+<span class="line" id="L2496">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;with unicode\\udbff\\udfff\&quot;&quot;</span>, <span class="tok-str">&quot;with unicode\u{10FFFF}&quot;</span>, StringifyOptions{ .string = .{ .String = .{ .escape_unicode = <span class="tok-null">true</span> } } });</span>
+<span class="line" id="L2497">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;/\&quot;&quot;</span>, <span class="tok-str">&quot;/&quot;</span>, StringifyOptions{});</span>
+<span class="line" id="L2498">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;\&quot;\\/\&quot;&quot;</span>, <span class="tok-str">&quot;/&quot;</span>, StringifyOptions{ .string = .{ .String = .{ .escape_solidus = <span class="tok-null">true</span> } } });</span>
+<span class="line" id="L2499">}</span>
+<span class="line" id="L2500"></span>
+<span class="line" id="L2501"><span class="tok-kw">test</span> <span class="tok-str">&quot;stringify tagged unions&quot;</span> {</span>
+<span class="line" id="L2502">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;42&quot;</span>, <span class="tok-kw">union</span>(<span class="tok-kw">enum</span>) {</span>
+<span class="line" id="L2503">        Foo: <span class="tok-type">u32</span>,</span>
+<span class="line" id="L2504">        Bar: <span class="tok-type">bool</span>,</span>
+<span class="line" id="L2505">    }{ .Foo = <span class="tok-number">42</span> }, StringifyOptions{});</span>
+<span class="line" id="L2506">}</span>
+<span class="line" id="L2507"></span>
+<span class="line" id="L2508"><span class="tok-kw">test</span> <span class="tok-str">&quot;stringify struct&quot;</span> {</span>
+<span class="line" id="L2509">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;{\&quot;foo\&quot;:42}&quot;</span>, <span class="tok-kw">struct</span> {</span>
+<span class="line" id="L2510">        foo: <span class="tok-type">u32</span>,</span>
+<span class="line" id="L2511">    }{ .foo = <span class="tok-number">42</span> }, StringifyOptions{});</span>
+<span class="line" id="L2512">}</span>
+<span class="line" id="L2513"></span>
+<span class="line" id="L2514"><span class="tok-kw">test</span> <span class="tok-str">&quot;stringify struct with string as array&quot;</span> {</span>
+<span class="line" id="L2515">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;{\&quot;foo\&quot;:\&quot;bar\&quot;}&quot;</span>, .{ .foo = <span class="tok-str">&quot;bar&quot;</span> }, StringifyOptions{});</span>
+<span class="line" id="L2516">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;{\&quot;foo\&quot;:[98,97,114]}&quot;</span>, .{ .foo = <span class="tok-str">&quot;bar&quot;</span> }, StringifyOptions{ .string = .Array });</span>
+<span class="line" id="L2517">}</span>
+<span class="line" id="L2518"></span>
+<span class="line" id="L2519"><span class="tok-kw">test</span> <span class="tok-str">&quot;stringify struct with indentation&quot;</span> {</span>
+<span class="line" id="L2520">    <span class="tok-kw">try</span> teststringify(</span>
+<span class="line" id="L2521">        <span class="tok-str">\\{</span></span>
 
-<span class="line" id="L2525">        <span class="tok-str">\\    &quot;foo&quot;: 42,</span></span>
+<span class="line" id="L2522">        <span class="tok-str">\\    &quot;foo&quot;: 42,</span></span>
 
-<span class="line" id="L2526">        <span class="tok-str">\\    &quot;bar&quot;: [</span></span>
+<span class="line" id="L2523">        <span class="tok-str">\\    &quot;bar&quot;: [</span></span>
 
-<span class="line" id="L2527">        <span class="tok-str">\\        1,</span></span>
+<span class="line" id="L2524">        <span class="tok-str">\\        1,</span></span>
 
-<span class="line" id="L2528">        <span class="tok-str">\\        2,</span></span>
+<span class="line" id="L2525">        <span class="tok-str">\\        2,</span></span>
 
-<span class="line" id="L2529">        <span class="tok-str">\\        3</span></span>
+<span class="line" id="L2526">        <span class="tok-str">\\        3</span></span>
 
-<span class="line" id="L2530">        <span class="tok-str">\\    ]</span></span>
+<span class="line" id="L2527">        <span class="tok-str">\\    ]</span></span>
 
-<span class="line" id="L2531">        <span class="tok-str">\\}</span></span>
+<span class="line" id="L2528">        <span class="tok-str">\\}</span></span>
 
-<span class="line" id="L2532">    ,</span>
-<span class="line" id="L2533">        <span class="tok-kw">struct</span> {</span>
-<span class="line" id="L2534">            foo: <span class="tok-type">u32</span>,</span>
-<span class="line" id="L2535">            bar: [<span class="tok-number">3</span>]<span class="tok-type">u32</span>,</span>
-<span class="line" id="L2536">        }{</span>
-<span class="line" id="L2537">            .foo = <span class="tok-number">42</span>,</span>
-<span class="line" id="L2538">            .bar = .{ <span class="tok-number">1</span>, <span class="tok-number">2</span>, <span class="tok-number">3</span> },</span>
+<span class="line" id="L2529">    ,</span>
+<span class="line" id="L2530">        <span class="tok-kw">struct</span> {</span>
+<span class="line" id="L2531">            foo: <span class="tok-type">u32</span>,</span>
+<span class="line" id="L2532">            bar: [<span class="tok-number">3</span>]<span class="tok-type">u32</span>,</span>
+<span class="line" id="L2533">        }{</span>
+<span class="line" id="L2534">            .foo = <span class="tok-number">42</span>,</span>
+<span class="line" id="L2535">            .bar = .{ <span class="tok-number">1</span>, <span class="tok-number">2</span>, <span class="tok-number">3</span> },</span>
+<span class="line" id="L2536">        },</span>
+<span class="line" id="L2537">        StringifyOptions{</span>
+<span class="line" id="L2538">            .whitespace = .{},</span>
 <span class="line" id="L2539">        },</span>
-<span class="line" id="L2540">        StringifyOptions{</span>
-<span class="line" id="L2541">            .whitespace = .{},</span>
-<span class="line" id="L2542">        },</span>
-<span class="line" id="L2543">    );</span>
-<span class="line" id="L2544">    <span class="tok-kw">try</span> teststringify(</span>
-<span class="line" id="L2545">        <span class="tok-str">&quot;{\n\t\&quot;foo\&quot;:42,\n\t\&quot;bar\&quot;:[\n\t\t1,\n\t\t2,\n\t\t3\n\t]\n}&quot;</span>,</span>
-<span class="line" id="L2546">        <span class="tok-kw">struct</span> {</span>
-<span class="line" id="L2547">            foo: <span class="tok-type">u32</span>,</span>
-<span class="line" id="L2548">            bar: [<span class="tok-number">3</span>]<span class="tok-type">u32</span>,</span>
-<span class="line" id="L2549">        }{</span>
-<span class="line" id="L2550">            .foo = <span class="tok-number">42</span>,</span>
-<span class="line" id="L2551">            .bar = .{ <span class="tok-number">1</span>, <span class="tok-number">2</span>, <span class="tok-number">3</span> },</span>
-<span class="line" id="L2552">        },</span>
-<span class="line" id="L2553">        StringifyOptions{</span>
-<span class="line" id="L2554">            .whitespace = .{</span>
-<span class="line" id="L2555">                .indent = .Tab,</span>
-<span class="line" id="L2556">                .separator = <span class="tok-null">false</span>,</span>
-<span class="line" id="L2557">            },</span>
-<span class="line" id="L2558">        },</span>
-<span class="line" id="L2559">    );</span>
-<span class="line" id="L2560">    <span class="tok-kw">try</span> teststringify(</span>
-<span class="line" id="L2561">        <span class="tok-str">\\{&quot;foo&quot;:42,&quot;bar&quot;:[1,2,3]}</span></span>
+<span class="line" id="L2540">    );</span>
+<span class="line" id="L2541">    <span class="tok-kw">try</span> teststringify(</span>
+<span class="line" id="L2542">        <span class="tok-str">&quot;{\n\t\&quot;foo\&quot;:42,\n\t\&quot;bar\&quot;:[\n\t\t1,\n\t\t2,\n\t\t3\n\t]\n}&quot;</span>,</span>
+<span class="line" id="L2543">        <span class="tok-kw">struct</span> {</span>
+<span class="line" id="L2544">            foo: <span class="tok-type">u32</span>,</span>
+<span class="line" id="L2545">            bar: [<span class="tok-number">3</span>]<span class="tok-type">u32</span>,</span>
+<span class="line" id="L2546">        }{</span>
+<span class="line" id="L2547">            .foo = <span class="tok-number">42</span>,</span>
+<span class="line" id="L2548">            .bar = .{ <span class="tok-number">1</span>, <span class="tok-number">2</span>, <span class="tok-number">3</span> },</span>
+<span class="line" id="L2549">        },</span>
+<span class="line" id="L2550">        StringifyOptions{</span>
+<span class="line" id="L2551">            .whitespace = .{</span>
+<span class="line" id="L2552">                .indent = .Tab,</span>
+<span class="line" id="L2553">                .separator = <span class="tok-null">false</span>,</span>
+<span class="line" id="L2554">            },</span>
+<span class="line" id="L2555">        },</span>
+<span class="line" id="L2556">    );</span>
+<span class="line" id="L2557">    <span class="tok-kw">try</span> teststringify(</span>
+<span class="line" id="L2558">        <span class="tok-str">\\{&quot;foo&quot;:42,&quot;bar&quot;:[1,2,3]}</span></span>
 
-<span class="line" id="L2562">    ,</span>
-<span class="line" id="L2563">        <span class="tok-kw">struct</span> {</span>
-<span class="line" id="L2564">            foo: <span class="tok-type">u32</span>,</span>
-<span class="line" id="L2565">            bar: [<span class="tok-number">3</span>]<span class="tok-type">u32</span>,</span>
-<span class="line" id="L2566">        }{</span>
-<span class="line" id="L2567">            .foo = <span class="tok-number">42</span>,</span>
-<span class="line" id="L2568">            .bar = .{ <span class="tok-number">1</span>, <span class="tok-number">2</span>, <span class="tok-number">3</span> },</span>
-<span class="line" id="L2569">        },</span>
-<span class="line" id="L2570">        StringifyOptions{</span>
-<span class="line" id="L2571">            .whitespace = .{</span>
-<span class="line" id="L2572">                .indent = .None,</span>
-<span class="line" id="L2573">                .separator = <span class="tok-null">false</span>,</span>
-<span class="line" id="L2574">            },</span>
-<span class="line" id="L2575">        },</span>
-<span class="line" id="L2576">    );</span>
-<span class="line" id="L2577">}</span>
-<span class="line" id="L2578"></span>
-<span class="line" id="L2579"><span class="tok-kw">test</span> <span class="tok-str">&quot;stringify struct with void field&quot;</span> {</span>
-<span class="line" id="L2580">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;{\&quot;foo\&quot;:42}&quot;</span>, <span class="tok-kw">struct</span> {</span>
-<span class="line" id="L2581">        foo: <span class="tok-type">u32</span>,</span>
-<span class="line" id="L2582">        bar: <span class="tok-type">void</span> = {},</span>
-<span class="line" id="L2583">    }{ .foo = <span class="tok-number">42</span> }, StringifyOptions{});</span>
-<span class="line" id="L2584">}</span>
-<span class="line" id="L2585"></span>
-<span class="line" id="L2586"><span class="tok-kw">test</span> <span class="tok-str">&quot;stringify array of structs&quot;</span> {</span>
-<span class="line" id="L2587">    <span class="tok-kw">const</span> MyStruct = <span class="tok-kw">struct</span> {</span>
-<span class="line" id="L2588">        foo: <span class="tok-type">u32</span>,</span>
-<span class="line" id="L2589">    };</span>
-<span class="line" id="L2590">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;[{\&quot;foo\&quot;:42},{\&quot;foo\&quot;:100},{\&quot;foo\&quot;:1000}]&quot;</span>, [_]MyStruct{</span>
-<span class="line" id="L2591">        MyStruct{ .foo = <span class="tok-number">42</span> },</span>
-<span class="line" id="L2592">        MyStruct{ .foo = <span class="tok-number">100</span> },</span>
-<span class="line" id="L2593">        MyStruct{ .foo = <span class="tok-number">1000</span> },</span>
-<span class="line" id="L2594">    }, StringifyOptions{});</span>
-<span class="line" id="L2595">}</span>
-<span class="line" id="L2596"></span>
-<span class="line" id="L2597"><span class="tok-kw">test</span> <span class="tok-str">&quot;stringify struct with custom stringifier&quot;</span> {</span>
-<span class="line" id="L2598">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;[\&quot;something special\&quot;,42]&quot;</span>, <span class="tok-kw">struct</span> {</span>
-<span class="line" id="L2599">        foo: <span class="tok-type">u32</span>,</span>
-<span class="line" id="L2600">        <span class="tok-kw">const</span> Self = <span class="tok-builtin">@This</span>();</span>
-<span class="line" id="L2601">        <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">jsonStringify</span>(</span>
-<span class="line" id="L2602">            value: Self,</span>
-<span class="line" id="L2603">            options: StringifyOptions,</span>
-<span class="line" id="L2604">            out_stream: <span class="tok-kw">anytype</span>,</span>
-<span class="line" id="L2605">        ) !<span class="tok-type">void</span> {</span>
-<span class="line" id="L2606">            _ = value;</span>
-<span class="line" id="L2607">            <span class="tok-kw">try</span> out_stream.writeAll(<span class="tok-str">&quot;[\&quot;something special\&quot;,&quot;</span>);</span>
-<span class="line" id="L2608">            <span class="tok-kw">try</span> stringify(<span class="tok-number">42</span>, options, out_stream);</span>
-<span class="line" id="L2609">            <span class="tok-kw">try</span> out_stream.writeByte(<span class="tok-str">']'</span>);</span>
-<span class="line" id="L2610">        }</span>
-<span class="line" id="L2611">    }{ .foo = <span class="tok-number">42</span> }, StringifyOptions{});</span>
-<span class="line" id="L2612">}</span>
-<span class="line" id="L2613"></span>
-<span class="line" id="L2614"><span class="tok-kw">test</span> <span class="tok-str">&quot;stringify vector&quot;</span> {</span>
-<span class="line" id="L2615">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;[1,1]&quot;</span>, <span class="tok-builtin">@splat</span>(<span class="tok-number">2</span>, <span class="tok-builtin">@as</span>(<span class="tok-type">u32</span>, <span class="tok-number">1</span>)), StringifyOptions{});</span>
-<span class="line" id="L2616">}</span>
-<span class="line" id="L2617"></span>
-<span class="line" id="L2618"><span class="tok-kw">fn</span> <span class="tok-fn">teststringify</span>(expected: []<span class="tok-kw">const</span> <span class="tok-type">u8</span>, value: <span class="tok-kw">anytype</span>, options: StringifyOptions) !<span class="tok-type">void</span> {</span>
-<span class="line" id="L2619">    <span class="tok-kw">const</span> ValidationWriter = <span class="tok-kw">struct</span> {</span>
-<span class="line" id="L2620">        <span class="tok-kw">const</span> Self = <span class="tok-builtin">@This</span>();</span>
-<span class="line" id="L2621">        <span class="tok-kw">pub</span> <span class="tok-kw">const</span> Writer = std.io.Writer(*Self, Error, write);</span>
-<span class="line" id="L2622">        <span class="tok-kw">pub</span> <span class="tok-kw">const</span> Error = <span class="tok-kw">error</span>{</span>
-<span class="line" id="L2623">            TooMuchData,</span>
-<span class="line" id="L2624">            DifferentData,</span>
-<span class="line" id="L2625">        };</span>
-<span class="line" id="L2626"></span>
-<span class="line" id="L2627">        expected_remaining: []<span class="tok-kw">const</span> <span class="tok-type">u8</span>,</span>
-<span class="line" id="L2628"></span>
-<span class="line" id="L2629">        <span class="tok-kw">fn</span> <span class="tok-fn">init</span>(exp: []<span class="tok-kw">const</span> <span class="tok-type">u8</span>) Self {</span>
-<span class="line" id="L2630">            <span class="tok-kw">return</span> .{ .expected_remaining = exp };</span>
-<span class="line" id="L2631">        }</span>
-<span class="line" id="L2632"></span>
-<span class="line" id="L2633">        <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">writer</span>(self: *Self) Writer {</span>
-<span class="line" id="L2634">            <span class="tok-kw">return</span> .{ .context = self };</span>
-<span class="line" id="L2635">        }</span>
-<span class="line" id="L2636"></span>
-<span class="line" id="L2637">        <span class="tok-kw">fn</span> <span class="tok-fn">write</span>(self: *Self, bytes: []<span class="tok-kw">const</span> <span class="tok-type">u8</span>) Error!<span class="tok-type">usize</span> {</span>
-<span class="line" id="L2638">            <span class="tok-kw">if</span> (self.expected_remaining.len &lt; bytes.len) {</span>
-<span class="line" id="L2639">                std.debug.print(</span>
-<span class="line" id="L2640">                    <span class="tok-str">\\====== expected this output: =========</span></span>
+<span class="line" id="L2559">    ,</span>
+<span class="line" id="L2560">        <span class="tok-kw">struct</span> {</span>
+<span class="line" id="L2561">            foo: <span class="tok-type">u32</span>,</span>
+<span class="line" id="L2562">            bar: [<span class="tok-number">3</span>]<span class="tok-type">u32</span>,</span>
+<span class="line" id="L2563">        }{</span>
+<span class="line" id="L2564">            .foo = <span class="tok-number">42</span>,</span>
+<span class="line" id="L2565">            .bar = .{ <span class="tok-number">1</span>, <span class="tok-number">2</span>, <span class="tok-number">3</span> },</span>
+<span class="line" id="L2566">        },</span>
+<span class="line" id="L2567">        StringifyOptions{</span>
+<span class="line" id="L2568">            .whitespace = .{</span>
+<span class="line" id="L2569">                .indent = .None,</span>
+<span class="line" id="L2570">                .separator = <span class="tok-null">false</span>,</span>
+<span class="line" id="L2571">            },</span>
+<span class="line" id="L2572">        },</span>
+<span class="line" id="L2573">    );</span>
+<span class="line" id="L2574">}</span>
+<span class="line" id="L2575"></span>
+<span class="line" id="L2576"><span class="tok-kw">test</span> <span class="tok-str">&quot;stringify struct with void field&quot;</span> {</span>
+<span class="line" id="L2577">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;{\&quot;foo\&quot;:42}&quot;</span>, <span class="tok-kw">struct</span> {</span>
+<span class="line" id="L2578">        foo: <span class="tok-type">u32</span>,</span>
+<span class="line" id="L2579">        bar: <span class="tok-type">void</span> = {},</span>
+<span class="line" id="L2580">    }{ .foo = <span class="tok-number">42</span> }, StringifyOptions{});</span>
+<span class="line" id="L2581">}</span>
+<span class="line" id="L2582"></span>
+<span class="line" id="L2583"><span class="tok-kw">test</span> <span class="tok-str">&quot;stringify array of structs&quot;</span> {</span>
+<span class="line" id="L2584">    <span class="tok-kw">const</span> MyStruct = <span class="tok-kw">struct</span> {</span>
+<span class="line" id="L2585">        foo: <span class="tok-type">u32</span>,</span>
+<span class="line" id="L2586">    };</span>
+<span class="line" id="L2587">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;[{\&quot;foo\&quot;:42},{\&quot;foo\&quot;:100},{\&quot;foo\&quot;:1000}]&quot;</span>, [_]MyStruct{</span>
+<span class="line" id="L2588">        MyStruct{ .foo = <span class="tok-number">42</span> },</span>
+<span class="line" id="L2589">        MyStruct{ .foo = <span class="tok-number">100</span> },</span>
+<span class="line" id="L2590">        MyStruct{ .foo = <span class="tok-number">1000</span> },</span>
+<span class="line" id="L2591">    }, StringifyOptions{});</span>
+<span class="line" id="L2592">}</span>
+<span class="line" id="L2593"></span>
+<span class="line" id="L2594"><span class="tok-kw">test</span> <span class="tok-str">&quot;stringify struct with custom stringifier&quot;</span> {</span>
+<span class="line" id="L2595">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;[\&quot;something special\&quot;,42]&quot;</span>, <span class="tok-kw">struct</span> {</span>
+<span class="line" id="L2596">        foo: <span class="tok-type">u32</span>,</span>
+<span class="line" id="L2597">        <span class="tok-kw">const</span> Self = <span class="tok-builtin">@This</span>();</span>
+<span class="line" id="L2598">        <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">jsonStringify</span>(</span>
+<span class="line" id="L2599">            value: Self,</span>
+<span class="line" id="L2600">            options: StringifyOptions,</span>
+<span class="line" id="L2601">            out_stream: <span class="tok-kw">anytype</span>,</span>
+<span class="line" id="L2602">        ) !<span class="tok-type">void</span> {</span>
+<span class="line" id="L2603">            _ = value;</span>
+<span class="line" id="L2604">            <span class="tok-kw">try</span> out_stream.writeAll(<span class="tok-str">&quot;[\&quot;something special\&quot;,&quot;</span>);</span>
+<span class="line" id="L2605">            <span class="tok-kw">try</span> stringify(<span class="tok-number">42</span>, options, out_stream);</span>
+<span class="line" id="L2606">            <span class="tok-kw">try</span> out_stream.writeByte(<span class="tok-str">']'</span>);</span>
+<span class="line" id="L2607">        }</span>
+<span class="line" id="L2608">    }{ .foo = <span class="tok-number">42</span> }, StringifyOptions{});</span>
+<span class="line" id="L2609">}</span>
+<span class="line" id="L2610"></span>
+<span class="line" id="L2611"><span class="tok-kw">test</span> <span class="tok-str">&quot;stringify vector&quot;</span> {</span>
+<span class="line" id="L2612">    <span class="tok-kw">try</span> teststringify(<span class="tok-str">&quot;[1,1]&quot;</span>, <span class="tok-builtin">@splat</span>(<span class="tok-number">2</span>, <span class="tok-builtin">@as</span>(<span class="tok-type">u32</span>, <span class="tok-number">1</span>)), StringifyOptions{});</span>
+<span class="line" id="L2613">}</span>
+<span class="line" id="L2614"></span>
+<span class="line" id="L2615"><span class="tok-kw">fn</span> <span class="tok-fn">teststringify</span>(expected: []<span class="tok-kw">const</span> <span class="tok-type">u8</span>, value: <span class="tok-kw">anytype</span>, options: StringifyOptions) !<span class="tok-type">void</span> {</span>
+<span class="line" id="L2616">    <span class="tok-kw">const</span> ValidationWriter = <span class="tok-kw">struct</span> {</span>
+<span class="line" id="L2617">        <span class="tok-kw">const</span> Self = <span class="tok-builtin">@This</span>();</span>
+<span class="line" id="L2618">        <span class="tok-kw">pub</span> <span class="tok-kw">const</span> Writer = std.io.Writer(*Self, Error, write);</span>
+<span class="line" id="L2619">        <span class="tok-kw">pub</span> <span class="tok-kw">const</span> Error = <span class="tok-kw">error</span>{</span>
+<span class="line" id="L2620">            TooMuchData,</span>
+<span class="line" id="L2621">            DifferentData,</span>
+<span class="line" id="L2622">        };</span>
+<span class="line" id="L2623"></span>
+<span class="line" id="L2624">        expected_remaining: []<span class="tok-kw">const</span> <span class="tok-type">u8</span>,</span>
+<span class="line" id="L2625"></span>
+<span class="line" id="L2626">        <span class="tok-kw">fn</span> <span class="tok-fn">init</span>(exp: []<span class="tok-kw">const</span> <span class="tok-type">u8</span>) Self {</span>
+<span class="line" id="L2627">            <span class="tok-kw">return</span> .{ .expected_remaining = exp };</span>
+<span class="line" id="L2628">        }</span>
+<span class="line" id="L2629"></span>
+<span class="line" id="L2630">        <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">writer</span>(self: *Self) Writer {</span>
+<span class="line" id="L2631">            <span class="tok-kw">return</span> .{ .context = self };</span>
+<span class="line" id="L2632">        }</span>
+<span class="line" id="L2633"></span>
+<span class="line" id="L2634">        <span class="tok-kw">fn</span> <span class="tok-fn">write</span>(self: *Self, bytes: []<span class="tok-kw">const</span> <span class="tok-type">u8</span>) Error!<span class="tok-type">usize</span> {</span>
+<span class="line" id="L2635">            <span class="tok-kw">if</span> (self.expected_remaining.len &lt; bytes.len) {</span>
+<span class="line" id="L2636">                std.debug.print(</span>
+<span class="line" id="L2637">                    <span class="tok-str">\\====== expected this output: =========</span></span>
 
-<span class="line" id="L2641">                    <span class="tok-str">\\{s}</span></span>
+<span class="line" id="L2638">                    <span class="tok-str">\\{s}</span></span>
 
-<span class="line" id="L2642">                    <span class="tok-str">\\======== instead found this: =========</span></span>
+<span class="line" id="L2639">                    <span class="tok-str">\\======== instead found this: =========</span></span>
 
-<span class="line" id="L2643">                    <span class="tok-str">\\{s}</span></span>
+<span class="line" id="L2640">                    <span class="tok-str">\\{s}</span></span>
 
-<span class="line" id="L2644">                    <span class="tok-str">\\======================================</span></span>
+<span class="line" id="L2641">                    <span class="tok-str">\\======================================</span></span>
 
-<span class="line" id="L2645">                , .{</span>
-<span class="line" id="L2646">                    self.expected_remaining,</span>
-<span class="line" id="L2647">                    bytes,</span>
-<span class="line" id="L2648">                });</span>
-<span class="line" id="L2649">                <span class="tok-kw">return</span> <span class="tok-kw">error</span>.TooMuchData;</span>
-<span class="line" id="L2650">            }</span>
-<span class="line" id="L2651">            <span class="tok-kw">if</span> (!mem.eql(<span class="tok-type">u8</span>, self.expected_remaining[<span class="tok-number">0</span>..bytes.len], bytes)) {</span>
-<span class="line" id="L2652">                std.debug.print(</span>
-<span class="line" id="L2653">                    <span class="tok-str">\\====== expected this output: =========</span></span>
+<span class="line" id="L2642">                , .{</span>
+<span class="line" id="L2643">                    self.expected_remaining,</span>
+<span class="line" id="L2644">                    bytes,</span>
+<span class="line" id="L2645">                });</span>
+<span class="line" id="L2646">                <span class="tok-kw">return</span> <span class="tok-kw">error</span>.TooMuchData;</span>
+<span class="line" id="L2647">            }</span>
+<span class="line" id="L2648">            <span class="tok-kw">if</span> (!mem.eql(<span class="tok-type">u8</span>, self.expected_remaining[<span class="tok-number">0</span>..bytes.len], bytes)) {</span>
+<span class="line" id="L2649">                std.debug.print(</span>
+<span class="line" id="L2650">                    <span class="tok-str">\\====== expected this output: =========</span></span>
 
-<span class="line" id="L2654">                    <span class="tok-str">\\{s}</span></span>
+<span class="line" id="L2651">                    <span class="tok-str">\\{s}</span></span>
 
-<span class="line" id="L2655">                    <span class="tok-str">\\======== instead found this: =========</span></span>
+<span class="line" id="L2652">                    <span class="tok-str">\\======== instead found this: =========</span></span>
 
-<span class="line" id="L2656">                    <span class="tok-str">\\{s}</span></span>
+<span class="line" id="L2653">                    <span class="tok-str">\\{s}</span></span>
 
-<span class="line" id="L2657">                    <span class="tok-str">\\======================================</span></span>
+<span class="line" id="L2654">                    <span class="tok-str">\\======================================</span></span>
 
-<span class="line" id="L2658">                , .{</span>
-<span class="line" id="L2659">                    self.expected_remaining[<span class="tok-number">0</span>..bytes.len],</span>
-<span class="line" id="L2660">                    bytes,</span>
-<span class="line" id="L2661">                });</span>
-<span class="line" id="L2662">                <span class="tok-kw">return</span> <span class="tok-kw">error</span>.DifferentData;</span>
-<span class="line" id="L2663">            }</span>
-<span class="line" id="L2664">            self.expected_remaining = self.expected_remaining[bytes.len..];</span>
-<span class="line" id="L2665">            <span class="tok-kw">return</span> bytes.len;</span>
-<span class="line" id="L2666">        }</span>
-<span class="line" id="L2667">    };</span>
-<span class="line" id="L2668"></span>
-<span class="line" id="L2669">    <span class="tok-kw">var</span> vos = ValidationWriter.init(expected);</span>
-<span class="line" id="L2670">    <span class="tok-kw">try</span> stringify(value, options, vos.writer());</span>
-<span class="line" id="L2671">    <span class="tok-kw">if</span> (vos.expected_remaining.len &gt; <span class="tok-number">0</span>) <span class="tok-kw">return</span> <span class="tok-kw">error</span>.NotEnoughData;</span>
-<span class="line" id="L2672">}</span>
-<span class="line" id="L2673"></span>
-<span class="line" id="L2674"><span class="tok-kw">test</span> <span class="tok-str">&quot;encodesTo&quot;</span> {</span>
-<span class="line" id="L2675">    <span class="tok-comment">// same</span>
+<span class="line" id="L2655">                , .{</span>
+<span class="line" id="L2656">                    self.expected_remaining[<span class="tok-number">0</span>..bytes.len],</span>
+<span class="line" id="L2657">                    bytes,</span>
+<span class="line" id="L2658">                });</span>
+<span class="line" id="L2659">                <span class="tok-kw">return</span> <span class="tok-kw">error</span>.DifferentData;</span>
+<span class="line" id="L2660">            }</span>
+<span class="line" id="L2661">            self.expected_remaining = self.expected_remaining[bytes.len..];</span>
+<span class="line" id="L2662">            <span class="tok-kw">return</span> bytes.len;</span>
+<span class="line" id="L2663">        }</span>
+<span class="line" id="L2664">    };</span>
+<span class="line" id="L2665"></span>
+<span class="line" id="L2666">    <span class="tok-kw">var</span> vos = ValidationWriter.init(expected);</span>
+<span class="line" id="L2667">    <span class="tok-kw">try</span> stringify(value, options, vos.writer());</span>
+<span class="line" id="L2668">    <span class="tok-kw">if</span> (vos.expected_remaining.len &gt; <span class="tok-number">0</span>) <span class="tok-kw">return</span> <span class="tok-kw">error</span>.NotEnoughData;</span>
+<span class="line" id="L2669">}</span>
+<span class="line" id="L2670"></span>
+<span class="line" id="L2671"><span class="tok-kw">test</span> <span class="tok-str">&quot;encodesTo&quot;</span> {</span>
+<span class="line" id="L2672">    <span class="tok-comment">// same</span>
 </span>
-<span class="line" id="L2676">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-null">true</span>, encodesTo(<span class="tok-str">&quot;false&quot;</span>, <span class="tok-str">&quot;false&quot;</span>));</span>
-<span class="line" id="L2677">    <span class="tok-comment">// totally different</span>
+<span class="line" id="L2673">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-null">true</span>, encodesTo(<span class="tok-str">&quot;false&quot;</span>, <span class="tok-str">&quot;false&quot;</span>));</span>
+<span class="line" id="L2674">    <span class="tok-comment">// totally different</span>
 </span>
-<span class="line" id="L2678">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-null">false</span>, encodesTo(<span class="tok-str">&quot;false&quot;</span>, <span class="tok-str">&quot;true&quot;</span>));</span>
-<span class="line" id="L2679">    <span class="tok-comment">// different lengths</span>
+<span class="line" id="L2675">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-null">false</span>, encodesTo(<span class="tok-str">&quot;false&quot;</span>, <span class="tok-str">&quot;true&quot;</span>));</span>
+<span class="line" id="L2676">    <span class="tok-comment">// different lengths</span>
 </span>
-<span class="line" id="L2680">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-null">false</span>, encodesTo(<span class="tok-str">&quot;false&quot;</span>, <span class="tok-str">&quot;other&quot;</span>));</span>
-<span class="line" id="L2681">    <span class="tok-comment">// with escape</span>
+<span class="line" id="L2677">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-null">false</span>, encodesTo(<span class="tok-str">&quot;false&quot;</span>, <span class="tok-str">&quot;other&quot;</span>));</span>
+<span class="line" id="L2678">    <span class="tok-comment">// with escape</span>
 </span>
-<span class="line" id="L2682">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-null">true</span>, encodesTo(<span class="tok-str">&quot;\\&quot;</span>, <span class="tok-str">&quot;\\\\&quot;</span>));</span>
-<span class="line" id="L2683">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-null">true</span>, encodesTo(<span class="tok-str">&quot;with\nescape&quot;</span>, <span class="tok-str">&quot;with\\nescape&quot;</span>));</span>
-<span class="line" id="L2684">    <span class="tok-comment">// with unicode</span>
+<span class="line" id="L2679">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-null">true</span>, encodesTo(<span class="tok-str">&quot;\\&quot;</span>, <span class="tok-str">&quot;\\\\&quot;</span>));</span>
+<span class="line" id="L2680">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-null">true</span>, encodesTo(<span class="tok-str">&quot;with\nescape&quot;</span>, <span class="tok-str">&quot;with\\nescape&quot;</span>));</span>
+<span class="line" id="L2681">    <span class="tok-comment">// with unicode</span>
 </span>
-<span class="line" id="L2685">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-null">true</span>, encodesTo(<span class="tok-str">&quot;ą&quot;</span>, <span class="tok-str">&quot;\\u0105&quot;</span>));</span>
-<span class="line" id="L2686">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-null">true</span>, encodesTo(<span class="tok-str">&quot;😂&quot;</span>, <span class="tok-str">&quot;\\ud83d\\ude02&quot;</span>));</span>
-<span class="line" id="L2687">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-null">true</span>, encodesTo(<span class="tok-str">&quot;withąunicode😂&quot;</span>, <span class="tok-str">&quot;with\\u0105unicode\\ud83d\\ude02&quot;</span>));</span>
-<span class="line" id="L2688">}</span>
-<span class="line" id="L2689"></span>
+<span class="line" id="L2682">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-null">true</span>, encodesTo(<span class="tok-str">&quot;ą&quot;</span>, <span class="tok-str">&quot;\\u0105&quot;</span>));</span>
+<span class="line" id="L2683">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-null">true</span>, encodesTo(<span class="tok-str">&quot;😂&quot;</span>, <span class="tok-str">&quot;\\ud83d\\ude02&quot;</span>));</span>
+<span class="line" id="L2684">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-null">true</span>, encodesTo(<span class="tok-str">&quot;withąunicode😂&quot;</span>, <span class="tok-str">&quot;with\\u0105unicode\\ud83d\\ude02&quot;</span>));</span>
+<span class="line" id="L2685">}</span>
+<span class="line" id="L2686"></span>
 </code></pre></body>
 </html>

@@ -266,6 +266,42 @@
         font-weight: bold;
       }
 
+      details[open] summary .sum-less {
+        display: none;
+      }
+
+      details[open] summary .sum-more {
+        display: block;
+      }
+
+      details summary .sum-more {
+        display: none;
+      }
+
+      details summary {
+        list-style-type: none;
+        position: relative;
+        pointer-events: none;
+      }
+
+      details summary::before {
+        content: "[+] ";
+        font-family: var(--mono);
+        color: var(--link-color);
+        position: sticky;
+        float: left;
+        top: 0px;
+        right: -16px;
+        z-index: 1;
+        margin-left: -2em;
+        pointer-events: all;
+        cursor: pointer;
+      }
+
+      details[open] summary::before {
+        content: "[-] ";
+      }
+
       .examples {
         list-style-type: none;
         margin: 0;
@@ -633,13 +669,14 @@
         <div class="wrap">
           <section class="docs">
             <div style="position: relative">
-              <span id="searchPlaceholder"><kbd>S</kbd> to search, <kbd>?</kbd> for more options</span>
+              <span id="searchPlaceholder"><kbd>s</kbd> to search, <kbd>?</kbd> for more options</span>
               <input type="search" class="search" id="search" autocomplete="off" spellcheck="false" disabled>
             </div>
             <p id="status">Loading...</p>
             <div id="sectNav" class="hidden"><ul id="listNav"></ul></div>
             <div id="fnProto" class="hidden">
               <div class="mobile-scroll-container"><pre id="fnProtoCode" class="scroll-item"></pre></div>
+              <div id="fnSourceLink" style="display:flex;flex-direction:row;justify-content:flex-end;"></div>
             </div>
             <h1 id="hdrName" class="hidden"></h1>
             <div id="fnNoExamples" class="hidden">

@@ -143,7 +143,7 @@
 <span class="line" id="L30"><span class="tok-comment">//!   A variant of DynamicBitSet which does not store a pointer to its</span></span>
 <span class="line" id="L31"><span class="tok-comment">//!   allocator, in order to save space.</span></span>
 <span class="line" id="L32"></span>
-<span class="line" id="L33"><span class="tok-kw">const</span> std = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;std&quot;</span>);</span>
+<span class="line" id="L33"><span class="tok-kw">const</span> std = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;std.zig&quot;</span>);</span>
 <span class="line" id="L34"><span class="tok-kw">const</span> assert = std.debug.assert;</span>
 <span class="line" id="L35"><span class="tok-kw">const</span> Allocator = std.mem.Allocator;</span>
 <span class="line" id="L36"></span>
@@ -313,14 +313,14 @@
 <span class="line" id="L198">            <span class="tok-kw">return</span> bit_length == <span class="tok-number">0</span> <span class="tok-kw">or</span> self.mask == other.mask;</span>
 <span class="line" id="L199">        }</span>
 <span class="line" id="L200"></span>
-<span class="line" id="L201">        <span class="tok-comment">/// Returns iff the first bit set is the subset of the</span></span>
-<span class="line" id="L202">        <span class="tok-comment">/// second one.</span></span>
+<span class="line" id="L201">        <span class="tok-comment">/// Returns true iff the first bit set is the subset</span></span>
+<span class="line" id="L202">        <span class="tok-comment">/// of the second one.</span></span>
 <span class="line" id="L203">        <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">subsetOf</span>(self: Self, other: Self) <span class="tok-type">bool</span> {</span>
 <span class="line" id="L204">            <span class="tok-kw">return</span> self.intersectWith(other).eql(self);</span>
 <span class="line" id="L205">        }</span>
 <span class="line" id="L206"></span>
-<span class="line" id="L207">        <span class="tok-comment">/// Returns iff the first bit set is the superset of the</span></span>
-<span class="line" id="L208">        <span class="tok-comment">/// second one.</span></span>
+<span class="line" id="L207">        <span class="tok-comment">/// Returns true iff the first bit set is the superset</span></span>
+<span class="line" id="L208">        <span class="tok-comment">/// of the second one.</span></span>
 <span class="line" id="L209">        <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">supersetOf</span>(self: Self, other: Self) <span class="tok-type">bool</span> {</span>
 <span class="line" id="L210">            <span class="tok-kw">return</span> other.subsetOf(self);</span>
 <span class="line" id="L211">        }</span>
@@ -335,7 +335,7 @@
 <span class="line" id="L220"></span>
 <span class="line" id="L221">        <span class="tok-comment">/// Returns the union of two bit sets. Bits in the</span></span>
 <span class="line" id="L222">        <span class="tok-comment">/// result are set if the corresponding bits were set</span></span>
-<span class="line" id="L223">        <span class="tok-comment">/// in both inputs.</span></span>
+<span class="line" id="L223">        <span class="tok-comment">/// in either input.</span></span>
 <span class="line" id="L224">        <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">unionWith</span>(self: Self, other: Self) Self {</span>
 <span class="line" id="L225">            <span class="tok-kw">var</span> result = self;</span>
 <span class="line" id="L226">            result.setUnion(other);</span>
@@ -353,7 +353,7 @@
 <span class="line" id="L238"></span>
 <span class="line" id="L239">        <span class="tok-comment">/// Returns the xor of two bit sets. Bits in the</span></span>
 <span class="line" id="L240">        <span class="tok-comment">/// result are set if the corresponding bits were</span></span>
-<span class="line" id="L241">        <span class="tok-comment">/// set in not the same in both inputs.</span></span>
+<span class="line" id="L241">        <span class="tok-comment">/// not the same in both inputs.</span></span>
 <span class="line" id="L242">        <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">xorWith</span>(self: Self, other: Self) Self {</span>
 <span class="line" id="L243">            <span class="tok-kw">var</span> result = self;</span>
 <span class="line" id="L244">            result.toggleSet(other);</span>
@@ -701,14 +701,14 @@
 <span class="line" id="L564">            } <span class="tok-kw">else</span> <span class="tok-null">true</span>;</span>
 <span class="line" id="L565">        }</span>
 <span class="line" id="L566"></span>
-<span class="line" id="L567">        <span class="tok-comment">/// Returns iff the first bit set is the subset of the</span></span>
-<span class="line" id="L568">        <span class="tok-comment">/// second one.</span></span>
+<span class="line" id="L567">        <span class="tok-comment">/// Returns true iff the first bit set is the subset</span></span>
+<span class="line" id="L568">        <span class="tok-comment">/// of the second one.</span></span>
 <span class="line" id="L569">        <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">subsetOf</span>(self: Self, other: Self) <span class="tok-type">bool</span> {</span>
 <span class="line" id="L570">            <span class="tok-kw">return</span> self.intersectWith(other).eql(self);</span>
 <span class="line" id="L571">        }</span>
 <span class="line" id="L572"></span>
-<span class="line" id="L573">        <span class="tok-comment">/// Returns iff the first bit set is the superset of the</span></span>
-<span class="line" id="L574">        <span class="tok-comment">/// second one.</span></span>
+<span class="line" id="L573">        <span class="tok-comment">/// Returns true iff the first bit set is the superset</span></span>
+<span class="line" id="L574">        <span class="tok-comment">/// of the second one.</span></span>
 <span class="line" id="L575">        <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">supersetOf</span>(self: Self, other: Self) <span class="tok-type">bool</span> {</span>
 <span class="line" id="L576">            <span class="tok-kw">return</span> other.subsetOf(self);</span>
 <span class="line" id="L577">        }</span>
@@ -723,7 +723,7 @@
 <span class="line" id="L586"></span>
 <span class="line" id="L587">        <span class="tok-comment">/// Returns the union of two bit sets. Bits in the</span></span>
 <span class="line" id="L588">        <span class="tok-comment">/// result are set if the corresponding bits were set</span></span>
-<span class="line" id="L589">        <span class="tok-comment">/// in both inputs.</span></span>
+<span class="line" id="L589">        <span class="tok-comment">/// in either input.</span></span>
 <span class="line" id="L590">        <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">unionWith</span>(self: Self, other: Self) Self {</span>
 <span class="line" id="L591">            <span class="tok-kw">var</span> result = self;</span>
 <span class="line" id="L592">            result.setUnion(other);</span>
@@ -741,7 +741,7 @@
 <span class="line" id="L604"></span>
 <span class="line" id="L605">        <span class="tok-comment">/// Returns the xor of two bit sets. Bits in the</span></span>
 <span class="line" id="L606">        <span class="tok-comment">/// result are set if the corresponding bits were</span></span>
-<span class="line" id="L607">        <span class="tok-comment">/// set in not the same in both inputs.</span></span>
+<span class="line" id="L607">        <span class="tok-comment">/// not the same in both inputs.</span></span>
 <span class="line" id="L608">        <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">xorWith</span>(self: Self, other: Self) Self {</span>
 <span class="line" id="L609">            <span class="tok-kw">var</span> result = self;</span>
 <span class="line" id="L610">            result.toggleSet(other);</span>
@@ -1116,761 +1116,818 @@
 <span class="line" id="L957">        } <span class="tok-kw">else</span> <span class="tok-null">true</span>;</span>
 <span class="line" id="L958">    }</span>
 <span class="line" id="L959"></span>
-<span class="line" id="L960">    <span class="tok-comment">/// Iterates through the items in the set, according to the options.</span></span>
-<span class="line" id="L961">    <span class="tok-comment">/// The default options (.{}) will iterate indices of set bits in</span></span>
-<span class="line" id="L962">    <span class="tok-comment">/// ascending order.  Modifications to the underlying bit set may</span></span>
-<span class="line" id="L963">    <span class="tok-comment">/// or may not be observed by the iterator.  Resizing the underlying</span></span>
-<span class="line" id="L964">    <span class="tok-comment">/// bit set invalidates the iterator.</span></span>
-<span class="line" id="L965">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">iterator</span>(self: *<span class="tok-kw">const</span> Self, <span class="tok-kw">comptime</span> options: IteratorOptions) Iterator(options) {</span>
+<span class="line" id="L960">    <span class="tok-comment">/// Returns true iff the first bit set is the subset</span></span>
+<span class="line" id="L961">    <span class="tok-comment">/// of the second one.</span></span>
+<span class="line" id="L962">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">subsetOf</span>(self: Self, other: Self) <span class="tok-type">bool</span> {</span>
+<span class="line" id="L963">        <span class="tok-kw">if</span> (self.bit_length != other.bit_length) {</span>
+<span class="line" id="L964">            <span class="tok-kw">return</span> <span class="tok-null">false</span>;</span>
+<span class="line" id="L965">        }</span>
 <span class="line" id="L966">        <span class="tok-kw">const</span> num_masks = numMasks(self.bit_length);</span>
-<span class="line" id="L967">        <span class="tok-kw">const</span> padding_bits = num_masks * <span class="tok-builtin">@bitSizeOf</span>(MaskInt) - self.bit_length;</span>
-<span class="line" id="L968">        <span class="tok-kw">const</span> last_item_mask = (~<span class="tok-builtin">@as</span>(MaskInt, <span class="tok-number">0</span>)) &gt;&gt; <span class="tok-builtin">@intCast</span>(ShiftInt, padding_bits);</span>
-<span class="line" id="L969">        <span class="tok-kw">return</span> Iterator(options).init(self.masks[<span class="tok-number">0</span>..num_masks], last_item_mask);</span>
-<span class="line" id="L970">    }</span>
-<span class="line" id="L971"></span>
-<span class="line" id="L972">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">Iterator</span>(<span class="tok-kw">comptime</span> options: IteratorOptions) <span class="tok-type">type</span> {</span>
-<span class="line" id="L973">        <span class="tok-kw">return</span> BitSetIterator(MaskInt, options);</span>
-<span class="line" id="L974">    }</span>
-<span class="line" id="L975"></span>
-<span class="line" id="L976">    <span class="tok-kw">fn</span> <span class="tok-fn">maskBit</span>(index: <span class="tok-type">usize</span>) MaskInt {</span>
-<span class="line" id="L977">        <span class="tok-kw">return</span> <span class="tok-builtin">@as</span>(MaskInt, <span class="tok-number">1</span>) &lt;&lt; <span class="tok-builtin">@truncate</span>(ShiftInt, index);</span>
-<span class="line" id="L978">    }</span>
-<span class="line" id="L979">    <span class="tok-kw">fn</span> <span class="tok-fn">maskIndex</span>(index: <span class="tok-type">usize</span>) <span class="tok-type">usize</span> {</span>
-<span class="line" id="L980">        <span class="tok-kw">return</span> index &gt;&gt; <span class="tok-builtin">@bitSizeOf</span>(ShiftInt);</span>
-<span class="line" id="L981">    }</span>
-<span class="line" id="L982">    <span class="tok-kw">fn</span> <span class="tok-fn">boolMaskBit</span>(index: <span class="tok-type">usize</span>, value: <span class="tok-type">bool</span>) MaskInt {</span>
-<span class="line" id="L983">        <span class="tok-kw">return</span> <span class="tok-builtin">@as</span>(MaskInt, <span class="tok-builtin">@boolToInt</span>(value)) &lt;&lt; <span class="tok-builtin">@intCast</span>(ShiftInt, index);</span>
-<span class="line" id="L984">    }</span>
-<span class="line" id="L985">    <span class="tok-kw">fn</span> <span class="tok-fn">numMasks</span>(bit_length: <span class="tok-type">usize</span>) <span class="tok-type">usize</span> {</span>
-<span class="line" id="L986">        <span class="tok-kw">return</span> (bit_length + (<span class="tok-builtin">@bitSizeOf</span>(MaskInt) - <span class="tok-number">1</span>)) / <span class="tok-builtin">@bitSizeOf</span>(MaskInt);</span>
-<span class="line" id="L987">    }</span>
-<span class="line" id="L988">};</span>
+<span class="line" id="L967">        <span class="tok-kw">var</span> i: <span class="tok-type">usize</span> = <span class="tok-number">0</span>;</span>
+<span class="line" id="L968">        <span class="tok-kw">return</span> <span class="tok-kw">while</span> (i &lt; num_masks) : (i += <span class="tok-number">1</span>) {</span>
+<span class="line" id="L969">            <span class="tok-kw">if</span> (self.masks[i] &amp; other.masks[i] != self.masks[i]) {</span>
+<span class="line" id="L970">                <span class="tok-kw">break</span> <span class="tok-null">false</span>;</span>
+<span class="line" id="L971">            }</span>
+<span class="line" id="L972">        } <span class="tok-kw">else</span> <span class="tok-null">true</span>;</span>
+<span class="line" id="L973">    }</span>
+<span class="line" id="L974"></span>
+<span class="line" id="L975">    <span class="tok-comment">/// Returns true iff the first bit set is the superset</span></span>
+<span class="line" id="L976">    <span class="tok-comment">/// of the second one.</span></span>
+<span class="line" id="L977">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">supersetOf</span>(self: Self, other: Self) <span class="tok-type">bool</span> {</span>
+<span class="line" id="L978">        <span class="tok-kw">if</span> (self.bit_length != other.bit_length) {</span>
+<span class="line" id="L979">            <span class="tok-kw">return</span> <span class="tok-null">false</span>;</span>
+<span class="line" id="L980">        }</span>
+<span class="line" id="L981">        <span class="tok-kw">const</span> num_masks = numMasks(self.bit_length);</span>
+<span class="line" id="L982">        <span class="tok-kw">var</span> i: <span class="tok-type">usize</span> = <span class="tok-number">0</span>;</span>
+<span class="line" id="L983">        <span class="tok-kw">return</span> <span class="tok-kw">while</span> (i &lt; num_masks) : (i += <span class="tok-number">1</span>) {</span>
+<span class="line" id="L984">            <span class="tok-kw">if</span> (self.masks[i] &amp; other.masks[i] != other.masks[i]) {</span>
+<span class="line" id="L985">                <span class="tok-kw">break</span> <span class="tok-null">false</span>;</span>
+<span class="line" id="L986">            }</span>
+<span class="line" id="L987">        } <span class="tok-kw">else</span> <span class="tok-null">true</span>;</span>
+<span class="line" id="L988">    }</span>
 <span class="line" id="L989"></span>
-<span class="line" id="L990"><span class="tok-comment">/// A bit set with runtime-known size, backed by an allocated slice</span></span>
-<span class="line" id="L991"><span class="tok-comment">/// of usize.  Thin wrapper around DynamicBitSetUnmanaged which keeps</span></span>
-<span class="line" id="L992"><span class="tok-comment">/// track of the allocator instance.</span></span>
-<span class="line" id="L993"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> DynamicBitSet = <span class="tok-kw">struct</span> {</span>
-<span class="line" id="L994">    <span class="tok-kw">const</span> Self = <span class="tok-builtin">@This</span>();</span>
-<span class="line" id="L995"></span>
-<span class="line" id="L996">    <span class="tok-comment">/// The integer type used to represent a mask in this bit set</span></span>
-<span class="line" id="L997">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> MaskInt = <span class="tok-type">usize</span>;</span>
-<span class="line" id="L998"></span>
-<span class="line" id="L999">    <span class="tok-comment">/// The integer type used to shift a mask in this bit set</span></span>
-<span class="line" id="L1000">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> ShiftInt = std.math.Log2Int(MaskInt);</span>
+<span class="line" id="L990">    <span class="tok-comment">/// Iterates through the items in the set, according to the options.</span></span>
+<span class="line" id="L991">    <span class="tok-comment">/// The default options (.{}) will iterate indices of set bits in</span></span>
+<span class="line" id="L992">    <span class="tok-comment">/// ascending order.  Modifications to the underlying bit set may</span></span>
+<span class="line" id="L993">    <span class="tok-comment">/// or may not be observed by the iterator.  Resizing the underlying</span></span>
+<span class="line" id="L994">    <span class="tok-comment">/// bit set invalidates the iterator.</span></span>
+<span class="line" id="L995">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">iterator</span>(self: *<span class="tok-kw">const</span> Self, <span class="tok-kw">comptime</span> options: IteratorOptions) Iterator(options) {</span>
+<span class="line" id="L996">        <span class="tok-kw">const</span> num_masks = numMasks(self.bit_length);</span>
+<span class="line" id="L997">        <span class="tok-kw">const</span> padding_bits = num_masks * <span class="tok-builtin">@bitSizeOf</span>(MaskInt) - self.bit_length;</span>
+<span class="line" id="L998">        <span class="tok-kw">const</span> last_item_mask = (~<span class="tok-builtin">@as</span>(MaskInt, <span class="tok-number">0</span>)) &gt;&gt; <span class="tok-builtin">@intCast</span>(ShiftInt, padding_bits);</span>
+<span class="line" id="L999">        <span class="tok-kw">return</span> Iterator(options).init(self.masks[<span class="tok-number">0</span>..num_masks], last_item_mask);</span>
+<span class="line" id="L1000">    }</span>
 <span class="line" id="L1001"></span>
-<span class="line" id="L1002">    <span class="tok-comment">/// The allocator used by this bit set</span></span>
-<span class="line" id="L1003">    allocator: Allocator,</span>
-<span class="line" id="L1004"></span>
-<span class="line" id="L1005">    <span class="tok-comment">/// The number of valid items in this bit set</span></span>
-<span class="line" id="L1006">    unmanaged: DynamicBitSetUnmanaged = .{},</span>
-<span class="line" id="L1007"></span>
-<span class="line" id="L1008">    <span class="tok-comment">/// Creates a bit set with no elements present.</span></span>
-<span class="line" id="L1009">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">initEmpty</span>(allocator: Allocator, bit_length: <span class="tok-type">usize</span>) !Self {</span>
-<span class="line" id="L1010">        <span class="tok-kw">return</span> Self{</span>
-<span class="line" id="L1011">            .unmanaged = <span class="tok-kw">try</span> DynamicBitSetUnmanaged.initEmpty(allocator, bit_length),</span>
-<span class="line" id="L1012">            .allocator = allocator,</span>
-<span class="line" id="L1013">        };</span>
+<span class="line" id="L1002">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">Iterator</span>(<span class="tok-kw">comptime</span> options: IteratorOptions) <span class="tok-type">type</span> {</span>
+<span class="line" id="L1003">        <span class="tok-kw">return</span> BitSetIterator(MaskInt, options);</span>
+<span class="line" id="L1004">    }</span>
+<span class="line" id="L1005"></span>
+<span class="line" id="L1006">    <span class="tok-kw">fn</span> <span class="tok-fn">maskBit</span>(index: <span class="tok-type">usize</span>) MaskInt {</span>
+<span class="line" id="L1007">        <span class="tok-kw">return</span> <span class="tok-builtin">@as</span>(MaskInt, <span class="tok-number">1</span>) &lt;&lt; <span class="tok-builtin">@truncate</span>(ShiftInt, index);</span>
+<span class="line" id="L1008">    }</span>
+<span class="line" id="L1009">    <span class="tok-kw">fn</span> <span class="tok-fn">maskIndex</span>(index: <span class="tok-type">usize</span>) <span class="tok-type">usize</span> {</span>
+<span class="line" id="L1010">        <span class="tok-kw">return</span> index &gt;&gt; <span class="tok-builtin">@bitSizeOf</span>(ShiftInt);</span>
+<span class="line" id="L1011">    }</span>
+<span class="line" id="L1012">    <span class="tok-kw">fn</span> <span class="tok-fn">boolMaskBit</span>(index: <span class="tok-type">usize</span>, value: <span class="tok-type">bool</span>) MaskInt {</span>
+<span class="line" id="L1013">        <span class="tok-kw">return</span> <span class="tok-builtin">@as</span>(MaskInt, <span class="tok-builtin">@boolToInt</span>(value)) &lt;&lt; <span class="tok-builtin">@intCast</span>(ShiftInt, index);</span>
 <span class="line" id="L1014">    }</span>
-<span class="line" id="L1015"></span>
-<span class="line" id="L1016">    <span class="tok-comment">/// Creates a bit set with all elements present.</span></span>
-<span class="line" id="L1017">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">initFull</span>(allocator: Allocator, bit_length: <span class="tok-type">usize</span>) !Self {</span>
-<span class="line" id="L1018">        <span class="tok-kw">return</span> Self{</span>
-<span class="line" id="L1019">            .unmanaged = <span class="tok-kw">try</span> DynamicBitSetUnmanaged.initFull(allocator, bit_length),</span>
-<span class="line" id="L1020">            .allocator = allocator,</span>
-<span class="line" id="L1021">        };</span>
-<span class="line" id="L1022">    }</span>
-<span class="line" id="L1023"></span>
-<span class="line" id="L1024">    <span class="tok-comment">/// Resizes to a new length.  If the new length is larger</span></span>
-<span class="line" id="L1025">    <span class="tok-comment">/// than the old length, fills any added bits with `fill`.</span></span>
-<span class="line" id="L1026">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">resize</span>(self: *<span class="tok-builtin">@This</span>(), new_len: <span class="tok-type">usize</span>, fill: <span class="tok-type">bool</span>) !<span class="tok-type">void</span> {</span>
-<span class="line" id="L1027">        <span class="tok-kw">try</span> self.unmanaged.resize(self.allocator, new_len, fill);</span>
-<span class="line" id="L1028">    }</span>
-<span class="line" id="L1029"></span>
-<span class="line" id="L1030">    <span class="tok-comment">/// deinitializes the array and releases its memory.</span></span>
-<span class="line" id="L1031">    <span class="tok-comment">/// The passed allocator must be the same one used for</span></span>
-<span class="line" id="L1032">    <span class="tok-comment">/// init* or resize in the past.</span></span>
-<span class="line" id="L1033">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">deinit</span>(self: *Self) <span class="tok-type">void</span> {</span>
-<span class="line" id="L1034">        self.unmanaged.deinit(self.allocator);</span>
-<span class="line" id="L1035">    }</span>
-<span class="line" id="L1036"></span>
-<span class="line" id="L1037">    <span class="tok-comment">/// Creates a duplicate of this bit set, using the new allocator.</span></span>
-<span class="line" id="L1038">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">clone</span>(self: *<span class="tok-kw">const</span> Self, new_allocator: Allocator) !Self {</span>
-<span class="line" id="L1039">        <span class="tok-kw">return</span> Self{</span>
-<span class="line" id="L1040">            .unmanaged = <span class="tok-kw">try</span> self.unmanaged.clone(new_allocator),</span>
-<span class="line" id="L1041">            .allocator = new_allocator,</span>
-<span class="line" id="L1042">        };</span>
-<span class="line" id="L1043">    }</span>
-<span class="line" id="L1044"></span>
-<span class="line" id="L1045">    <span class="tok-comment">/// Returns the number of bits in this bit set</span></span>
-<span class="line" id="L1046">    <span class="tok-kw">pub</span> <span class="tok-kw">inline</span> <span class="tok-kw">fn</span> <span class="tok-fn">capacity</span>(self: Self) <span class="tok-type">usize</span> {</span>
-<span class="line" id="L1047">        <span class="tok-kw">return</span> self.unmanaged.capacity();</span>
-<span class="line" id="L1048">    }</span>
-<span class="line" id="L1049"></span>
-<span class="line" id="L1050">    <span class="tok-comment">/// Returns true if the bit at the specified index</span></span>
-<span class="line" id="L1051">    <span class="tok-comment">/// is present in the set, false otherwise.</span></span>
-<span class="line" id="L1052">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">isSet</span>(self: Self, index: <span class="tok-type">usize</span>) <span class="tok-type">bool</span> {</span>
-<span class="line" id="L1053">        <span class="tok-kw">return</span> self.unmanaged.isSet(index);</span>
-<span class="line" id="L1054">    }</span>
-<span class="line" id="L1055"></span>
-<span class="line" id="L1056">    <span class="tok-comment">/// Returns the total number of set bits in this bit set.</span></span>
-<span class="line" id="L1057">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">count</span>(self: Self) <span class="tok-type">usize</span> {</span>
-<span class="line" id="L1058">        <span class="tok-kw">return</span> self.unmanaged.count();</span>
-<span class="line" id="L1059">    }</span>
-<span class="line" id="L1060"></span>
-<span class="line" id="L1061">    <span class="tok-comment">/// Changes the value of the specified bit of the bit</span></span>
-<span class="line" id="L1062">    <span class="tok-comment">/// set to match the passed boolean.</span></span>
-<span class="line" id="L1063">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">setValue</span>(self: *Self, index: <span class="tok-type">usize</span>, value: <span class="tok-type">bool</span>) <span class="tok-type">void</span> {</span>
-<span class="line" id="L1064">        self.unmanaged.setValue(index, value);</span>
+<span class="line" id="L1015">    <span class="tok-kw">fn</span> <span class="tok-fn">numMasks</span>(bit_length: <span class="tok-type">usize</span>) <span class="tok-type">usize</span> {</span>
+<span class="line" id="L1016">        <span class="tok-kw">return</span> (bit_length + (<span class="tok-builtin">@bitSizeOf</span>(MaskInt) - <span class="tok-number">1</span>)) / <span class="tok-builtin">@bitSizeOf</span>(MaskInt);</span>
+<span class="line" id="L1017">    }</span>
+<span class="line" id="L1018">};</span>
+<span class="line" id="L1019"></span>
+<span class="line" id="L1020"><span class="tok-comment">/// A bit set with runtime-known size, backed by an allocated slice</span></span>
+<span class="line" id="L1021"><span class="tok-comment">/// of usize.  Thin wrapper around DynamicBitSetUnmanaged which keeps</span></span>
+<span class="line" id="L1022"><span class="tok-comment">/// track of the allocator instance.</span></span>
+<span class="line" id="L1023"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> DynamicBitSet = <span class="tok-kw">struct</span> {</span>
+<span class="line" id="L1024">    <span class="tok-kw">const</span> Self = <span class="tok-builtin">@This</span>();</span>
+<span class="line" id="L1025"></span>
+<span class="line" id="L1026">    <span class="tok-comment">/// The integer type used to represent a mask in this bit set</span></span>
+<span class="line" id="L1027">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> MaskInt = <span class="tok-type">usize</span>;</span>
+<span class="line" id="L1028"></span>
+<span class="line" id="L1029">    <span class="tok-comment">/// The integer type used to shift a mask in this bit set</span></span>
+<span class="line" id="L1030">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> ShiftInt = std.math.Log2Int(MaskInt);</span>
+<span class="line" id="L1031"></span>
+<span class="line" id="L1032">    <span class="tok-comment">/// The allocator used by this bit set</span></span>
+<span class="line" id="L1033">    allocator: Allocator,</span>
+<span class="line" id="L1034"></span>
+<span class="line" id="L1035">    <span class="tok-comment">/// The number of valid items in this bit set</span></span>
+<span class="line" id="L1036">    unmanaged: DynamicBitSetUnmanaged = .{},</span>
+<span class="line" id="L1037"></span>
+<span class="line" id="L1038">    <span class="tok-comment">/// Creates a bit set with no elements present.</span></span>
+<span class="line" id="L1039">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">initEmpty</span>(allocator: Allocator, bit_length: <span class="tok-type">usize</span>) !Self {</span>
+<span class="line" id="L1040">        <span class="tok-kw">return</span> Self{</span>
+<span class="line" id="L1041">            .unmanaged = <span class="tok-kw">try</span> DynamicBitSetUnmanaged.initEmpty(allocator, bit_length),</span>
+<span class="line" id="L1042">            .allocator = allocator,</span>
+<span class="line" id="L1043">        };</span>
+<span class="line" id="L1044">    }</span>
+<span class="line" id="L1045"></span>
+<span class="line" id="L1046">    <span class="tok-comment">/// Creates a bit set with all elements present.</span></span>
+<span class="line" id="L1047">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">initFull</span>(allocator: Allocator, bit_length: <span class="tok-type">usize</span>) !Self {</span>
+<span class="line" id="L1048">        <span class="tok-kw">return</span> Self{</span>
+<span class="line" id="L1049">            .unmanaged = <span class="tok-kw">try</span> DynamicBitSetUnmanaged.initFull(allocator, bit_length),</span>
+<span class="line" id="L1050">            .allocator = allocator,</span>
+<span class="line" id="L1051">        };</span>
+<span class="line" id="L1052">    }</span>
+<span class="line" id="L1053"></span>
+<span class="line" id="L1054">    <span class="tok-comment">/// Resizes to a new length.  If the new length is larger</span></span>
+<span class="line" id="L1055">    <span class="tok-comment">/// than the old length, fills any added bits with `fill`.</span></span>
+<span class="line" id="L1056">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">resize</span>(self: *<span class="tok-builtin">@This</span>(), new_len: <span class="tok-type">usize</span>, fill: <span class="tok-type">bool</span>) !<span class="tok-type">void</span> {</span>
+<span class="line" id="L1057">        <span class="tok-kw">try</span> self.unmanaged.resize(self.allocator, new_len, fill);</span>
+<span class="line" id="L1058">    }</span>
+<span class="line" id="L1059"></span>
+<span class="line" id="L1060">    <span class="tok-comment">/// deinitializes the array and releases its memory.</span></span>
+<span class="line" id="L1061">    <span class="tok-comment">/// The passed allocator must be the same one used for</span></span>
+<span class="line" id="L1062">    <span class="tok-comment">/// init* or resize in the past.</span></span>
+<span class="line" id="L1063">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">deinit</span>(self: *Self) <span class="tok-type">void</span> {</span>
+<span class="line" id="L1064">        self.unmanaged.deinit(self.allocator);</span>
 <span class="line" id="L1065">    }</span>
 <span class="line" id="L1066"></span>
-<span class="line" id="L1067">    <span class="tok-comment">/// Adds a specific bit to the bit set</span></span>
-<span class="line" id="L1068">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">set</span>(self: *Self, index: <span class="tok-type">usize</span>) <span class="tok-type">void</span> {</span>
-<span class="line" id="L1069">        self.unmanaged.set(index);</span>
-<span class="line" id="L1070">    }</span>
-<span class="line" id="L1071"></span>
-<span class="line" id="L1072">    <span class="tok-comment">/// Changes the value of all bits in the specified range to</span></span>
-<span class="line" id="L1073">    <span class="tok-comment">/// match the passed boolean.</span></span>
-<span class="line" id="L1074">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">setRangeValue</span>(self: *Self, range: Range, value: <span class="tok-type">bool</span>) <span class="tok-type">void</span> {</span>
-<span class="line" id="L1075">        self.unmanaged.setRangeValue(range, value);</span>
-<span class="line" id="L1076">    }</span>
-<span class="line" id="L1077"></span>
-<span class="line" id="L1078">    <span class="tok-comment">/// Removes a specific bit from the bit set</span></span>
-<span class="line" id="L1079">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">unset</span>(self: *Self, index: <span class="tok-type">usize</span>) <span class="tok-type">void</span> {</span>
-<span class="line" id="L1080">        self.unmanaged.unset(index);</span>
-<span class="line" id="L1081">    }</span>
-<span class="line" id="L1082"></span>
-<span class="line" id="L1083">    <span class="tok-comment">/// Flips a specific bit in the bit set</span></span>
-<span class="line" id="L1084">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">toggle</span>(self: *Self, index: <span class="tok-type">usize</span>) <span class="tok-type">void</span> {</span>
-<span class="line" id="L1085">        self.unmanaged.toggle(index);</span>
-<span class="line" id="L1086">    }</span>
-<span class="line" id="L1087"></span>
-<span class="line" id="L1088">    <span class="tok-comment">/// Flips all bits in this bit set which are present</span></span>
-<span class="line" id="L1089">    <span class="tok-comment">/// in the toggles bit set.  Both sets must have the</span></span>
-<span class="line" id="L1090">    <span class="tok-comment">/// same bit_length.</span></span>
-<span class="line" id="L1091">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">toggleSet</span>(self: *Self, toggles: Self) <span class="tok-type">void</span> {</span>
-<span class="line" id="L1092">        self.unmanaged.toggleSet(toggles.unmanaged);</span>
-<span class="line" id="L1093">    }</span>
-<span class="line" id="L1094"></span>
-<span class="line" id="L1095">    <span class="tok-comment">/// Flips every bit in the bit set.</span></span>
-<span class="line" id="L1096">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">toggleAll</span>(self: *Self) <span class="tok-type">void</span> {</span>
-<span class="line" id="L1097">        self.unmanaged.toggleAll();</span>
-<span class="line" id="L1098">    }</span>
-<span class="line" id="L1099"></span>
-<span class="line" id="L1100">    <span class="tok-comment">/// Performs a union of two bit sets, and stores the</span></span>
-<span class="line" id="L1101">    <span class="tok-comment">/// result in the first one.  Bits in the result are</span></span>
-<span class="line" id="L1102">    <span class="tok-comment">/// set if the corresponding bits were set in either input.</span></span>
-<span class="line" id="L1103">    <span class="tok-comment">/// The two sets must both be the same bit_length.</span></span>
-<span class="line" id="L1104">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">setUnion</span>(self: *Self, other: Self) <span class="tok-type">void</span> {</span>
-<span class="line" id="L1105">        self.unmanaged.setUnion(other.unmanaged);</span>
+<span class="line" id="L1067">    <span class="tok-comment">/// Creates a duplicate of this bit set, using the new allocator.</span></span>
+<span class="line" id="L1068">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">clone</span>(self: *<span class="tok-kw">const</span> Self, new_allocator: Allocator) !Self {</span>
+<span class="line" id="L1069">        <span class="tok-kw">return</span> Self{</span>
+<span class="line" id="L1070">            .unmanaged = <span class="tok-kw">try</span> self.unmanaged.clone(new_allocator),</span>
+<span class="line" id="L1071">            .allocator = new_allocator,</span>
+<span class="line" id="L1072">        };</span>
+<span class="line" id="L1073">    }</span>
+<span class="line" id="L1074"></span>
+<span class="line" id="L1075">    <span class="tok-comment">/// Returns the number of bits in this bit set</span></span>
+<span class="line" id="L1076">    <span class="tok-kw">pub</span> <span class="tok-kw">inline</span> <span class="tok-kw">fn</span> <span class="tok-fn">capacity</span>(self: Self) <span class="tok-type">usize</span> {</span>
+<span class="line" id="L1077">        <span class="tok-kw">return</span> self.unmanaged.capacity();</span>
+<span class="line" id="L1078">    }</span>
+<span class="line" id="L1079"></span>
+<span class="line" id="L1080">    <span class="tok-comment">/// Returns true if the bit at the specified index</span></span>
+<span class="line" id="L1081">    <span class="tok-comment">/// is present in the set, false otherwise.</span></span>
+<span class="line" id="L1082">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">isSet</span>(self: Self, index: <span class="tok-type">usize</span>) <span class="tok-type">bool</span> {</span>
+<span class="line" id="L1083">        <span class="tok-kw">return</span> self.unmanaged.isSet(index);</span>
+<span class="line" id="L1084">    }</span>
+<span class="line" id="L1085"></span>
+<span class="line" id="L1086">    <span class="tok-comment">/// Returns the total number of set bits in this bit set.</span></span>
+<span class="line" id="L1087">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">count</span>(self: Self) <span class="tok-type">usize</span> {</span>
+<span class="line" id="L1088">        <span class="tok-kw">return</span> self.unmanaged.count();</span>
+<span class="line" id="L1089">    }</span>
+<span class="line" id="L1090"></span>
+<span class="line" id="L1091">    <span class="tok-comment">/// Changes the value of the specified bit of the bit</span></span>
+<span class="line" id="L1092">    <span class="tok-comment">/// set to match the passed boolean.</span></span>
+<span class="line" id="L1093">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">setValue</span>(self: *Self, index: <span class="tok-type">usize</span>, value: <span class="tok-type">bool</span>) <span class="tok-type">void</span> {</span>
+<span class="line" id="L1094">        self.unmanaged.setValue(index, value);</span>
+<span class="line" id="L1095">    }</span>
+<span class="line" id="L1096"></span>
+<span class="line" id="L1097">    <span class="tok-comment">/// Adds a specific bit to the bit set</span></span>
+<span class="line" id="L1098">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">set</span>(self: *Self, index: <span class="tok-type">usize</span>) <span class="tok-type">void</span> {</span>
+<span class="line" id="L1099">        self.unmanaged.set(index);</span>
+<span class="line" id="L1100">    }</span>
+<span class="line" id="L1101"></span>
+<span class="line" id="L1102">    <span class="tok-comment">/// Changes the value of all bits in the specified range to</span></span>
+<span class="line" id="L1103">    <span class="tok-comment">/// match the passed boolean.</span></span>
+<span class="line" id="L1104">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">setRangeValue</span>(self: *Self, range: Range, value: <span class="tok-type">bool</span>) <span class="tok-type">void</span> {</span>
+<span class="line" id="L1105">        self.unmanaged.setRangeValue(range, value);</span>
 <span class="line" id="L1106">    }</span>
 <span class="line" id="L1107"></span>
-<span class="line" id="L1108">    <span class="tok-comment">/// Performs an intersection of two bit sets, and stores</span></span>
-<span class="line" id="L1109">    <span class="tok-comment">/// the result in the first one.  Bits in the result are</span></span>
-<span class="line" id="L1110">    <span class="tok-comment">/// set if the corresponding bits were set in both inputs.</span></span>
-<span class="line" id="L1111">    <span class="tok-comment">/// The two sets must both be the same bit_length.</span></span>
-<span class="line" id="L1112">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">setIntersection</span>(self: *Self, other: Self) <span class="tok-type">void</span> {</span>
-<span class="line" id="L1113">        self.unmanaged.setIntersection(other.unmanaged);</span>
-<span class="line" id="L1114">    }</span>
-<span class="line" id="L1115"></span>
-<span class="line" id="L1116">    <span class="tok-comment">/// Finds the index of the first set bit.</span></span>
-<span class="line" id="L1117">    <span class="tok-comment">/// If no bits are set, returns null.</span></span>
-<span class="line" id="L1118">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">findFirstSet</span>(self: Self) ?<span class="tok-type">usize</span> {</span>
-<span class="line" id="L1119">        <span class="tok-kw">return</span> self.unmanaged.findFirstSet();</span>
-<span class="line" id="L1120">    }</span>
-<span class="line" id="L1121"></span>
-<span class="line" id="L1122">    <span class="tok-comment">/// Finds the index of the first set bit, and unsets it.</span></span>
-<span class="line" id="L1123">    <span class="tok-comment">/// If no bits are set, returns null.</span></span>
-<span class="line" id="L1124">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">toggleFirstSet</span>(self: *Self) ?<span class="tok-type">usize</span> {</span>
-<span class="line" id="L1125">        <span class="tok-kw">return</span> self.unmanaged.toggleFirstSet();</span>
-<span class="line" id="L1126">    }</span>
-<span class="line" id="L1127"></span>
-<span class="line" id="L1128">    <span class="tok-comment">/// Returns true iff every corresponding bit in both</span></span>
-<span class="line" id="L1129">    <span class="tok-comment">/// bit sets are the same.</span></span>
-<span class="line" id="L1130">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">eql</span>(self: Self, other: Self) <span class="tok-type">bool</span> {</span>
-<span class="line" id="L1131">        <span class="tok-kw">return</span> self.unmanaged.eql(other.unmanaged);</span>
-<span class="line" id="L1132">    }</span>
-<span class="line" id="L1133"></span>
-<span class="line" id="L1134">    <span class="tok-comment">/// Iterates through the items in the set, according to the options.</span></span>
-<span class="line" id="L1135">    <span class="tok-comment">/// The default options (.{}) will iterate indices of set bits in</span></span>
-<span class="line" id="L1136">    <span class="tok-comment">/// ascending order.  Modifications to the underlying bit set may</span></span>
-<span class="line" id="L1137">    <span class="tok-comment">/// or may not be observed by the iterator.  Resizing the underlying</span></span>
-<span class="line" id="L1138">    <span class="tok-comment">/// bit set invalidates the iterator.</span></span>
-<span class="line" id="L1139">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">iterator</span>(self: *<span class="tok-kw">const</span> Self, <span class="tok-kw">comptime</span> options: IteratorOptions) Iterator(options) {</span>
-<span class="line" id="L1140">        <span class="tok-kw">return</span> self.unmanaged.iterator(options);</span>
-<span class="line" id="L1141">    }</span>
-<span class="line" id="L1142"></span>
-<span class="line" id="L1143">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> Iterator = DynamicBitSetUnmanaged.Iterator;</span>
-<span class="line" id="L1144">};</span>
+<span class="line" id="L1108">    <span class="tok-comment">/// Removes a specific bit from the bit set</span></span>
+<span class="line" id="L1109">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">unset</span>(self: *Self, index: <span class="tok-type">usize</span>) <span class="tok-type">void</span> {</span>
+<span class="line" id="L1110">        self.unmanaged.unset(index);</span>
+<span class="line" id="L1111">    }</span>
+<span class="line" id="L1112"></span>
+<span class="line" id="L1113">    <span class="tok-comment">/// Flips a specific bit in the bit set</span></span>
+<span class="line" id="L1114">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">toggle</span>(self: *Self, index: <span class="tok-type">usize</span>) <span class="tok-type">void</span> {</span>
+<span class="line" id="L1115">        self.unmanaged.toggle(index);</span>
+<span class="line" id="L1116">    }</span>
+<span class="line" id="L1117"></span>
+<span class="line" id="L1118">    <span class="tok-comment">/// Flips all bits in this bit set which are present</span></span>
+<span class="line" id="L1119">    <span class="tok-comment">/// in the toggles bit set.  Both sets must have the</span></span>
+<span class="line" id="L1120">    <span class="tok-comment">/// same bit_length.</span></span>
+<span class="line" id="L1121">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">toggleSet</span>(self: *Self, toggles: Self) <span class="tok-type">void</span> {</span>
+<span class="line" id="L1122">        self.unmanaged.toggleSet(toggles.unmanaged);</span>
+<span class="line" id="L1123">    }</span>
+<span class="line" id="L1124"></span>
+<span class="line" id="L1125">    <span class="tok-comment">/// Flips every bit in the bit set.</span></span>
+<span class="line" id="L1126">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">toggleAll</span>(self: *Self) <span class="tok-type">void</span> {</span>
+<span class="line" id="L1127">        self.unmanaged.toggleAll();</span>
+<span class="line" id="L1128">    }</span>
+<span class="line" id="L1129"></span>
+<span class="line" id="L1130">    <span class="tok-comment">/// Performs a union of two bit sets, and stores the</span></span>
+<span class="line" id="L1131">    <span class="tok-comment">/// result in the first one.  Bits in the result are</span></span>
+<span class="line" id="L1132">    <span class="tok-comment">/// set if the corresponding bits were set in either input.</span></span>
+<span class="line" id="L1133">    <span class="tok-comment">/// The two sets must both be the same bit_length.</span></span>
+<span class="line" id="L1134">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">setUnion</span>(self: *Self, other: Self) <span class="tok-type">void</span> {</span>
+<span class="line" id="L1135">        self.unmanaged.setUnion(other.unmanaged);</span>
+<span class="line" id="L1136">    }</span>
+<span class="line" id="L1137"></span>
+<span class="line" id="L1138">    <span class="tok-comment">/// Performs an intersection of two bit sets, and stores</span></span>
+<span class="line" id="L1139">    <span class="tok-comment">/// the result in the first one.  Bits in the result are</span></span>
+<span class="line" id="L1140">    <span class="tok-comment">/// set if the corresponding bits were set in both inputs.</span></span>
+<span class="line" id="L1141">    <span class="tok-comment">/// The two sets must both be the same bit_length.</span></span>
+<span class="line" id="L1142">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">setIntersection</span>(self: *Self, other: Self) <span class="tok-type">void</span> {</span>
+<span class="line" id="L1143">        self.unmanaged.setIntersection(other.unmanaged);</span>
+<span class="line" id="L1144">    }</span>
 <span class="line" id="L1145"></span>
-<span class="line" id="L1146"><span class="tok-comment">/// Options for configuring an iterator over a bit set</span></span>
-<span class="line" id="L1147"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> IteratorOptions = <span class="tok-kw">struct</span> {</span>
-<span class="line" id="L1148">    <span class="tok-comment">/// determines which bits should be visited</span></span>
-<span class="line" id="L1149">    kind: Type = .set,</span>
-<span class="line" id="L1150">    <span class="tok-comment">/// determines the order in which bit indices should be visited</span></span>
-<span class="line" id="L1151">    direction: Direction = .forward,</span>
-<span class="line" id="L1152"></span>
-<span class="line" id="L1153">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> Type = <span class="tok-kw">enum</span> {</span>
-<span class="line" id="L1154">        <span class="tok-comment">/// visit indexes of set bits</span></span>
-<span class="line" id="L1155">        set,</span>
-<span class="line" id="L1156">        <span class="tok-comment">/// visit indexes of unset bits</span></span>
-<span class="line" id="L1157">        unset,</span>
-<span class="line" id="L1158">    };</span>
-<span class="line" id="L1159"></span>
-<span class="line" id="L1160">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> Direction = <span class="tok-kw">enum</span> {</span>
-<span class="line" id="L1161">        <span class="tok-comment">/// visit indices in ascending order</span></span>
-<span class="line" id="L1162">        forward,</span>
-<span class="line" id="L1163">        <span class="tok-comment">/// visit indices in descending order.</span></span>
-<span class="line" id="L1164">        <span class="tok-comment">/// Note that this may be slightly more expensive than forward iteration.</span></span>
-<span class="line" id="L1165">        reverse,</span>
-<span class="line" id="L1166">    };</span>
-<span class="line" id="L1167">};</span>
-<span class="line" id="L1168"></span>
-<span class="line" id="L1169"><span class="tok-comment">// The iterator is reusable between several bit set types</span>
+<span class="line" id="L1146">    <span class="tok-comment">/// Finds the index of the first set bit.</span></span>
+<span class="line" id="L1147">    <span class="tok-comment">/// If no bits are set, returns null.</span></span>
+<span class="line" id="L1148">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">findFirstSet</span>(self: Self) ?<span class="tok-type">usize</span> {</span>
+<span class="line" id="L1149">        <span class="tok-kw">return</span> self.unmanaged.findFirstSet();</span>
+<span class="line" id="L1150">    }</span>
+<span class="line" id="L1151"></span>
+<span class="line" id="L1152">    <span class="tok-comment">/// Finds the index of the first set bit, and unsets it.</span></span>
+<span class="line" id="L1153">    <span class="tok-comment">/// If no bits are set, returns null.</span></span>
+<span class="line" id="L1154">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">toggleFirstSet</span>(self: *Self) ?<span class="tok-type">usize</span> {</span>
+<span class="line" id="L1155">        <span class="tok-kw">return</span> self.unmanaged.toggleFirstSet();</span>
+<span class="line" id="L1156">    }</span>
+<span class="line" id="L1157"></span>
+<span class="line" id="L1158">    <span class="tok-comment">/// Returns true iff every corresponding bit in both</span></span>
+<span class="line" id="L1159">    <span class="tok-comment">/// bit sets are the same.</span></span>
+<span class="line" id="L1160">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">eql</span>(self: Self, other: Self) <span class="tok-type">bool</span> {</span>
+<span class="line" id="L1161">        <span class="tok-kw">return</span> self.unmanaged.eql(other.unmanaged);</span>
+<span class="line" id="L1162">    }</span>
+<span class="line" id="L1163"></span>
+<span class="line" id="L1164">    <span class="tok-comment">/// Iterates through the items in the set, according to the options.</span></span>
+<span class="line" id="L1165">    <span class="tok-comment">/// The default options (.{}) will iterate indices of set bits in</span></span>
+<span class="line" id="L1166">    <span class="tok-comment">/// ascending order.  Modifications to the underlying bit set may</span></span>
+<span class="line" id="L1167">    <span class="tok-comment">/// or may not be observed by the iterator.  Resizing the underlying</span></span>
+<span class="line" id="L1168">    <span class="tok-comment">/// bit set invalidates the iterator.</span></span>
+<span class="line" id="L1169">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">iterator</span>(self: *<span class="tok-kw">const</span> Self, <span class="tok-kw">comptime</span> options: IteratorOptions) Iterator(options) {</span>
+<span class="line" id="L1170">        <span class="tok-kw">return</span> self.unmanaged.iterator(options);</span>
+<span class="line" id="L1171">    }</span>
+<span class="line" id="L1172"></span>
+<span class="line" id="L1173">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> Iterator = DynamicBitSetUnmanaged.Iterator;</span>
+<span class="line" id="L1174">};</span>
+<span class="line" id="L1175"></span>
+<span class="line" id="L1176"><span class="tok-comment">/// Options for configuring an iterator over a bit set</span></span>
+<span class="line" id="L1177"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> IteratorOptions = <span class="tok-kw">struct</span> {</span>
+<span class="line" id="L1178">    <span class="tok-comment">/// determines which bits should be visited</span></span>
+<span class="line" id="L1179">    kind: Type = .set,</span>
+<span class="line" id="L1180">    <span class="tok-comment">/// determines the order in which bit indices should be visited</span></span>
+<span class="line" id="L1181">    direction: Direction = .forward,</span>
+<span class="line" id="L1182"></span>
+<span class="line" id="L1183">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> Type = <span class="tok-kw">enum</span> {</span>
+<span class="line" id="L1184">        <span class="tok-comment">/// visit indexes of set bits</span></span>
+<span class="line" id="L1185">        set,</span>
+<span class="line" id="L1186">        <span class="tok-comment">/// visit indexes of unset bits</span></span>
+<span class="line" id="L1187">        unset,</span>
+<span class="line" id="L1188">    };</span>
+<span class="line" id="L1189"></span>
+<span class="line" id="L1190">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> Direction = <span class="tok-kw">enum</span> {</span>
+<span class="line" id="L1191">        <span class="tok-comment">/// visit indices in ascending order</span></span>
+<span class="line" id="L1192">        forward,</span>
+<span class="line" id="L1193">        <span class="tok-comment">/// visit indices in descending order.</span></span>
+<span class="line" id="L1194">        <span class="tok-comment">/// Note that this may be slightly more expensive than forward iteration.</span></span>
+<span class="line" id="L1195">        reverse,</span>
+<span class="line" id="L1196">    };</span>
+<span class="line" id="L1197">};</span>
+<span class="line" id="L1198"></span>
+<span class="line" id="L1199"><span class="tok-comment">// The iterator is reusable between several bit set types</span>
 </span>
-<span class="line" id="L1170"><span class="tok-kw">fn</span> <span class="tok-fn">BitSetIterator</span>(<span class="tok-kw">comptime</span> MaskInt: <span class="tok-type">type</span>, <span class="tok-kw">comptime</span> options: IteratorOptions) <span class="tok-type">type</span> {</span>
-<span class="line" id="L1171">    <span class="tok-kw">const</span> ShiftInt = std.math.Log2Int(MaskInt);</span>
-<span class="line" id="L1172">    <span class="tok-kw">const</span> kind = options.kind;</span>
-<span class="line" id="L1173">    <span class="tok-kw">const</span> direction = options.direction;</span>
-<span class="line" id="L1174">    <span class="tok-kw">return</span> <span class="tok-kw">struct</span> {</span>
-<span class="line" id="L1175">        <span class="tok-kw">const</span> Self = <span class="tok-builtin">@This</span>();</span>
-<span class="line" id="L1176"></span>
-<span class="line" id="L1177">        <span class="tok-comment">// all bits which have not yet been iterated over</span>
+<span class="line" id="L1200"><span class="tok-kw">fn</span> <span class="tok-fn">BitSetIterator</span>(<span class="tok-kw">comptime</span> MaskInt: <span class="tok-type">type</span>, <span class="tok-kw">comptime</span> options: IteratorOptions) <span class="tok-type">type</span> {</span>
+<span class="line" id="L1201">    <span class="tok-kw">const</span> ShiftInt = std.math.Log2Int(MaskInt);</span>
+<span class="line" id="L1202">    <span class="tok-kw">const</span> kind = options.kind;</span>
+<span class="line" id="L1203">    <span class="tok-kw">const</span> direction = options.direction;</span>
+<span class="line" id="L1204">    <span class="tok-kw">return</span> <span class="tok-kw">struct</span> {</span>
+<span class="line" id="L1205">        <span class="tok-kw">const</span> Self = <span class="tok-builtin">@This</span>();</span>
+<span class="line" id="L1206"></span>
+<span class="line" id="L1207">        <span class="tok-comment">// all bits which have not yet been iterated over</span>
 </span>
-<span class="line" id="L1178">        bits_remain: MaskInt,</span>
-<span class="line" id="L1179">        <span class="tok-comment">// all words which have not yet been iterated over</span>
+<span class="line" id="L1208">        bits_remain: MaskInt,</span>
+<span class="line" id="L1209">        <span class="tok-comment">// all words which have not yet been iterated over</span>
 </span>
-<span class="line" id="L1180">        words_remain: []<span class="tok-kw">const</span> MaskInt,</span>
-<span class="line" id="L1181">        <span class="tok-comment">// the offset of the current word</span>
+<span class="line" id="L1210">        words_remain: []<span class="tok-kw">const</span> MaskInt,</span>
+<span class="line" id="L1211">        <span class="tok-comment">// the offset of the current word</span>
 </span>
-<span class="line" id="L1182">        bit_offset: <span class="tok-type">usize</span>,</span>
-<span class="line" id="L1183">        <span class="tok-comment">// the mask of the last word</span>
+<span class="line" id="L1212">        bit_offset: <span class="tok-type">usize</span>,</span>
+<span class="line" id="L1213">        <span class="tok-comment">// the mask of the last word</span>
 </span>
-<span class="line" id="L1184">        last_word_mask: MaskInt,</span>
-<span class="line" id="L1185"></span>
-<span class="line" id="L1186">        <span class="tok-kw">fn</span> <span class="tok-fn">init</span>(masks: []<span class="tok-kw">const</span> MaskInt, last_word_mask: MaskInt) Self {</span>
-<span class="line" id="L1187">            <span class="tok-kw">if</span> (masks.len == <span class="tok-number">0</span>) {</span>
-<span class="line" id="L1188">                <span class="tok-kw">return</span> Self{</span>
-<span class="line" id="L1189">                    .bits_remain = <span class="tok-number">0</span>,</span>
-<span class="line" id="L1190">                    .words_remain = &amp;[_]MaskInt{},</span>
-<span class="line" id="L1191">                    .last_word_mask = last_word_mask,</span>
-<span class="line" id="L1192">                    .bit_offset = <span class="tok-number">0</span>,</span>
-<span class="line" id="L1193">                };</span>
-<span class="line" id="L1194">            } <span class="tok-kw">else</span> {</span>
-<span class="line" id="L1195">                <span class="tok-kw">var</span> result = Self{</span>
-<span class="line" id="L1196">                    .bits_remain = <span class="tok-number">0</span>,</span>
-<span class="line" id="L1197">                    .words_remain = masks,</span>
-<span class="line" id="L1198">                    .last_word_mask = last_word_mask,</span>
-<span class="line" id="L1199">                    .bit_offset = <span class="tok-kw">if</span> (direction == .forward) <span class="tok-number">0</span> <span class="tok-kw">else</span> (masks.len - <span class="tok-number">1</span>) * <span class="tok-builtin">@bitSizeOf</span>(MaskInt),</span>
-<span class="line" id="L1200">                };</span>
-<span class="line" id="L1201">                result.nextWord(<span class="tok-null">true</span>);</span>
-<span class="line" id="L1202">                <span class="tok-kw">return</span> result;</span>
-<span class="line" id="L1203">            }</span>
-<span class="line" id="L1204">        }</span>
-<span class="line" id="L1205"></span>
-<span class="line" id="L1206">        <span class="tok-comment">/// Returns the index of the next unvisited set bit</span></span>
-<span class="line" id="L1207">        <span class="tok-comment">/// in the bit set, in ascending order.</span></span>
-<span class="line" id="L1208">        <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">next</span>(self: *Self) ?<span class="tok-type">usize</span> {</span>
-<span class="line" id="L1209">            <span class="tok-kw">while</span> (self.bits_remain == <span class="tok-number">0</span>) {</span>
-<span class="line" id="L1210">                <span class="tok-kw">if</span> (self.words_remain.len == <span class="tok-number">0</span>) <span class="tok-kw">return</span> <span class="tok-null">null</span>;</span>
-<span class="line" id="L1211">                self.nextWord(<span class="tok-null">false</span>);</span>
-<span class="line" id="L1212">                <span class="tok-kw">switch</span> (direction) {</span>
-<span class="line" id="L1213">                    .forward =&gt; self.bit_offset += <span class="tok-builtin">@bitSizeOf</span>(MaskInt),</span>
-<span class="line" id="L1214">                    .reverse =&gt; self.bit_offset -= <span class="tok-builtin">@bitSizeOf</span>(MaskInt),</span>
-<span class="line" id="L1215">                }</span>
-<span class="line" id="L1216">            }</span>
-<span class="line" id="L1217"></span>
-<span class="line" id="L1218">            <span class="tok-kw">switch</span> (direction) {</span>
-<span class="line" id="L1219">                .forward =&gt; {</span>
-<span class="line" id="L1220">                    <span class="tok-kw">const</span> next_index = <span class="tok-builtin">@ctz</span>(self.bits_remain) + self.bit_offset;</span>
-<span class="line" id="L1221">                    self.bits_remain &amp;= self.bits_remain - <span class="tok-number">1</span>;</span>
-<span class="line" id="L1222">                    <span class="tok-kw">return</span> next_index;</span>
-<span class="line" id="L1223">                },</span>
-<span class="line" id="L1224">                .reverse =&gt; {</span>
-<span class="line" id="L1225">                    <span class="tok-kw">const</span> leading_zeroes = <span class="tok-builtin">@clz</span>(self.bits_remain);</span>
-<span class="line" id="L1226">                    <span class="tok-kw">const</span> top_bit = (<span class="tok-builtin">@bitSizeOf</span>(MaskInt) - <span class="tok-number">1</span>) - leading_zeroes;</span>
-<span class="line" id="L1227">                    <span class="tok-kw">const</span> no_top_bit_mask = (<span class="tok-builtin">@as</span>(MaskInt, <span class="tok-number">1</span>) &lt;&lt; <span class="tok-builtin">@intCast</span>(ShiftInt, top_bit)) - <span class="tok-number">1</span>;</span>
-<span class="line" id="L1228">                    self.bits_remain &amp;= no_top_bit_mask;</span>
-<span class="line" id="L1229">                    <span class="tok-kw">return</span> top_bit + self.bit_offset;</span>
-<span class="line" id="L1230">                },</span>
-<span class="line" id="L1231">            }</span>
-<span class="line" id="L1232">        }</span>
-<span class="line" id="L1233"></span>
-<span class="line" id="L1234">        <span class="tok-comment">// Load the next word.  Don't call this if there</span>
+<span class="line" id="L1214">        last_word_mask: MaskInt,</span>
+<span class="line" id="L1215"></span>
+<span class="line" id="L1216">        <span class="tok-kw">fn</span> <span class="tok-fn">init</span>(masks: []<span class="tok-kw">const</span> MaskInt, last_word_mask: MaskInt) Self {</span>
+<span class="line" id="L1217">            <span class="tok-kw">if</span> (masks.len == <span class="tok-number">0</span>) {</span>
+<span class="line" id="L1218">                <span class="tok-kw">return</span> Self{</span>
+<span class="line" id="L1219">                    .bits_remain = <span class="tok-number">0</span>,</span>
+<span class="line" id="L1220">                    .words_remain = &amp;[_]MaskInt{},</span>
+<span class="line" id="L1221">                    .last_word_mask = last_word_mask,</span>
+<span class="line" id="L1222">                    .bit_offset = <span class="tok-number">0</span>,</span>
+<span class="line" id="L1223">                };</span>
+<span class="line" id="L1224">            } <span class="tok-kw">else</span> {</span>
+<span class="line" id="L1225">                <span class="tok-kw">var</span> result = Self{</span>
+<span class="line" id="L1226">                    .bits_remain = <span class="tok-number">0</span>,</span>
+<span class="line" id="L1227">                    .words_remain = masks,</span>
+<span class="line" id="L1228">                    .last_word_mask = last_word_mask,</span>
+<span class="line" id="L1229">                    .bit_offset = <span class="tok-kw">if</span> (direction == .forward) <span class="tok-number">0</span> <span class="tok-kw">else</span> (masks.len - <span class="tok-number">1</span>) * <span class="tok-builtin">@bitSizeOf</span>(MaskInt),</span>
+<span class="line" id="L1230">                };</span>
+<span class="line" id="L1231">                result.nextWord(<span class="tok-null">true</span>);</span>
+<span class="line" id="L1232">                <span class="tok-kw">return</span> result;</span>
+<span class="line" id="L1233">            }</span>
+<span class="line" id="L1234">        }</span>
+<span class="line" id="L1235"></span>
+<span class="line" id="L1236">        <span class="tok-comment">/// Returns the index of the next unvisited set bit</span></span>
+<span class="line" id="L1237">        <span class="tok-comment">/// in the bit set, in ascending order.</span></span>
+<span class="line" id="L1238">        <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">next</span>(self: *Self) ?<span class="tok-type">usize</span> {</span>
+<span class="line" id="L1239">            <span class="tok-kw">while</span> (self.bits_remain == <span class="tok-number">0</span>) {</span>
+<span class="line" id="L1240">                <span class="tok-kw">if</span> (self.words_remain.len == <span class="tok-number">0</span>) <span class="tok-kw">return</span> <span class="tok-null">null</span>;</span>
+<span class="line" id="L1241">                self.nextWord(<span class="tok-null">false</span>);</span>
+<span class="line" id="L1242">                <span class="tok-kw">switch</span> (direction) {</span>
+<span class="line" id="L1243">                    .forward =&gt; self.bit_offset += <span class="tok-builtin">@bitSizeOf</span>(MaskInt),</span>
+<span class="line" id="L1244">                    .reverse =&gt; self.bit_offset -= <span class="tok-builtin">@bitSizeOf</span>(MaskInt),</span>
+<span class="line" id="L1245">                }</span>
+<span class="line" id="L1246">            }</span>
+<span class="line" id="L1247"></span>
+<span class="line" id="L1248">            <span class="tok-kw">switch</span> (direction) {</span>
+<span class="line" id="L1249">                .forward =&gt; {</span>
+<span class="line" id="L1250">                    <span class="tok-kw">const</span> next_index = <span class="tok-builtin">@ctz</span>(self.bits_remain) + self.bit_offset;</span>
+<span class="line" id="L1251">                    self.bits_remain &amp;= self.bits_remain - <span class="tok-number">1</span>;</span>
+<span class="line" id="L1252">                    <span class="tok-kw">return</span> next_index;</span>
+<span class="line" id="L1253">                },</span>
+<span class="line" id="L1254">                .reverse =&gt; {</span>
+<span class="line" id="L1255">                    <span class="tok-kw">const</span> leading_zeroes = <span class="tok-builtin">@clz</span>(self.bits_remain);</span>
+<span class="line" id="L1256">                    <span class="tok-kw">const</span> top_bit = (<span class="tok-builtin">@bitSizeOf</span>(MaskInt) - <span class="tok-number">1</span>) - leading_zeroes;</span>
+<span class="line" id="L1257">                    <span class="tok-kw">const</span> no_top_bit_mask = (<span class="tok-builtin">@as</span>(MaskInt, <span class="tok-number">1</span>) &lt;&lt; <span class="tok-builtin">@intCast</span>(ShiftInt, top_bit)) - <span class="tok-number">1</span>;</span>
+<span class="line" id="L1258">                    self.bits_remain &amp;= no_top_bit_mask;</span>
+<span class="line" id="L1259">                    <span class="tok-kw">return</span> top_bit + self.bit_offset;</span>
+<span class="line" id="L1260">                },</span>
+<span class="line" id="L1261">            }</span>
+<span class="line" id="L1262">        }</span>
+<span class="line" id="L1263"></span>
+<span class="line" id="L1264">        <span class="tok-comment">// Load the next word.  Don't call this if there</span>
 </span>
-<span class="line" id="L1235">        <span class="tok-comment">// isn't a next word.  If the next word is the</span>
+<span class="line" id="L1265">        <span class="tok-comment">// isn't a next word.  If the next word is the</span>
 </span>
-<span class="line" id="L1236">        <span class="tok-comment">// last word, mask off the padding bits so we</span>
+<span class="line" id="L1266">        <span class="tok-comment">// last word, mask off the padding bits so we</span>
 </span>
-<span class="line" id="L1237">        <span class="tok-comment">// don't visit them.</span>
+<span class="line" id="L1267">        <span class="tok-comment">// don't visit them.</span>
 </span>
-<span class="line" id="L1238">        <span class="tok-kw">inline</span> <span class="tok-kw">fn</span> <span class="tok-fn">nextWord</span>(self: *Self, <span class="tok-kw">comptime</span> is_first_word: <span class="tok-type">bool</span>) <span class="tok-type">void</span> {</span>
-<span class="line" id="L1239">            <span class="tok-kw">var</span> word = <span class="tok-kw">switch</span> (direction) {</span>
-<span class="line" id="L1240">                .forward =&gt; self.words_remain[<span class="tok-number">0</span>],</span>
-<span class="line" id="L1241">                .reverse =&gt; self.words_remain[self.words_remain.len - <span class="tok-number">1</span>],</span>
-<span class="line" id="L1242">            };</span>
-<span class="line" id="L1243">            <span class="tok-kw">switch</span> (kind) {</span>
-<span class="line" id="L1244">                .set =&gt; {},</span>
-<span class="line" id="L1245">                .unset =&gt; {</span>
-<span class="line" id="L1246">                    word = ~word;</span>
-<span class="line" id="L1247">                    <span class="tok-kw">if</span> ((direction == .reverse <span class="tok-kw">and</span> is_first_word) <span class="tok-kw">or</span></span>
-<span class="line" id="L1248">                        (direction == .forward <span class="tok-kw">and</span> self.words_remain.len == <span class="tok-number">1</span>))</span>
-<span class="line" id="L1249">                    {</span>
-<span class="line" id="L1250">                        word &amp;= self.last_word_mask;</span>
-<span class="line" id="L1251">                    }</span>
-<span class="line" id="L1252">                },</span>
-<span class="line" id="L1253">            }</span>
-<span class="line" id="L1254">            <span class="tok-kw">switch</span> (direction) {</span>
-<span class="line" id="L1255">                .forward =&gt; self.words_remain = self.words_remain[<span class="tok-number">1</span>..],</span>
-<span class="line" id="L1256">                .reverse =&gt; self.words_remain.len -= <span class="tok-number">1</span>,</span>
-<span class="line" id="L1257">            }</span>
-<span class="line" id="L1258">            self.bits_remain = word;</span>
-<span class="line" id="L1259">        }</span>
-<span class="line" id="L1260">    };</span>
-<span class="line" id="L1261">}</span>
-<span class="line" id="L1262"></span>
-<span class="line" id="L1263"><span class="tok-comment">/// A range of indices within a bitset.</span></span>
-<span class="line" id="L1264"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> Range = <span class="tok-kw">struct</span> {</span>
-<span class="line" id="L1265">    <span class="tok-comment">/// The index of the first bit of interest.</span></span>
-<span class="line" id="L1266">    start: <span class="tok-type">usize</span>,</span>
-<span class="line" id="L1267">    <span class="tok-comment">/// The index immediately after the last bit of interest.</span></span>
-<span class="line" id="L1268">    end: <span class="tok-type">usize</span>,</span>
-<span class="line" id="L1269">};</span>
-<span class="line" id="L1270"></span>
-<span class="line" id="L1271"><span class="tok-comment">// ---------------- Tests -----------------</span>
+<span class="line" id="L1268">        <span class="tok-kw">inline</span> <span class="tok-kw">fn</span> <span class="tok-fn">nextWord</span>(self: *Self, <span class="tok-kw">comptime</span> is_first_word: <span class="tok-type">bool</span>) <span class="tok-type">void</span> {</span>
+<span class="line" id="L1269">            <span class="tok-kw">var</span> word = <span class="tok-kw">switch</span> (direction) {</span>
+<span class="line" id="L1270">                .forward =&gt; self.words_remain[<span class="tok-number">0</span>],</span>
+<span class="line" id="L1271">                .reverse =&gt; self.words_remain[self.words_remain.len - <span class="tok-number">1</span>],</span>
+<span class="line" id="L1272">            };</span>
+<span class="line" id="L1273">            <span class="tok-kw">switch</span> (kind) {</span>
+<span class="line" id="L1274">                .set =&gt; {},</span>
+<span class="line" id="L1275">                .unset =&gt; {</span>
+<span class="line" id="L1276">                    word = ~word;</span>
+<span class="line" id="L1277">                    <span class="tok-kw">if</span> ((direction == .reverse <span class="tok-kw">and</span> is_first_word) <span class="tok-kw">or</span></span>
+<span class="line" id="L1278">                        (direction == .forward <span class="tok-kw">and</span> self.words_remain.len == <span class="tok-number">1</span>))</span>
+<span class="line" id="L1279">                    {</span>
+<span class="line" id="L1280">                        word &amp;= self.last_word_mask;</span>
+<span class="line" id="L1281">                    }</span>
+<span class="line" id="L1282">                },</span>
+<span class="line" id="L1283">            }</span>
+<span class="line" id="L1284">            <span class="tok-kw">switch</span> (direction) {</span>
+<span class="line" id="L1285">                .forward =&gt; self.words_remain = self.words_remain[<span class="tok-number">1</span>..],</span>
+<span class="line" id="L1286">                .reverse =&gt; self.words_remain.len -= <span class="tok-number">1</span>,</span>
+<span class="line" id="L1287">            }</span>
+<span class="line" id="L1288">            self.bits_remain = word;</span>
+<span class="line" id="L1289">        }</span>
+<span class="line" id="L1290">    };</span>
+<span class="line" id="L1291">}</span>
+<span class="line" id="L1292"></span>
+<span class="line" id="L1293"><span class="tok-comment">/// A range of indices within a bitset.</span></span>
+<span class="line" id="L1294"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> Range = <span class="tok-kw">struct</span> {</span>
+<span class="line" id="L1295">    <span class="tok-comment">/// The index of the first bit of interest.</span></span>
+<span class="line" id="L1296">    start: <span class="tok-type">usize</span>,</span>
+<span class="line" id="L1297">    <span class="tok-comment">/// The index immediately after the last bit of interest.</span></span>
+<span class="line" id="L1298">    end: <span class="tok-type">usize</span>,</span>
+<span class="line" id="L1299">};</span>
+<span class="line" id="L1300"></span>
+<span class="line" id="L1301"><span class="tok-comment">// ---------------- Tests -----------------</span>
 </span>
-<span class="line" id="L1272"></span>
-<span class="line" id="L1273"><span class="tok-kw">const</span> testing = std.testing;</span>
-<span class="line" id="L1274"></span>
-<span class="line" id="L1275"><span class="tok-kw">fn</span> <span class="tok-fn">testEql</span>(empty: <span class="tok-kw">anytype</span>, full: <span class="tok-kw">anytype</span>, len: <span class="tok-type">usize</span>) !<span class="tok-type">void</span> {</span>
-<span class="line" id="L1276">    <span class="tok-kw">try</span> testing.expect(empty.eql(empty));</span>
-<span class="line" id="L1277">    <span class="tok-kw">try</span> testing.expect(full.eql(full));</span>
-<span class="line" id="L1278">    <span class="tok-kw">switch</span> (len) {</span>
-<span class="line" id="L1279">        <span class="tok-number">0</span> =&gt; {</span>
-<span class="line" id="L1280">            <span class="tok-kw">try</span> testing.expect(empty.eql(full));</span>
-<span class="line" id="L1281">            <span class="tok-kw">try</span> testing.expect(full.eql(empty));</span>
-<span class="line" id="L1282">        },</span>
-<span class="line" id="L1283">        <span class="tok-kw">else</span> =&gt; {</span>
-<span class="line" id="L1284">            <span class="tok-kw">try</span> testing.expect(!empty.eql(full));</span>
-<span class="line" id="L1285">            <span class="tok-kw">try</span> testing.expect(!full.eql(empty));</span>
-<span class="line" id="L1286">        },</span>
-<span class="line" id="L1287">    }</span>
-<span class="line" id="L1288">}</span>
-<span class="line" id="L1289"></span>
-<span class="line" id="L1290"><span class="tok-kw">fn</span> <span class="tok-fn">testBitSet</span>(a: <span class="tok-kw">anytype</span>, b: <span class="tok-kw">anytype</span>, len: <span class="tok-type">usize</span>) !<span class="tok-type">void</span> {</span>
-<span class="line" id="L1291">    <span class="tok-kw">try</span> testing.expectEqual(len, a.capacity());</span>
-<span class="line" id="L1292">    <span class="tok-kw">try</span> testing.expectEqual(len, b.capacity());</span>
-<span class="line" id="L1293"></span>
-<span class="line" id="L1294">    {</span>
-<span class="line" id="L1295">        <span class="tok-kw">var</span> i: <span class="tok-type">usize</span> = <span class="tok-number">0</span>;</span>
-<span class="line" id="L1296">        <span class="tok-kw">while</span> (i &lt; len) : (i += <span class="tok-number">1</span>) {</span>
-<span class="line" id="L1297">            a.setValue(i, i &amp; <span class="tok-number">1</span> == <span class="tok-number">0</span>);</span>
-<span class="line" id="L1298">            b.setValue(i, i &amp; <span class="tok-number">2</span> == <span class="tok-number">0</span>);</span>
-<span class="line" id="L1299">        }</span>
-<span class="line" id="L1300">    }</span>
-<span class="line" id="L1301"></span>
-<span class="line" id="L1302">    <span class="tok-kw">try</span> testing.expectEqual((len + <span class="tok-number">1</span>) / <span class="tok-number">2</span>, a.count());</span>
-<span class="line" id="L1303">    <span class="tok-kw">try</span> testing.expectEqual((len + <span class="tok-number">3</span>) / <span class="tok-number">4</span> + (len + <span class="tok-number">2</span>) / <span class="tok-number">4</span>, b.count());</span>
+<span class="line" id="L1302"></span>
+<span class="line" id="L1303"><span class="tok-kw">const</span> testing = std.testing;</span>
 <span class="line" id="L1304"></span>
-<span class="line" id="L1305">    {</span>
-<span class="line" id="L1306">        <span class="tok-kw">var</span> iter = a.iterator(.{});</span>
-<span class="line" id="L1307">        <span class="tok-kw">var</span> i: <span class="tok-type">usize</span> = <span class="tok-number">0</span>;</span>
-<span class="line" id="L1308">        <span class="tok-kw">while</span> (i &lt; len) : (i += <span class="tok-number">2</span>) {</span>
-<span class="line" id="L1309">            <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, i), iter.next());</span>
-<span class="line" id="L1310">        }</span>
-<span class="line" id="L1311">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), iter.next());</span>
-<span class="line" id="L1312">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), iter.next());</span>
-<span class="line" id="L1313">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), iter.next());</span>
-<span class="line" id="L1314">    }</span>
-<span class="line" id="L1315">    a.toggleAll();</span>
-<span class="line" id="L1316">    {</span>
-<span class="line" id="L1317">        <span class="tok-kw">var</span> iter = a.iterator(.{});</span>
-<span class="line" id="L1318">        <span class="tok-kw">var</span> i: <span class="tok-type">usize</span> = <span class="tok-number">1</span>;</span>
-<span class="line" id="L1319">        <span class="tok-kw">while</span> (i &lt; len) : (i += <span class="tok-number">2</span>) {</span>
-<span class="line" id="L1320">            <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, i), iter.next());</span>
-<span class="line" id="L1321">        }</span>
-<span class="line" id="L1322">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), iter.next());</span>
-<span class="line" id="L1323">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), iter.next());</span>
-<span class="line" id="L1324">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), iter.next());</span>
-<span class="line" id="L1325">    }</span>
-<span class="line" id="L1326"></span>
-<span class="line" id="L1327">    {</span>
-<span class="line" id="L1328">        <span class="tok-kw">var</span> iter = b.iterator(.{ .kind = .unset });</span>
-<span class="line" id="L1329">        <span class="tok-kw">var</span> i: <span class="tok-type">usize</span> = <span class="tok-number">2</span>;</span>
-<span class="line" id="L1330">        <span class="tok-kw">while</span> (i &lt; len) : (i += <span class="tok-number">4</span>) {</span>
-<span class="line" id="L1331">            <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, i), iter.next());</span>
-<span class="line" id="L1332">            <span class="tok-kw">if</span> (i + <span class="tok-number">1</span> &lt; len) {</span>
-<span class="line" id="L1333">                <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, i + <span class="tok-number">1</span>), iter.next());</span>
-<span class="line" id="L1334">            }</span>
-<span class="line" id="L1335">        }</span>
-<span class="line" id="L1336">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), iter.next());</span>
-<span class="line" id="L1337">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), iter.next());</span>
-<span class="line" id="L1338">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), iter.next());</span>
-<span class="line" id="L1339">    }</span>
-<span class="line" id="L1340"></span>
-<span class="line" id="L1341">    {</span>
-<span class="line" id="L1342">        <span class="tok-kw">var</span> i: <span class="tok-type">usize</span> = <span class="tok-number">0</span>;</span>
-<span class="line" id="L1343">        <span class="tok-kw">while</span> (i &lt; len) : (i += <span class="tok-number">1</span>) {</span>
-<span class="line" id="L1344">            <span class="tok-kw">try</span> testing.expectEqual(i &amp; <span class="tok-number">1</span> != <span class="tok-number">0</span>, a.isSet(i));</span>
-<span class="line" id="L1345">            <span class="tok-kw">try</span> testing.expectEqual(i &amp; <span class="tok-number">2</span> == <span class="tok-number">0</span>, b.isSet(i));</span>
-<span class="line" id="L1346">        }</span>
-<span class="line" id="L1347">    }</span>
-<span class="line" id="L1348"></span>
-<span class="line" id="L1349">    a.setUnion(b.*);</span>
-<span class="line" id="L1350">    {</span>
-<span class="line" id="L1351">        <span class="tok-kw">var</span> i: <span class="tok-type">usize</span> = <span class="tok-number">0</span>;</span>
-<span class="line" id="L1352">        <span class="tok-kw">while</span> (i &lt; len) : (i += <span class="tok-number">1</span>) {</span>
-<span class="line" id="L1353">            <span class="tok-kw">try</span> testing.expectEqual(i &amp; <span class="tok-number">1</span> != <span class="tok-number">0</span> <span class="tok-kw">or</span> i &amp; <span class="tok-number">2</span> == <span class="tok-number">0</span>, a.isSet(i));</span>
-<span class="line" id="L1354">            <span class="tok-kw">try</span> testing.expectEqual(i &amp; <span class="tok-number">2</span> == <span class="tok-number">0</span>, b.isSet(i));</span>
-<span class="line" id="L1355">        }</span>
-<span class="line" id="L1356"></span>
-<span class="line" id="L1357">        i = len;</span>
-<span class="line" id="L1358">        <span class="tok-kw">var</span> set = a.iterator(.{ .direction = .reverse });</span>
-<span class="line" id="L1359">        <span class="tok-kw">var</span> unset = a.iterator(.{ .kind = .unset, .direction = .reverse });</span>
-<span class="line" id="L1360">        <span class="tok-kw">while</span> (i &gt; <span class="tok-number">0</span>) {</span>
-<span class="line" id="L1361">            i -= <span class="tok-number">1</span>;</span>
-<span class="line" id="L1362">            <span class="tok-kw">if</span> (i &amp; <span class="tok-number">1</span> != <span class="tok-number">0</span> <span class="tok-kw">or</span> i &amp; <span class="tok-number">2</span> == <span class="tok-number">0</span>) {</span>
-<span class="line" id="L1363">                <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, i), set.next());</span>
-<span class="line" id="L1364">            } <span class="tok-kw">else</span> {</span>
-<span class="line" id="L1365">                <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, i), unset.next());</span>
-<span class="line" id="L1366">            }</span>
-<span class="line" id="L1367">        }</span>
-<span class="line" id="L1368">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), set.next());</span>
-<span class="line" id="L1369">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), set.next());</span>
-<span class="line" id="L1370">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), set.next());</span>
-<span class="line" id="L1371">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), unset.next());</span>
-<span class="line" id="L1372">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), unset.next());</span>
-<span class="line" id="L1373">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), unset.next());</span>
-<span class="line" id="L1374">    }</span>
-<span class="line" id="L1375"></span>
-<span class="line" id="L1376">    a.toggleSet(b.*);</span>
-<span class="line" id="L1377">    {</span>
-<span class="line" id="L1378">        <span class="tok-kw">try</span> testing.expectEqual(len / <span class="tok-number">4</span>, a.count());</span>
-<span class="line" id="L1379"></span>
-<span class="line" id="L1380">        <span class="tok-kw">var</span> i: <span class="tok-type">usize</span> = <span class="tok-number">0</span>;</span>
-<span class="line" id="L1381">        <span class="tok-kw">while</span> (i &lt; len) : (i += <span class="tok-number">1</span>) {</span>
-<span class="line" id="L1382">            <span class="tok-kw">try</span> testing.expectEqual(i &amp; <span class="tok-number">1</span> != <span class="tok-number">0</span> <span class="tok-kw">and</span> i &amp; <span class="tok-number">2</span> != <span class="tok-number">0</span>, a.isSet(i));</span>
-<span class="line" id="L1383">            <span class="tok-kw">try</span> testing.expectEqual(i &amp; <span class="tok-number">2</span> == <span class="tok-number">0</span>, b.isSet(i));</span>
-<span class="line" id="L1384">            <span class="tok-kw">if</span> (i &amp; <span class="tok-number">1</span> == <span class="tok-number">0</span>) {</span>
-<span class="line" id="L1385">                a.set(i);</span>
-<span class="line" id="L1386">            } <span class="tok-kw">else</span> {</span>
-<span class="line" id="L1387">                a.unset(i);</span>
-<span class="line" id="L1388">            }</span>
-<span class="line" id="L1389">        }</span>
-<span class="line" id="L1390">    }</span>
-<span class="line" id="L1391"></span>
-<span class="line" id="L1392">    a.setIntersection(b.*);</span>
-<span class="line" id="L1393">    {</span>
-<span class="line" id="L1394">        <span class="tok-kw">try</span> testing.expectEqual((len + <span class="tok-number">3</span>) / <span class="tok-number">4</span>, a.count());</span>
-<span class="line" id="L1395"></span>
-<span class="line" id="L1396">        <span class="tok-kw">var</span> i: <span class="tok-type">usize</span> = <span class="tok-number">0</span>;</span>
-<span class="line" id="L1397">        <span class="tok-kw">while</span> (i &lt; len) : (i += <span class="tok-number">1</span>) {</span>
-<span class="line" id="L1398">            <span class="tok-kw">try</span> testing.expectEqual(i &amp; <span class="tok-number">1</span> == <span class="tok-number">0</span> <span class="tok-kw">and</span> i &amp; <span class="tok-number">2</span> == <span class="tok-number">0</span>, a.isSet(i));</span>
-<span class="line" id="L1399">            <span class="tok-kw">try</span> testing.expectEqual(i &amp; <span class="tok-number">2</span> == <span class="tok-number">0</span>, b.isSet(i));</span>
-<span class="line" id="L1400">        }</span>
-<span class="line" id="L1401">    }</span>
-<span class="line" id="L1402"></span>
-<span class="line" id="L1403">    a.toggleSet(a.*);</span>
-<span class="line" id="L1404">    {</span>
-<span class="line" id="L1405">        <span class="tok-kw">var</span> iter = a.iterator(.{});</span>
+<span class="line" id="L1305"><span class="tok-kw">fn</span> <span class="tok-fn">testEql</span>(empty: <span class="tok-kw">anytype</span>, full: <span class="tok-kw">anytype</span>, len: <span class="tok-type">usize</span>) !<span class="tok-type">void</span> {</span>
+<span class="line" id="L1306">    <span class="tok-kw">try</span> testing.expect(empty.eql(empty));</span>
+<span class="line" id="L1307">    <span class="tok-kw">try</span> testing.expect(full.eql(full));</span>
+<span class="line" id="L1308">    <span class="tok-kw">switch</span> (len) {</span>
+<span class="line" id="L1309">        <span class="tok-number">0</span> =&gt; {</span>
+<span class="line" id="L1310">            <span class="tok-kw">try</span> testing.expect(empty.eql(full));</span>
+<span class="line" id="L1311">            <span class="tok-kw">try</span> testing.expect(full.eql(empty));</span>
+<span class="line" id="L1312">        },</span>
+<span class="line" id="L1313">        <span class="tok-kw">else</span> =&gt; {</span>
+<span class="line" id="L1314">            <span class="tok-kw">try</span> testing.expect(!empty.eql(full));</span>
+<span class="line" id="L1315">            <span class="tok-kw">try</span> testing.expect(!full.eql(empty));</span>
+<span class="line" id="L1316">        },</span>
+<span class="line" id="L1317">    }</span>
+<span class="line" id="L1318">}</span>
+<span class="line" id="L1319"></span>
+<span class="line" id="L1320"><span class="tok-kw">fn</span> <span class="tok-fn">testSubsetOf</span>(empty: <span class="tok-kw">anytype</span>, full: <span class="tok-kw">anytype</span>, even: <span class="tok-kw">anytype</span>, odd: <span class="tok-kw">anytype</span>, len: <span class="tok-type">usize</span>) !<span class="tok-type">void</span> {</span>
+<span class="line" id="L1321">    <span class="tok-kw">try</span> testing.expect(empty.subsetOf(empty));</span>
+<span class="line" id="L1322">    <span class="tok-kw">try</span> testing.expect(empty.subsetOf(full));</span>
+<span class="line" id="L1323">    <span class="tok-kw">try</span> testing.expect(full.subsetOf(full));</span>
+<span class="line" id="L1324">    <span class="tok-kw">switch</span> (len) {</span>
+<span class="line" id="L1325">        <span class="tok-number">0</span> =&gt; {</span>
+<span class="line" id="L1326">            <span class="tok-kw">try</span> testing.expect(even.subsetOf(odd));</span>
+<span class="line" id="L1327">            <span class="tok-kw">try</span> testing.expect(odd.subsetOf(even));</span>
+<span class="line" id="L1328">        },</span>
+<span class="line" id="L1329">        <span class="tok-number">1</span> =&gt; {</span>
+<span class="line" id="L1330">            <span class="tok-kw">try</span> testing.expect(!even.subsetOf(odd));</span>
+<span class="line" id="L1331">            <span class="tok-kw">try</span> testing.expect(odd.subsetOf(even));</span>
+<span class="line" id="L1332">        },</span>
+<span class="line" id="L1333">        <span class="tok-kw">else</span> =&gt; {</span>
+<span class="line" id="L1334">            <span class="tok-kw">try</span> testing.expect(!even.subsetOf(odd));</span>
+<span class="line" id="L1335">            <span class="tok-kw">try</span> testing.expect(!odd.subsetOf(even));</span>
+<span class="line" id="L1336">        },</span>
+<span class="line" id="L1337">    }</span>
+<span class="line" id="L1338">}</span>
+<span class="line" id="L1339"></span>
+<span class="line" id="L1340"><span class="tok-kw">fn</span> <span class="tok-fn">testSupersetOf</span>(empty: <span class="tok-kw">anytype</span>, full: <span class="tok-kw">anytype</span>, even: <span class="tok-kw">anytype</span>, odd: <span class="tok-kw">anytype</span>, len: <span class="tok-type">usize</span>) !<span class="tok-type">void</span> {</span>
+<span class="line" id="L1341">    <span class="tok-kw">try</span> testing.expect(full.supersetOf(full));</span>
+<span class="line" id="L1342">    <span class="tok-kw">try</span> testing.expect(full.supersetOf(empty));</span>
+<span class="line" id="L1343">    <span class="tok-kw">try</span> testing.expect(empty.supersetOf(empty));</span>
+<span class="line" id="L1344">    <span class="tok-kw">switch</span> (len) {</span>
+<span class="line" id="L1345">        <span class="tok-number">0</span> =&gt; {</span>
+<span class="line" id="L1346">            <span class="tok-kw">try</span> testing.expect(even.supersetOf(odd));</span>
+<span class="line" id="L1347">            <span class="tok-kw">try</span> testing.expect(odd.supersetOf(even));</span>
+<span class="line" id="L1348">        },</span>
+<span class="line" id="L1349">        <span class="tok-number">1</span> =&gt; {</span>
+<span class="line" id="L1350">            <span class="tok-kw">try</span> testing.expect(even.supersetOf(odd));</span>
+<span class="line" id="L1351">            <span class="tok-kw">try</span> testing.expect(!odd.supersetOf(even));</span>
+<span class="line" id="L1352">        },</span>
+<span class="line" id="L1353">        <span class="tok-kw">else</span> =&gt; {</span>
+<span class="line" id="L1354">            <span class="tok-kw">try</span> testing.expect(!even.supersetOf(odd));</span>
+<span class="line" id="L1355">            <span class="tok-kw">try</span> testing.expect(!odd.supersetOf(even));</span>
+<span class="line" id="L1356">        },</span>
+<span class="line" id="L1357">    }</span>
+<span class="line" id="L1358">}</span>
+<span class="line" id="L1359"></span>
+<span class="line" id="L1360"><span class="tok-kw">fn</span> <span class="tok-fn">testBitSet</span>(a: <span class="tok-kw">anytype</span>, b: <span class="tok-kw">anytype</span>, len: <span class="tok-type">usize</span>) !<span class="tok-type">void</span> {</span>
+<span class="line" id="L1361">    <span class="tok-kw">try</span> testing.expectEqual(len, a.capacity());</span>
+<span class="line" id="L1362">    <span class="tok-kw">try</span> testing.expectEqual(len, b.capacity());</span>
+<span class="line" id="L1363"></span>
+<span class="line" id="L1364">    {</span>
+<span class="line" id="L1365">        <span class="tok-kw">var</span> i: <span class="tok-type">usize</span> = <span class="tok-number">0</span>;</span>
+<span class="line" id="L1366">        <span class="tok-kw">while</span> (i &lt; len) : (i += <span class="tok-number">1</span>) {</span>
+<span class="line" id="L1367">            a.setValue(i, i &amp; <span class="tok-number">1</span> == <span class="tok-number">0</span>);</span>
+<span class="line" id="L1368">            b.setValue(i, i &amp; <span class="tok-number">2</span> == <span class="tok-number">0</span>);</span>
+<span class="line" id="L1369">        }</span>
+<span class="line" id="L1370">    }</span>
+<span class="line" id="L1371"></span>
+<span class="line" id="L1372">    <span class="tok-kw">try</span> testing.expectEqual((len + <span class="tok-number">1</span>) / <span class="tok-number">2</span>, a.count());</span>
+<span class="line" id="L1373">    <span class="tok-kw">try</span> testing.expectEqual((len + <span class="tok-number">3</span>) / <span class="tok-number">4</span> + (len + <span class="tok-number">2</span>) / <span class="tok-number">4</span>, b.count());</span>
+<span class="line" id="L1374"></span>
+<span class="line" id="L1375">    {</span>
+<span class="line" id="L1376">        <span class="tok-kw">var</span> iter = a.iterator(.{});</span>
+<span class="line" id="L1377">        <span class="tok-kw">var</span> i: <span class="tok-type">usize</span> = <span class="tok-number">0</span>;</span>
+<span class="line" id="L1378">        <span class="tok-kw">while</span> (i &lt; len) : (i += <span class="tok-number">2</span>) {</span>
+<span class="line" id="L1379">            <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, i), iter.next());</span>
+<span class="line" id="L1380">        }</span>
+<span class="line" id="L1381">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), iter.next());</span>
+<span class="line" id="L1382">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), iter.next());</span>
+<span class="line" id="L1383">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), iter.next());</span>
+<span class="line" id="L1384">    }</span>
+<span class="line" id="L1385">    a.toggleAll();</span>
+<span class="line" id="L1386">    {</span>
+<span class="line" id="L1387">        <span class="tok-kw">var</span> iter = a.iterator(.{});</span>
+<span class="line" id="L1388">        <span class="tok-kw">var</span> i: <span class="tok-type">usize</span> = <span class="tok-number">1</span>;</span>
+<span class="line" id="L1389">        <span class="tok-kw">while</span> (i &lt; len) : (i += <span class="tok-number">2</span>) {</span>
+<span class="line" id="L1390">            <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, i), iter.next());</span>
+<span class="line" id="L1391">        }</span>
+<span class="line" id="L1392">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), iter.next());</span>
+<span class="line" id="L1393">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), iter.next());</span>
+<span class="line" id="L1394">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), iter.next());</span>
+<span class="line" id="L1395">    }</span>
+<span class="line" id="L1396"></span>
+<span class="line" id="L1397">    {</span>
+<span class="line" id="L1398">        <span class="tok-kw">var</span> iter = b.iterator(.{ .kind = .unset });</span>
+<span class="line" id="L1399">        <span class="tok-kw">var</span> i: <span class="tok-type">usize</span> = <span class="tok-number">2</span>;</span>
+<span class="line" id="L1400">        <span class="tok-kw">while</span> (i &lt; len) : (i += <span class="tok-number">4</span>) {</span>
+<span class="line" id="L1401">            <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, i), iter.next());</span>
+<span class="line" id="L1402">            <span class="tok-kw">if</span> (i + <span class="tok-number">1</span> &lt; len) {</span>
+<span class="line" id="L1403">                <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, i + <span class="tok-number">1</span>), iter.next());</span>
+<span class="line" id="L1404">            }</span>
+<span class="line" id="L1405">        }</span>
 <span class="line" id="L1406">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), iter.next());</span>
 <span class="line" id="L1407">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), iter.next());</span>
 <span class="line" id="L1408">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), iter.next());</span>
-<span class="line" id="L1409">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">0</span>), a.count());</span>
-<span class="line" id="L1410">    }</span>
+<span class="line" id="L1409">    }</span>
+<span class="line" id="L1410"></span>
 <span class="line" id="L1411">    {</span>
-<span class="line" id="L1412">        <span class="tok-kw">var</span> iter = a.iterator(.{ .direction = .reverse });</span>
-<span class="line" id="L1413">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), iter.next());</span>
-<span class="line" id="L1414">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), iter.next());</span>
-<span class="line" id="L1415">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), iter.next());</span>
-<span class="line" id="L1416">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">0</span>), a.count());</span>
+<span class="line" id="L1412">        <span class="tok-kw">var</span> i: <span class="tok-type">usize</span> = <span class="tok-number">0</span>;</span>
+<span class="line" id="L1413">        <span class="tok-kw">while</span> (i &lt; len) : (i += <span class="tok-number">1</span>) {</span>
+<span class="line" id="L1414">            <span class="tok-kw">try</span> testing.expectEqual(i &amp; <span class="tok-number">1</span> != <span class="tok-number">0</span>, a.isSet(i));</span>
+<span class="line" id="L1415">            <span class="tok-kw">try</span> testing.expectEqual(i &amp; <span class="tok-number">2</span> == <span class="tok-number">0</span>, b.isSet(i));</span>
+<span class="line" id="L1416">        }</span>
 <span class="line" id="L1417">    }</span>
 <span class="line" id="L1418"></span>
-<span class="line" id="L1419">    <span class="tok-kw">const</span> test_bits = [_]<span class="tok-type">usize</span>{</span>
-<span class="line" id="L1420">        <span class="tok-number">0</span>,  <span class="tok-number">1</span>,  <span class="tok-number">2</span>,   <span class="tok-number">3</span>,   <span class="tok-number">4</span>,   <span class="tok-number">5</span>,    <span class="tok-number">6</span>, <span class="tok-number">7</span>, <span class="tok-number">9</span>, <span class="tok-number">10</span>, <span class="tok-number">11</span>, <span class="tok-number">22</span>, <span class="tok-number">31</span>, <span class="tok-number">32</span>, <span class="tok-number">63</span>, <span class="tok-number">64</span>,</span>
-<span class="line" id="L1421">        <span class="tok-number">66</span>, <span class="tok-number">95</span>, <span class="tok-number">127</span>, <span class="tok-number">160</span>, <span class="tok-number">192</span>, <span class="tok-number">1000</span>,</span>
-<span class="line" id="L1422">    };</span>
-<span class="line" id="L1423">    <span class="tok-kw">for</span> (test_bits) |i| {</span>
-<span class="line" id="L1424">        <span class="tok-kw">if</span> (i &lt; a.capacity()) {</span>
-<span class="line" id="L1425">            a.set(i);</span>
-<span class="line" id="L1426">        }</span>
-<span class="line" id="L1427">    }</span>
-<span class="line" id="L1428"></span>
-<span class="line" id="L1429">    <span class="tok-kw">for</span> (test_bits) |i| {</span>
-<span class="line" id="L1430">        <span class="tok-kw">if</span> (i &lt; a.capacity()) {</span>
-<span class="line" id="L1431">            <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, i), a.findFirstSet());</span>
-<span class="line" id="L1432">            <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, i), a.toggleFirstSet());</span>
-<span class="line" id="L1433">        }</span>
-<span class="line" id="L1434">    }</span>
-<span class="line" id="L1435">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), a.findFirstSet());</span>
-<span class="line" id="L1436">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), a.toggleFirstSet());</span>
-<span class="line" id="L1437">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), a.findFirstSet());</span>
-<span class="line" id="L1438">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), a.toggleFirstSet());</span>
-<span class="line" id="L1439">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">0</span>), a.count());</span>
-<span class="line" id="L1440"></span>
-<span class="line" id="L1441">    a.setRangeValue(.{ .start = <span class="tok-number">0</span>, .end = len }, <span class="tok-null">false</span>);</span>
-<span class="line" id="L1442">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">0</span>), a.count());</span>
-<span class="line" id="L1443"></span>
-<span class="line" id="L1444">    a.setRangeValue(.{ .start = <span class="tok-number">0</span>, .end = len }, <span class="tok-null">true</span>);</span>
-<span class="line" id="L1445">    <span class="tok-kw">try</span> testing.expectEqual(len, a.count());</span>
-<span class="line" id="L1446"></span>
-<span class="line" id="L1447">    a.setRangeValue(.{ .start = <span class="tok-number">0</span>, .end = len }, <span class="tok-null">false</span>);</span>
-<span class="line" id="L1448">    a.setRangeValue(.{ .start = <span class="tok-number">0</span>, .end = <span class="tok-number">0</span> }, <span class="tok-null">true</span>);</span>
-<span class="line" id="L1449">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">0</span>), a.count());</span>
-<span class="line" id="L1450"></span>
-<span class="line" id="L1451">    a.setRangeValue(.{ .start = len, .end = len }, <span class="tok-null">true</span>);</span>
-<span class="line" id="L1452">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">0</span>), a.count());</span>
-<span class="line" id="L1453"></span>
-<span class="line" id="L1454">    <span class="tok-kw">if</span> (len &gt;= <span class="tok-number">1</span>) {</span>
-<span class="line" id="L1455">        a.setRangeValue(.{ .start = <span class="tok-number">0</span>, .end = len }, <span class="tok-null">false</span>);</span>
-<span class="line" id="L1456">        a.setRangeValue(.{ .start = <span class="tok-number">0</span>, .end = <span class="tok-number">1</span> }, <span class="tok-null">true</span>);</span>
-<span class="line" id="L1457">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">1</span>), a.count());</span>
-<span class="line" id="L1458">        <span class="tok-kw">try</span> testing.expect(a.isSet(<span class="tok-number">0</span>));</span>
-<span class="line" id="L1459"></span>
-<span class="line" id="L1460">        a.setRangeValue(.{ .start = <span class="tok-number">0</span>, .end = len }, <span class="tok-null">false</span>);</span>
-<span class="line" id="L1461">        a.setRangeValue(.{ .start = <span class="tok-number">0</span>, .end = len - <span class="tok-number">1</span> }, <span class="tok-null">true</span>);</span>
-<span class="line" id="L1462">        <span class="tok-kw">try</span> testing.expectEqual(len - <span class="tok-number">1</span>, a.count());</span>
-<span class="line" id="L1463">        <span class="tok-kw">try</span> testing.expect(!a.isSet(len - <span class="tok-number">1</span>));</span>
-<span class="line" id="L1464"></span>
-<span class="line" id="L1465">        a.setRangeValue(.{ .start = <span class="tok-number">0</span>, .end = len }, <span class="tok-null">false</span>);</span>
-<span class="line" id="L1466">        a.setRangeValue(.{ .start = <span class="tok-number">1</span>, .end = len }, <span class="tok-null">true</span>);</span>
-<span class="line" id="L1467">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, len - <span class="tok-number">1</span>), a.count());</span>
-<span class="line" id="L1468">        <span class="tok-kw">try</span> testing.expect(!a.isSet(<span class="tok-number">0</span>));</span>
-<span class="line" id="L1469"></span>
-<span class="line" id="L1470">        a.setRangeValue(.{ .start = <span class="tok-number">0</span>, .end = len }, <span class="tok-null">false</span>);</span>
-<span class="line" id="L1471">        a.setRangeValue(.{ .start = len - <span class="tok-number">1</span>, .end = len }, <span class="tok-null">true</span>);</span>
-<span class="line" id="L1472">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">1</span>), a.count());</span>
-<span class="line" id="L1473">        <span class="tok-kw">try</span> testing.expect(a.isSet(len - <span class="tok-number">1</span>));</span>
-<span class="line" id="L1474"></span>
-<span class="line" id="L1475">        <span class="tok-kw">if</span> (len &gt;= <span class="tok-number">4</span>) {</span>
-<span class="line" id="L1476">            a.setRangeValue(.{ .start = <span class="tok-number">0</span>, .end = len }, <span class="tok-null">false</span>);</span>
-<span class="line" id="L1477">            a.setRangeValue(.{ .start = <span class="tok-number">1</span>, .end = len - <span class="tok-number">2</span> }, <span class="tok-null">true</span>);</span>
-<span class="line" id="L1478">            <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, len - <span class="tok-number">3</span>), a.count());</span>
-<span class="line" id="L1479">            <span class="tok-kw">try</span> testing.expect(!a.isSet(<span class="tok-number">0</span>));</span>
-<span class="line" id="L1480">            <span class="tok-kw">try</span> testing.expect(a.isSet(<span class="tok-number">1</span>));</span>
-<span class="line" id="L1481">            <span class="tok-kw">try</span> testing.expect(a.isSet(len - <span class="tok-number">3</span>));</span>
-<span class="line" id="L1482">            <span class="tok-kw">try</span> testing.expect(!a.isSet(len - <span class="tok-number">2</span>));</span>
-<span class="line" id="L1483">            <span class="tok-kw">try</span> testing.expect(!a.isSet(len - <span class="tok-number">1</span>));</span>
-<span class="line" id="L1484">        }</span>
-<span class="line" id="L1485">    }</span>
-<span class="line" id="L1486">}</span>
-<span class="line" id="L1487"></span>
-<span class="line" id="L1488"><span class="tok-kw">fn</span> <span class="tok-fn">testPureBitSet</span>(<span class="tok-kw">comptime</span> Set: <span class="tok-type">type</span>) !<span class="tok-type">void</span> {</span>
-<span class="line" id="L1489">    <span class="tok-kw">const</span> empty = Set.initEmpty();</span>
-<span class="line" id="L1490">    <span class="tok-kw">const</span> full = Set.initFull();</span>
-<span class="line" id="L1491"></span>
-<span class="line" id="L1492">    <span class="tok-kw">const</span> even = even: {</span>
-<span class="line" id="L1493">        <span class="tok-kw">var</span> bit_set = Set.initEmpty();</span>
-<span class="line" id="L1494">        <span class="tok-kw">var</span> i: <span class="tok-type">usize</span> = <span class="tok-number">0</span>;</span>
-<span class="line" id="L1495">        <span class="tok-kw">while</span> (i &lt; Set.bit_length) : (i += <span class="tok-number">1</span>) {</span>
-<span class="line" id="L1496">            bit_set.setValue(i, i &amp; <span class="tok-number">1</span> == <span class="tok-number">0</span>);</span>
-<span class="line" id="L1497">        }</span>
-<span class="line" id="L1498">        <span class="tok-kw">break</span> :even bit_set;</span>
-<span class="line" id="L1499">    };</span>
-<span class="line" id="L1500"></span>
-<span class="line" id="L1501">    <span class="tok-kw">const</span> odd = odd: {</span>
-<span class="line" id="L1502">        <span class="tok-kw">var</span> bit_set = Set.initEmpty();</span>
-<span class="line" id="L1503">        <span class="tok-kw">var</span> i: <span class="tok-type">usize</span> = <span class="tok-number">0</span>;</span>
-<span class="line" id="L1504">        <span class="tok-kw">while</span> (i &lt; Set.bit_length) : (i += <span class="tok-number">1</span>) {</span>
-<span class="line" id="L1505">            bit_set.setValue(i, i &amp; <span class="tok-number">1</span> == <span class="tok-number">1</span>);</span>
-<span class="line" id="L1506">        }</span>
-<span class="line" id="L1507">        <span class="tok-kw">break</span> :odd bit_set;</span>
-<span class="line" id="L1508">    };</span>
-<span class="line" id="L1509"></span>
-<span class="line" id="L1510">    <span class="tok-kw">try</span> testing.expect(empty.subsetOf(empty));</span>
-<span class="line" id="L1511">    <span class="tok-kw">try</span> testing.expect(empty.subsetOf(full));</span>
-<span class="line" id="L1512">    <span class="tok-kw">try</span> testing.expect(full.subsetOf(full));</span>
-<span class="line" id="L1513">    <span class="tok-kw">switch</span> (Set.bit_length) {</span>
-<span class="line" id="L1514">        <span class="tok-number">0</span> =&gt; {</span>
-<span class="line" id="L1515">            <span class="tok-kw">try</span> testing.expect(even.subsetOf(odd));</span>
-<span class="line" id="L1516">            <span class="tok-kw">try</span> testing.expect(odd.subsetOf(even));</span>
-<span class="line" id="L1517">        },</span>
-<span class="line" id="L1518">        <span class="tok-number">1</span> =&gt; {</span>
-<span class="line" id="L1519">            <span class="tok-kw">try</span> testing.expect(!even.subsetOf(odd));</span>
-<span class="line" id="L1520">            <span class="tok-kw">try</span> testing.expect(odd.subsetOf(even));</span>
-<span class="line" id="L1521">        },</span>
-<span class="line" id="L1522">        <span class="tok-kw">else</span> =&gt; {</span>
-<span class="line" id="L1523">            <span class="tok-kw">try</span> testing.expect(!even.subsetOf(odd));</span>
-<span class="line" id="L1524">            <span class="tok-kw">try</span> testing.expect(!odd.subsetOf(even));</span>
-<span class="line" id="L1525">        },</span>
-<span class="line" id="L1526">    }</span>
-<span class="line" id="L1527"></span>
-<span class="line" id="L1528">    <span class="tok-kw">try</span> testing.expect(full.supersetOf(full));</span>
-<span class="line" id="L1529">    <span class="tok-kw">try</span> testing.expect(full.supersetOf(empty));</span>
-<span class="line" id="L1530">    <span class="tok-kw">try</span> testing.expect(empty.supersetOf(empty));</span>
-<span class="line" id="L1531">    <span class="tok-kw">switch</span> (Set.bit_length) {</span>
-<span class="line" id="L1532">        <span class="tok-number">0</span> =&gt; {</span>
-<span class="line" id="L1533">            <span class="tok-kw">try</span> testing.expect(even.supersetOf(odd));</span>
-<span class="line" id="L1534">            <span class="tok-kw">try</span> testing.expect(odd.supersetOf(even));</span>
-<span class="line" id="L1535">        },</span>
-<span class="line" id="L1536">        <span class="tok-number">1</span> =&gt; {</span>
-<span class="line" id="L1537">            <span class="tok-kw">try</span> testing.expect(even.supersetOf(odd));</span>
-<span class="line" id="L1538">            <span class="tok-kw">try</span> testing.expect(!odd.supersetOf(even));</span>
-<span class="line" id="L1539">        },</span>
-<span class="line" id="L1540">        <span class="tok-kw">else</span> =&gt; {</span>
-<span class="line" id="L1541">            <span class="tok-kw">try</span> testing.expect(!even.supersetOf(odd));</span>
-<span class="line" id="L1542">            <span class="tok-kw">try</span> testing.expect(!odd.supersetOf(even));</span>
-<span class="line" id="L1543">        },</span>
-<span class="line" id="L1544">    }</span>
-<span class="line" id="L1545"></span>
-<span class="line" id="L1546">    <span class="tok-kw">try</span> testing.expect(empty.complement().eql(full));</span>
-<span class="line" id="L1547">    <span class="tok-kw">try</span> testing.expect(full.complement().eql(empty));</span>
-<span class="line" id="L1548">    <span class="tok-kw">try</span> testing.expect(even.complement().eql(odd));</span>
-<span class="line" id="L1549">    <span class="tok-kw">try</span> testing.expect(odd.complement().eql(even));</span>
-<span class="line" id="L1550"></span>
-<span class="line" id="L1551">    <span class="tok-kw">try</span> testing.expect(empty.unionWith(empty).eql(empty));</span>
-<span class="line" id="L1552">    <span class="tok-kw">try</span> testing.expect(empty.unionWith(full).eql(full));</span>
-<span class="line" id="L1553">    <span class="tok-kw">try</span> testing.expect(full.unionWith(full).eql(full));</span>
-<span class="line" id="L1554">    <span class="tok-kw">try</span> testing.expect(full.unionWith(empty).eql(full));</span>
-<span class="line" id="L1555">    <span class="tok-kw">try</span> testing.expect(even.unionWith(odd).eql(full));</span>
-<span class="line" id="L1556">    <span class="tok-kw">try</span> testing.expect(odd.unionWith(even).eql(full));</span>
+<span class="line" id="L1419">    a.setUnion(b.*);</span>
+<span class="line" id="L1420">    {</span>
+<span class="line" id="L1421">        <span class="tok-kw">var</span> i: <span class="tok-type">usize</span> = <span class="tok-number">0</span>;</span>
+<span class="line" id="L1422">        <span class="tok-kw">while</span> (i &lt; len) : (i += <span class="tok-number">1</span>) {</span>
+<span class="line" id="L1423">            <span class="tok-kw">try</span> testing.expectEqual(i &amp; <span class="tok-number">1</span> != <span class="tok-number">0</span> <span class="tok-kw">or</span> i &amp; <span class="tok-number">2</span> == <span class="tok-number">0</span>, a.isSet(i));</span>
+<span class="line" id="L1424">            <span class="tok-kw">try</span> testing.expectEqual(i &amp; <span class="tok-number">2</span> == <span class="tok-number">0</span>, b.isSet(i));</span>
+<span class="line" id="L1425">        }</span>
+<span class="line" id="L1426"></span>
+<span class="line" id="L1427">        i = len;</span>
+<span class="line" id="L1428">        <span class="tok-kw">var</span> set = a.iterator(.{ .direction = .reverse });</span>
+<span class="line" id="L1429">        <span class="tok-kw">var</span> unset = a.iterator(.{ .kind = .unset, .direction = .reverse });</span>
+<span class="line" id="L1430">        <span class="tok-kw">while</span> (i &gt; <span class="tok-number">0</span>) {</span>
+<span class="line" id="L1431">            i -= <span class="tok-number">1</span>;</span>
+<span class="line" id="L1432">            <span class="tok-kw">if</span> (i &amp; <span class="tok-number">1</span> != <span class="tok-number">0</span> <span class="tok-kw">or</span> i &amp; <span class="tok-number">2</span> == <span class="tok-number">0</span>) {</span>
+<span class="line" id="L1433">                <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, i), set.next());</span>
+<span class="line" id="L1434">            } <span class="tok-kw">else</span> {</span>
+<span class="line" id="L1435">                <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, i), unset.next());</span>
+<span class="line" id="L1436">            }</span>
+<span class="line" id="L1437">        }</span>
+<span class="line" id="L1438">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), set.next());</span>
+<span class="line" id="L1439">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), set.next());</span>
+<span class="line" id="L1440">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), set.next());</span>
+<span class="line" id="L1441">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), unset.next());</span>
+<span class="line" id="L1442">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), unset.next());</span>
+<span class="line" id="L1443">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), unset.next());</span>
+<span class="line" id="L1444">    }</span>
+<span class="line" id="L1445"></span>
+<span class="line" id="L1446">    a.toggleSet(b.*);</span>
+<span class="line" id="L1447">    {</span>
+<span class="line" id="L1448">        <span class="tok-kw">try</span> testing.expectEqual(len / <span class="tok-number">4</span>, a.count());</span>
+<span class="line" id="L1449"></span>
+<span class="line" id="L1450">        <span class="tok-kw">var</span> i: <span class="tok-type">usize</span> = <span class="tok-number">0</span>;</span>
+<span class="line" id="L1451">        <span class="tok-kw">while</span> (i &lt; len) : (i += <span class="tok-number">1</span>) {</span>
+<span class="line" id="L1452">            <span class="tok-kw">try</span> testing.expectEqual(i &amp; <span class="tok-number">1</span> != <span class="tok-number">0</span> <span class="tok-kw">and</span> i &amp; <span class="tok-number">2</span> != <span class="tok-number">0</span>, a.isSet(i));</span>
+<span class="line" id="L1453">            <span class="tok-kw">try</span> testing.expectEqual(i &amp; <span class="tok-number">2</span> == <span class="tok-number">0</span>, b.isSet(i));</span>
+<span class="line" id="L1454">            <span class="tok-kw">if</span> (i &amp; <span class="tok-number">1</span> == <span class="tok-number">0</span>) {</span>
+<span class="line" id="L1455">                a.set(i);</span>
+<span class="line" id="L1456">            } <span class="tok-kw">else</span> {</span>
+<span class="line" id="L1457">                a.unset(i);</span>
+<span class="line" id="L1458">            }</span>
+<span class="line" id="L1459">        }</span>
+<span class="line" id="L1460">    }</span>
+<span class="line" id="L1461"></span>
+<span class="line" id="L1462">    a.setIntersection(b.*);</span>
+<span class="line" id="L1463">    {</span>
+<span class="line" id="L1464">        <span class="tok-kw">try</span> testing.expectEqual((len + <span class="tok-number">3</span>) / <span class="tok-number">4</span>, a.count());</span>
+<span class="line" id="L1465"></span>
+<span class="line" id="L1466">        <span class="tok-kw">var</span> i: <span class="tok-type">usize</span> = <span class="tok-number">0</span>;</span>
+<span class="line" id="L1467">        <span class="tok-kw">while</span> (i &lt; len) : (i += <span class="tok-number">1</span>) {</span>
+<span class="line" id="L1468">            <span class="tok-kw">try</span> testing.expectEqual(i &amp; <span class="tok-number">1</span> == <span class="tok-number">0</span> <span class="tok-kw">and</span> i &amp; <span class="tok-number">2</span> == <span class="tok-number">0</span>, a.isSet(i));</span>
+<span class="line" id="L1469">            <span class="tok-kw">try</span> testing.expectEqual(i &amp; <span class="tok-number">2</span> == <span class="tok-number">0</span>, b.isSet(i));</span>
+<span class="line" id="L1470">        }</span>
+<span class="line" id="L1471">    }</span>
+<span class="line" id="L1472"></span>
+<span class="line" id="L1473">    a.toggleSet(a.*);</span>
+<span class="line" id="L1474">    {</span>
+<span class="line" id="L1475">        <span class="tok-kw">var</span> iter = a.iterator(.{});</span>
+<span class="line" id="L1476">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), iter.next());</span>
+<span class="line" id="L1477">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), iter.next());</span>
+<span class="line" id="L1478">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), iter.next());</span>
+<span class="line" id="L1479">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">0</span>), a.count());</span>
+<span class="line" id="L1480">    }</span>
+<span class="line" id="L1481">    {</span>
+<span class="line" id="L1482">        <span class="tok-kw">var</span> iter = a.iterator(.{ .direction = .reverse });</span>
+<span class="line" id="L1483">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), iter.next());</span>
+<span class="line" id="L1484">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), iter.next());</span>
+<span class="line" id="L1485">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), iter.next());</span>
+<span class="line" id="L1486">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">0</span>), a.count());</span>
+<span class="line" id="L1487">    }</span>
+<span class="line" id="L1488"></span>
+<span class="line" id="L1489">    <span class="tok-kw">const</span> test_bits = [_]<span class="tok-type">usize</span>{</span>
+<span class="line" id="L1490">        <span class="tok-number">0</span>,  <span class="tok-number">1</span>,  <span class="tok-number">2</span>,   <span class="tok-number">3</span>,   <span class="tok-number">4</span>,   <span class="tok-number">5</span>,    <span class="tok-number">6</span>, <span class="tok-number">7</span>, <span class="tok-number">9</span>, <span class="tok-number">10</span>, <span class="tok-number">11</span>, <span class="tok-number">22</span>, <span class="tok-number">31</span>, <span class="tok-number">32</span>, <span class="tok-number">63</span>, <span class="tok-number">64</span>,</span>
+<span class="line" id="L1491">        <span class="tok-number">66</span>, <span class="tok-number">95</span>, <span class="tok-number">127</span>, <span class="tok-number">160</span>, <span class="tok-number">192</span>, <span class="tok-number">1000</span>,</span>
+<span class="line" id="L1492">    };</span>
+<span class="line" id="L1493">    <span class="tok-kw">for</span> (test_bits) |i| {</span>
+<span class="line" id="L1494">        <span class="tok-kw">if</span> (i &lt; a.capacity()) {</span>
+<span class="line" id="L1495">            a.set(i);</span>
+<span class="line" id="L1496">        }</span>
+<span class="line" id="L1497">    }</span>
+<span class="line" id="L1498"></span>
+<span class="line" id="L1499">    <span class="tok-kw">for</span> (test_bits) |i| {</span>
+<span class="line" id="L1500">        <span class="tok-kw">if</span> (i &lt; a.capacity()) {</span>
+<span class="line" id="L1501">            <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, i), a.findFirstSet());</span>
+<span class="line" id="L1502">            <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, i), a.toggleFirstSet());</span>
+<span class="line" id="L1503">        }</span>
+<span class="line" id="L1504">    }</span>
+<span class="line" id="L1505">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), a.findFirstSet());</span>
+<span class="line" id="L1506">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), a.toggleFirstSet());</span>
+<span class="line" id="L1507">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), a.findFirstSet());</span>
+<span class="line" id="L1508">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(?<span class="tok-type">usize</span>, <span class="tok-null">null</span>), a.toggleFirstSet());</span>
+<span class="line" id="L1509">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">0</span>), a.count());</span>
+<span class="line" id="L1510"></span>
+<span class="line" id="L1511">    a.setRangeValue(.{ .start = <span class="tok-number">0</span>, .end = len }, <span class="tok-null">false</span>);</span>
+<span class="line" id="L1512">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">0</span>), a.count());</span>
+<span class="line" id="L1513"></span>
+<span class="line" id="L1514">    a.setRangeValue(.{ .start = <span class="tok-number">0</span>, .end = len }, <span class="tok-null">true</span>);</span>
+<span class="line" id="L1515">    <span class="tok-kw">try</span> testing.expectEqual(len, a.count());</span>
+<span class="line" id="L1516"></span>
+<span class="line" id="L1517">    a.setRangeValue(.{ .start = <span class="tok-number">0</span>, .end = len }, <span class="tok-null">false</span>);</span>
+<span class="line" id="L1518">    a.setRangeValue(.{ .start = <span class="tok-number">0</span>, .end = <span class="tok-number">0</span> }, <span class="tok-null">true</span>);</span>
+<span class="line" id="L1519">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">0</span>), a.count());</span>
+<span class="line" id="L1520"></span>
+<span class="line" id="L1521">    a.setRangeValue(.{ .start = len, .end = len }, <span class="tok-null">true</span>);</span>
+<span class="line" id="L1522">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">0</span>), a.count());</span>
+<span class="line" id="L1523"></span>
+<span class="line" id="L1524">    <span class="tok-kw">if</span> (len &gt;= <span class="tok-number">1</span>) {</span>
+<span class="line" id="L1525">        a.setRangeValue(.{ .start = <span class="tok-number">0</span>, .end = len }, <span class="tok-null">false</span>);</span>
+<span class="line" id="L1526">        a.setRangeValue(.{ .start = <span class="tok-number">0</span>, .end = <span class="tok-number">1</span> }, <span class="tok-null">true</span>);</span>
+<span class="line" id="L1527">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">1</span>), a.count());</span>
+<span class="line" id="L1528">        <span class="tok-kw">try</span> testing.expect(a.isSet(<span class="tok-number">0</span>));</span>
+<span class="line" id="L1529"></span>
+<span class="line" id="L1530">        a.setRangeValue(.{ .start = <span class="tok-number">0</span>, .end = len }, <span class="tok-null">false</span>);</span>
+<span class="line" id="L1531">        a.setRangeValue(.{ .start = <span class="tok-number">0</span>, .end = len - <span class="tok-number">1</span> }, <span class="tok-null">true</span>);</span>
+<span class="line" id="L1532">        <span class="tok-kw">try</span> testing.expectEqual(len - <span class="tok-number">1</span>, a.count());</span>
+<span class="line" id="L1533">        <span class="tok-kw">try</span> testing.expect(!a.isSet(len - <span class="tok-number">1</span>));</span>
+<span class="line" id="L1534"></span>
+<span class="line" id="L1535">        a.setRangeValue(.{ .start = <span class="tok-number">0</span>, .end = len }, <span class="tok-null">false</span>);</span>
+<span class="line" id="L1536">        a.setRangeValue(.{ .start = <span class="tok-number">1</span>, .end = len }, <span class="tok-null">true</span>);</span>
+<span class="line" id="L1537">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, len - <span class="tok-number">1</span>), a.count());</span>
+<span class="line" id="L1538">        <span class="tok-kw">try</span> testing.expect(!a.isSet(<span class="tok-number">0</span>));</span>
+<span class="line" id="L1539"></span>
+<span class="line" id="L1540">        a.setRangeValue(.{ .start = <span class="tok-number">0</span>, .end = len }, <span class="tok-null">false</span>);</span>
+<span class="line" id="L1541">        a.setRangeValue(.{ .start = len - <span class="tok-number">1</span>, .end = len }, <span class="tok-null">true</span>);</span>
+<span class="line" id="L1542">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">1</span>), a.count());</span>
+<span class="line" id="L1543">        <span class="tok-kw">try</span> testing.expect(a.isSet(len - <span class="tok-number">1</span>));</span>
+<span class="line" id="L1544"></span>
+<span class="line" id="L1545">        <span class="tok-kw">if</span> (len &gt;= <span class="tok-number">4</span>) {</span>
+<span class="line" id="L1546">            a.setRangeValue(.{ .start = <span class="tok-number">0</span>, .end = len }, <span class="tok-null">false</span>);</span>
+<span class="line" id="L1547">            a.setRangeValue(.{ .start = <span class="tok-number">1</span>, .end = len - <span class="tok-number">2</span> }, <span class="tok-null">true</span>);</span>
+<span class="line" id="L1548">            <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, len - <span class="tok-number">3</span>), a.count());</span>
+<span class="line" id="L1549">            <span class="tok-kw">try</span> testing.expect(!a.isSet(<span class="tok-number">0</span>));</span>
+<span class="line" id="L1550">            <span class="tok-kw">try</span> testing.expect(a.isSet(<span class="tok-number">1</span>));</span>
+<span class="line" id="L1551">            <span class="tok-kw">try</span> testing.expect(a.isSet(len - <span class="tok-number">3</span>));</span>
+<span class="line" id="L1552">            <span class="tok-kw">try</span> testing.expect(!a.isSet(len - <span class="tok-number">2</span>));</span>
+<span class="line" id="L1553">            <span class="tok-kw">try</span> testing.expect(!a.isSet(len - <span class="tok-number">1</span>));</span>
+<span class="line" id="L1554">        }</span>
+<span class="line" id="L1555">    }</span>
+<span class="line" id="L1556">}</span>
 <span class="line" id="L1557"></span>
-<span class="line" id="L1558">    <span class="tok-kw">try</span> testing.expect(empty.intersectWith(empty).eql(empty));</span>
-<span class="line" id="L1559">    <span class="tok-kw">try</span> testing.expect(empty.intersectWith(full).eql(empty));</span>
-<span class="line" id="L1560">    <span class="tok-kw">try</span> testing.expect(full.intersectWith(full).eql(full));</span>
-<span class="line" id="L1561">    <span class="tok-kw">try</span> testing.expect(full.intersectWith(empty).eql(empty));</span>
-<span class="line" id="L1562">    <span class="tok-kw">try</span> testing.expect(even.intersectWith(odd).eql(empty));</span>
-<span class="line" id="L1563">    <span class="tok-kw">try</span> testing.expect(odd.intersectWith(even).eql(empty));</span>
+<span class="line" id="L1558"><span class="tok-kw">fn</span> <span class="tok-fn">fillEven</span>(set: <span class="tok-kw">anytype</span>, len: <span class="tok-type">usize</span>) <span class="tok-type">void</span> {</span>
+<span class="line" id="L1559">    <span class="tok-kw">var</span> i: <span class="tok-type">usize</span> = <span class="tok-number">0</span>;</span>
+<span class="line" id="L1560">    <span class="tok-kw">while</span> (i &lt; len) : (i += <span class="tok-number">1</span>) {</span>
+<span class="line" id="L1561">        set.setValue(i, i &amp; <span class="tok-number">1</span> == <span class="tok-number">0</span>);</span>
+<span class="line" id="L1562">    }</span>
+<span class="line" id="L1563">}</span>
 <span class="line" id="L1564"></span>
-<span class="line" id="L1565">    <span class="tok-kw">try</span> testing.expect(empty.xorWith(empty).eql(empty));</span>
-<span class="line" id="L1566">    <span class="tok-kw">try</span> testing.expect(empty.xorWith(full).eql(full));</span>
-<span class="line" id="L1567">    <span class="tok-kw">try</span> testing.expect(full.xorWith(full).eql(empty));</span>
-<span class="line" id="L1568">    <span class="tok-kw">try</span> testing.expect(full.xorWith(empty).eql(full));</span>
-<span class="line" id="L1569">    <span class="tok-kw">try</span> testing.expect(even.xorWith(odd).eql(full));</span>
-<span class="line" id="L1570">    <span class="tok-kw">try</span> testing.expect(odd.xorWith(even).eql(full));</span>
+<span class="line" id="L1565"><span class="tok-kw">fn</span> <span class="tok-fn">fillOdd</span>(set: <span class="tok-kw">anytype</span>, len: <span class="tok-type">usize</span>) <span class="tok-type">void</span> {</span>
+<span class="line" id="L1566">    <span class="tok-kw">var</span> i: <span class="tok-type">usize</span> = <span class="tok-number">0</span>;</span>
+<span class="line" id="L1567">    <span class="tok-kw">while</span> (i &lt; len) : (i += <span class="tok-number">1</span>) {</span>
+<span class="line" id="L1568">        set.setValue(i, i &amp; <span class="tok-number">1</span> == <span class="tok-number">1</span>);</span>
+<span class="line" id="L1569">    }</span>
+<span class="line" id="L1570">}</span>
 <span class="line" id="L1571"></span>
-<span class="line" id="L1572">    <span class="tok-kw">try</span> testing.expect(empty.differenceWith(empty).eql(empty));</span>
-<span class="line" id="L1573">    <span class="tok-kw">try</span> testing.expect(empty.differenceWith(full).eql(empty));</span>
-<span class="line" id="L1574">    <span class="tok-kw">try</span> testing.expect(full.differenceWith(full).eql(empty));</span>
-<span class="line" id="L1575">    <span class="tok-kw">try</span> testing.expect(full.differenceWith(empty).eql(full));</span>
-<span class="line" id="L1576">    <span class="tok-kw">try</span> testing.expect(full.differenceWith(odd).eql(even));</span>
-<span class="line" id="L1577">    <span class="tok-kw">try</span> testing.expect(full.differenceWith(even).eql(odd));</span>
-<span class="line" id="L1578">}</span>
-<span class="line" id="L1579"></span>
-<span class="line" id="L1580"><span class="tok-kw">fn</span> <span class="tok-fn">testStaticBitSet</span>(<span class="tok-kw">comptime</span> Set: <span class="tok-type">type</span>) !<span class="tok-type">void</span> {</span>
-<span class="line" id="L1581">    <span class="tok-kw">var</span> a = Set.initEmpty();</span>
-<span class="line" id="L1582">    <span class="tok-kw">var</span> b = Set.initFull();</span>
-<span class="line" id="L1583">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">0</span>), a.count());</span>
-<span class="line" id="L1584">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, Set.bit_length), b.count());</span>
-<span class="line" id="L1585"></span>
-<span class="line" id="L1586">    <span class="tok-kw">try</span> testEql(a, b, Set.bit_length);</span>
-<span class="line" id="L1587">    <span class="tok-kw">try</span> testBitSet(&amp;a, &amp;b, Set.bit_length);</span>
-<span class="line" id="L1588"></span>
-<span class="line" id="L1589">    <span class="tok-kw">try</span> testPureBitSet(Set);</span>
-<span class="line" id="L1590">}</span>
-<span class="line" id="L1591"></span>
-<span class="line" id="L1592"><span class="tok-kw">test</span> <span class="tok-str">&quot;IntegerBitSet&quot;</span> {</span>
-<span class="line" id="L1593">    <span class="tok-kw">try</span> testStaticBitSet(IntegerBitSet(<span class="tok-number">0</span>));</span>
-<span class="line" id="L1594">    <span class="tok-kw">try</span> testStaticBitSet(IntegerBitSet(<span class="tok-number">1</span>));</span>
-<span class="line" id="L1595">    <span class="tok-kw">try</span> testStaticBitSet(IntegerBitSet(<span class="tok-number">2</span>));</span>
-<span class="line" id="L1596">    <span class="tok-kw">try</span> testStaticBitSet(IntegerBitSet(<span class="tok-number">5</span>));</span>
-<span class="line" id="L1597">    <span class="tok-kw">try</span> testStaticBitSet(IntegerBitSet(<span class="tok-number">8</span>));</span>
-<span class="line" id="L1598">    <span class="tok-kw">try</span> testStaticBitSet(IntegerBitSet(<span class="tok-number">32</span>));</span>
-<span class="line" id="L1599">    <span class="tok-kw">try</span> testStaticBitSet(IntegerBitSet(<span class="tok-number">64</span>));</span>
-<span class="line" id="L1600">    <span class="tok-kw">try</span> testStaticBitSet(IntegerBitSet(<span class="tok-number">127</span>));</span>
-<span class="line" id="L1601">}</span>
+<span class="line" id="L1572"><span class="tok-kw">fn</span> <span class="tok-fn">testPureBitSet</span>(<span class="tok-kw">comptime</span> Set: <span class="tok-type">type</span>) !<span class="tok-type">void</span> {</span>
+<span class="line" id="L1573">    <span class="tok-kw">const</span> empty = Set.initEmpty();</span>
+<span class="line" id="L1574">    <span class="tok-kw">const</span> full = Set.initFull();</span>
+<span class="line" id="L1575"></span>
+<span class="line" id="L1576">    <span class="tok-kw">const</span> even = even: {</span>
+<span class="line" id="L1577">        <span class="tok-kw">var</span> bit_set = Set.initEmpty();</span>
+<span class="line" id="L1578">        fillEven(&amp;bit_set, Set.bit_length);</span>
+<span class="line" id="L1579">        <span class="tok-kw">break</span> :even bit_set;</span>
+<span class="line" id="L1580">    };</span>
+<span class="line" id="L1581"></span>
+<span class="line" id="L1582">    <span class="tok-kw">const</span> odd = odd: {</span>
+<span class="line" id="L1583">        <span class="tok-kw">var</span> bit_set = Set.initEmpty();</span>
+<span class="line" id="L1584">        fillOdd(&amp;bit_set, Set.bit_length);</span>
+<span class="line" id="L1585">        <span class="tok-kw">break</span> :odd bit_set;</span>
+<span class="line" id="L1586">    };</span>
+<span class="line" id="L1587"></span>
+<span class="line" id="L1588">    <span class="tok-kw">try</span> testSubsetOf(empty, full, even, odd, Set.bit_length);</span>
+<span class="line" id="L1589">    <span class="tok-kw">try</span> testSupersetOf(empty, full, even, odd, Set.bit_length);</span>
+<span class="line" id="L1590"></span>
+<span class="line" id="L1591">    <span class="tok-kw">try</span> testing.expect(empty.complement().eql(full));</span>
+<span class="line" id="L1592">    <span class="tok-kw">try</span> testing.expect(full.complement().eql(empty));</span>
+<span class="line" id="L1593">    <span class="tok-kw">try</span> testing.expect(even.complement().eql(odd));</span>
+<span class="line" id="L1594">    <span class="tok-kw">try</span> testing.expect(odd.complement().eql(even));</span>
+<span class="line" id="L1595"></span>
+<span class="line" id="L1596">    <span class="tok-kw">try</span> testing.expect(empty.unionWith(empty).eql(empty));</span>
+<span class="line" id="L1597">    <span class="tok-kw">try</span> testing.expect(empty.unionWith(full).eql(full));</span>
+<span class="line" id="L1598">    <span class="tok-kw">try</span> testing.expect(full.unionWith(full).eql(full));</span>
+<span class="line" id="L1599">    <span class="tok-kw">try</span> testing.expect(full.unionWith(empty).eql(full));</span>
+<span class="line" id="L1600">    <span class="tok-kw">try</span> testing.expect(even.unionWith(odd).eql(full));</span>
+<span class="line" id="L1601">    <span class="tok-kw">try</span> testing.expect(odd.unionWith(even).eql(full));</span>
 <span class="line" id="L1602"></span>
-<span class="line" id="L1603"><span class="tok-kw">test</span> <span class="tok-str">&quot;ArrayBitSet&quot;</span> {</span>
-<span class="line" id="L1604">    <span class="tok-kw">inline</span> <span class="tok-kw">for</span> (.{ <span class="tok-number">0</span>, <span class="tok-number">1</span>, <span class="tok-number">2</span>, <span class="tok-number">31</span>, <span class="tok-number">32</span>, <span class="tok-number">33</span>, <span class="tok-number">63</span>, <span class="tok-number">64</span>, <span class="tok-number">65</span>, <span class="tok-number">254</span>, <span class="tok-number">500</span>, <span class="tok-number">3000</span> }) |size| {</span>
-<span class="line" id="L1605">        <span class="tok-kw">try</span> testStaticBitSet(ArrayBitSet(<span class="tok-type">u8</span>, size));</span>
-<span class="line" id="L1606">        <span class="tok-kw">try</span> testStaticBitSet(ArrayBitSet(<span class="tok-type">u16</span>, size));</span>
-<span class="line" id="L1607">        <span class="tok-kw">try</span> testStaticBitSet(ArrayBitSet(<span class="tok-type">u32</span>, size));</span>
-<span class="line" id="L1608">        <span class="tok-kw">try</span> testStaticBitSet(ArrayBitSet(<span class="tok-type">u64</span>, size));</span>
-<span class="line" id="L1609">        <span class="tok-kw">try</span> testStaticBitSet(ArrayBitSet(<span class="tok-type">u128</span>, size));</span>
-<span class="line" id="L1610">    }</span>
-<span class="line" id="L1611">}</span>
-<span class="line" id="L1612"></span>
-<span class="line" id="L1613"><span class="tok-kw">test</span> <span class="tok-str">&quot;DynamicBitSetUnmanaged&quot;</span> {</span>
-<span class="line" id="L1614">    <span class="tok-kw">const</span> allocator = std.testing.allocator;</span>
-<span class="line" id="L1615">    <span class="tok-kw">var</span> a = <span class="tok-kw">try</span> DynamicBitSetUnmanaged.initEmpty(allocator, <span class="tok-number">300</span>);</span>
-<span class="line" id="L1616">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">0</span>), a.count());</span>
-<span class="line" id="L1617">    a.deinit(allocator);</span>
-<span class="line" id="L1618"></span>
-<span class="line" id="L1619">    a = <span class="tok-kw">try</span> DynamicBitSetUnmanaged.initEmpty(allocator, <span class="tok-number">0</span>);</span>
-<span class="line" id="L1620">    <span class="tok-kw">defer</span> a.deinit(allocator);</span>
-<span class="line" id="L1621">    <span class="tok-kw">for</span> ([_]<span class="tok-type">usize</span>{ <span class="tok-number">1</span>, <span class="tok-number">2</span>, <span class="tok-number">31</span>, <span class="tok-number">32</span>, <span class="tok-number">33</span>, <span class="tok-number">0</span>, <span class="tok-number">65</span>, <span class="tok-number">64</span>, <span class="tok-number">63</span>, <span class="tok-number">500</span>, <span class="tok-number">254</span>, <span class="tok-number">3000</span> }) |size| {</span>
-<span class="line" id="L1622">        <span class="tok-kw">const</span> old_len = a.capacity();</span>
-<span class="line" id="L1623"></span>
-<span class="line" id="L1624">        <span class="tok-kw">var</span> tmp = <span class="tok-kw">try</span> a.clone(allocator);</span>
-<span class="line" id="L1625">        <span class="tok-kw">defer</span> tmp.deinit(allocator);</span>
-<span class="line" id="L1626">        <span class="tok-kw">try</span> testing.expectEqual(old_len, tmp.capacity());</span>
-<span class="line" id="L1627">        <span class="tok-kw">var</span> i: <span class="tok-type">usize</span> = <span class="tok-number">0</span>;</span>
-<span class="line" id="L1628">        <span class="tok-kw">while</span> (i &lt; old_len) : (i += <span class="tok-number">1</span>) {</span>
-<span class="line" id="L1629">            <span class="tok-kw">try</span> testing.expectEqual(a.isSet(i), tmp.isSet(i));</span>
-<span class="line" id="L1630">        }</span>
-<span class="line" id="L1631"></span>
-<span class="line" id="L1632">        a.toggleSet(a); <span class="tok-comment">// zero a</span>
+<span class="line" id="L1603">    <span class="tok-kw">try</span> testing.expect(empty.intersectWith(empty).eql(empty));</span>
+<span class="line" id="L1604">    <span class="tok-kw">try</span> testing.expect(empty.intersectWith(full).eql(empty));</span>
+<span class="line" id="L1605">    <span class="tok-kw">try</span> testing.expect(full.intersectWith(full).eql(full));</span>
+<span class="line" id="L1606">    <span class="tok-kw">try</span> testing.expect(full.intersectWith(empty).eql(empty));</span>
+<span class="line" id="L1607">    <span class="tok-kw">try</span> testing.expect(even.intersectWith(odd).eql(empty));</span>
+<span class="line" id="L1608">    <span class="tok-kw">try</span> testing.expect(odd.intersectWith(even).eql(empty));</span>
+<span class="line" id="L1609"></span>
+<span class="line" id="L1610">    <span class="tok-kw">try</span> testing.expect(empty.xorWith(empty).eql(empty));</span>
+<span class="line" id="L1611">    <span class="tok-kw">try</span> testing.expect(empty.xorWith(full).eql(full));</span>
+<span class="line" id="L1612">    <span class="tok-kw">try</span> testing.expect(full.xorWith(full).eql(empty));</span>
+<span class="line" id="L1613">    <span class="tok-kw">try</span> testing.expect(full.xorWith(empty).eql(full));</span>
+<span class="line" id="L1614">    <span class="tok-kw">try</span> testing.expect(even.xorWith(odd).eql(full));</span>
+<span class="line" id="L1615">    <span class="tok-kw">try</span> testing.expect(odd.xorWith(even).eql(full));</span>
+<span class="line" id="L1616"></span>
+<span class="line" id="L1617">    <span class="tok-kw">try</span> testing.expect(empty.differenceWith(empty).eql(empty));</span>
+<span class="line" id="L1618">    <span class="tok-kw">try</span> testing.expect(empty.differenceWith(full).eql(empty));</span>
+<span class="line" id="L1619">    <span class="tok-kw">try</span> testing.expect(full.differenceWith(full).eql(empty));</span>
+<span class="line" id="L1620">    <span class="tok-kw">try</span> testing.expect(full.differenceWith(empty).eql(full));</span>
+<span class="line" id="L1621">    <span class="tok-kw">try</span> testing.expect(full.differenceWith(odd).eql(even));</span>
+<span class="line" id="L1622">    <span class="tok-kw">try</span> testing.expect(full.differenceWith(even).eql(odd));</span>
+<span class="line" id="L1623">}</span>
+<span class="line" id="L1624"></span>
+<span class="line" id="L1625"><span class="tok-kw">fn</span> <span class="tok-fn">testStaticBitSet</span>(<span class="tok-kw">comptime</span> Set: <span class="tok-type">type</span>) !<span class="tok-type">void</span> {</span>
+<span class="line" id="L1626">    <span class="tok-kw">var</span> a = Set.initEmpty();</span>
+<span class="line" id="L1627">    <span class="tok-kw">var</span> b = Set.initFull();</span>
+<span class="line" id="L1628">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">0</span>), a.count());</span>
+<span class="line" id="L1629">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, Set.bit_length), b.count());</span>
+<span class="line" id="L1630"></span>
+<span class="line" id="L1631">    <span class="tok-kw">try</span> testEql(a, b, Set.bit_length);</span>
+<span class="line" id="L1632">    <span class="tok-kw">try</span> testBitSet(&amp;a, &amp;b, Set.bit_length);</span>
+<span class="line" id="L1633"></span>
+<span class="line" id="L1634">    <span class="tok-kw">try</span> testPureBitSet(Set);</span>
+<span class="line" id="L1635">}</span>
+<span class="line" id="L1636"></span>
+<span class="line" id="L1637"><span class="tok-kw">test</span> <span class="tok-str">&quot;IntegerBitSet&quot;</span> {</span>
+<span class="line" id="L1638">    <span class="tok-kw">try</span> testStaticBitSet(IntegerBitSet(<span class="tok-number">0</span>));</span>
+<span class="line" id="L1639">    <span class="tok-kw">try</span> testStaticBitSet(IntegerBitSet(<span class="tok-number">1</span>));</span>
+<span class="line" id="L1640">    <span class="tok-kw">try</span> testStaticBitSet(IntegerBitSet(<span class="tok-number">2</span>));</span>
+<span class="line" id="L1641">    <span class="tok-kw">try</span> testStaticBitSet(IntegerBitSet(<span class="tok-number">5</span>));</span>
+<span class="line" id="L1642">    <span class="tok-kw">try</span> testStaticBitSet(IntegerBitSet(<span class="tok-number">8</span>));</span>
+<span class="line" id="L1643">    <span class="tok-kw">try</span> testStaticBitSet(IntegerBitSet(<span class="tok-number">32</span>));</span>
+<span class="line" id="L1644">    <span class="tok-kw">try</span> testStaticBitSet(IntegerBitSet(<span class="tok-number">64</span>));</span>
+<span class="line" id="L1645">    <span class="tok-kw">try</span> testStaticBitSet(IntegerBitSet(<span class="tok-number">127</span>));</span>
+<span class="line" id="L1646">}</span>
+<span class="line" id="L1647"></span>
+<span class="line" id="L1648"><span class="tok-kw">test</span> <span class="tok-str">&quot;ArrayBitSet&quot;</span> {</span>
+<span class="line" id="L1649">    <span class="tok-kw">inline</span> <span class="tok-kw">for</span> (.{ <span class="tok-number">0</span>, <span class="tok-number">1</span>, <span class="tok-number">2</span>, <span class="tok-number">31</span>, <span class="tok-number">32</span>, <span class="tok-number">33</span>, <span class="tok-number">63</span>, <span class="tok-number">64</span>, <span class="tok-number">65</span>, <span class="tok-number">254</span>, <span class="tok-number">500</span>, <span class="tok-number">3000</span> }) |size| {</span>
+<span class="line" id="L1650">        <span class="tok-kw">try</span> testStaticBitSet(ArrayBitSet(<span class="tok-type">u8</span>, size));</span>
+<span class="line" id="L1651">        <span class="tok-kw">try</span> testStaticBitSet(ArrayBitSet(<span class="tok-type">u16</span>, size));</span>
+<span class="line" id="L1652">        <span class="tok-kw">try</span> testStaticBitSet(ArrayBitSet(<span class="tok-type">u32</span>, size));</span>
+<span class="line" id="L1653">        <span class="tok-kw">try</span> testStaticBitSet(ArrayBitSet(<span class="tok-type">u64</span>, size));</span>
+<span class="line" id="L1654">        <span class="tok-kw">try</span> testStaticBitSet(ArrayBitSet(<span class="tok-type">u128</span>, size));</span>
+<span class="line" id="L1655">    }</span>
+<span class="line" id="L1656">}</span>
+<span class="line" id="L1657"></span>
+<span class="line" id="L1658"><span class="tok-kw">test</span> <span class="tok-str">&quot;DynamicBitSetUnmanaged&quot;</span> {</span>
+<span class="line" id="L1659">    <span class="tok-kw">const</span> allocator = std.testing.allocator;</span>
+<span class="line" id="L1660">    <span class="tok-kw">var</span> a = <span class="tok-kw">try</span> DynamicBitSetUnmanaged.initEmpty(allocator, <span class="tok-number">300</span>);</span>
+<span class="line" id="L1661">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">0</span>), a.count());</span>
+<span class="line" id="L1662">    a.deinit(allocator);</span>
+<span class="line" id="L1663"></span>
+<span class="line" id="L1664">    a = <span class="tok-kw">try</span> DynamicBitSetUnmanaged.initEmpty(allocator, <span class="tok-number">0</span>);</span>
+<span class="line" id="L1665">    <span class="tok-kw">defer</span> a.deinit(allocator);</span>
+<span class="line" id="L1666">    <span class="tok-kw">for</span> ([_]<span class="tok-type">usize</span>{ <span class="tok-number">1</span>, <span class="tok-number">2</span>, <span class="tok-number">31</span>, <span class="tok-number">32</span>, <span class="tok-number">33</span>, <span class="tok-number">0</span>, <span class="tok-number">65</span>, <span class="tok-number">64</span>, <span class="tok-number">63</span>, <span class="tok-number">500</span>, <span class="tok-number">254</span>, <span class="tok-number">3000</span> }) |size| {</span>
+<span class="line" id="L1667">        <span class="tok-kw">const</span> old_len = a.capacity();</span>
+<span class="line" id="L1668"></span>
+<span class="line" id="L1669">        <span class="tok-kw">var</span> empty = <span class="tok-kw">try</span> a.clone(allocator);</span>
+<span class="line" id="L1670">        <span class="tok-kw">defer</span> empty.deinit(allocator);</span>
+<span class="line" id="L1671">        <span class="tok-kw">try</span> testing.expectEqual(old_len, empty.capacity());</span>
+<span class="line" id="L1672">        <span class="tok-kw">var</span> i: <span class="tok-type">usize</span> = <span class="tok-number">0</span>;</span>
+<span class="line" id="L1673">        <span class="tok-kw">while</span> (i &lt; old_len) : (i += <span class="tok-number">1</span>) {</span>
+<span class="line" id="L1674">            <span class="tok-kw">try</span> testing.expectEqual(a.isSet(i), empty.isSet(i));</span>
+<span class="line" id="L1675">        }</span>
+<span class="line" id="L1676"></span>
+<span class="line" id="L1677">        a.toggleSet(a); <span class="tok-comment">// zero a</span>
 </span>
-<span class="line" id="L1633">        tmp.toggleSet(tmp);</span>
-<span class="line" id="L1634"></span>
-<span class="line" id="L1635">        <span class="tok-kw">try</span> a.resize(allocator, size, <span class="tok-null">true</span>);</span>
-<span class="line" id="L1636">        <span class="tok-kw">try</span> tmp.resize(allocator, size, <span class="tok-null">false</span>);</span>
-<span class="line" id="L1637"></span>
-<span class="line" id="L1638">        <span class="tok-kw">if</span> (size &gt; old_len) {</span>
-<span class="line" id="L1639">            <span class="tok-kw">try</span> testing.expectEqual(size - old_len, a.count());</span>
-<span class="line" id="L1640">        } <span class="tok-kw">else</span> {</span>
-<span class="line" id="L1641">            <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">0</span>), a.count());</span>
-<span class="line" id="L1642">        }</span>
-<span class="line" id="L1643">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">0</span>), tmp.count());</span>
-<span class="line" id="L1644"></span>
-<span class="line" id="L1645">        <span class="tok-kw">var</span> b = <span class="tok-kw">try</span> DynamicBitSetUnmanaged.initFull(allocator, size);</span>
-<span class="line" id="L1646">        <span class="tok-kw">defer</span> b.deinit(allocator);</span>
-<span class="line" id="L1647">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, size), b.count());</span>
-<span class="line" id="L1648"></span>
-<span class="line" id="L1649">        <span class="tok-kw">try</span> testEql(tmp, b, size);</span>
-<span class="line" id="L1650">        <span class="tok-kw">try</span> testBitSet(&amp;a, &amp;b, size);</span>
-<span class="line" id="L1651">    }</span>
-<span class="line" id="L1652">}</span>
-<span class="line" id="L1653"></span>
-<span class="line" id="L1654"><span class="tok-kw">test</span> <span class="tok-str">&quot;DynamicBitSet&quot;</span> {</span>
-<span class="line" id="L1655">    <span class="tok-kw">const</span> allocator = std.testing.allocator;</span>
-<span class="line" id="L1656">    <span class="tok-kw">var</span> a = <span class="tok-kw">try</span> DynamicBitSet.initEmpty(allocator, <span class="tok-number">300</span>);</span>
-<span class="line" id="L1657">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">0</span>), a.count());</span>
-<span class="line" id="L1658">    a.deinit();</span>
-<span class="line" id="L1659"></span>
-<span class="line" id="L1660">    a = <span class="tok-kw">try</span> DynamicBitSet.initEmpty(allocator, <span class="tok-number">0</span>);</span>
-<span class="line" id="L1661">    <span class="tok-kw">defer</span> a.deinit();</span>
-<span class="line" id="L1662">    <span class="tok-kw">for</span> ([_]<span class="tok-type">usize</span>{ <span class="tok-number">1</span>, <span class="tok-number">2</span>, <span class="tok-number">31</span>, <span class="tok-number">32</span>, <span class="tok-number">33</span>, <span class="tok-number">0</span>, <span class="tok-number">65</span>, <span class="tok-number">64</span>, <span class="tok-number">63</span>, <span class="tok-number">500</span>, <span class="tok-number">254</span>, <span class="tok-number">3000</span> }) |size| {</span>
-<span class="line" id="L1663">        <span class="tok-kw">const</span> old_len = a.capacity();</span>
-<span class="line" id="L1664"></span>
-<span class="line" id="L1665">        <span class="tok-kw">var</span> tmp = <span class="tok-kw">try</span> a.clone(allocator);</span>
-<span class="line" id="L1666">        <span class="tok-kw">defer</span> tmp.deinit();</span>
-<span class="line" id="L1667">        <span class="tok-kw">try</span> testing.expectEqual(old_len, tmp.capacity());</span>
-<span class="line" id="L1668">        <span class="tok-kw">var</span> i: <span class="tok-type">usize</span> = <span class="tok-number">0</span>;</span>
-<span class="line" id="L1669">        <span class="tok-kw">while</span> (i &lt; old_len) : (i += <span class="tok-number">1</span>) {</span>
-<span class="line" id="L1670">            <span class="tok-kw">try</span> testing.expectEqual(a.isSet(i), tmp.isSet(i));</span>
-<span class="line" id="L1671">        }</span>
-<span class="line" id="L1672"></span>
-<span class="line" id="L1673">        a.toggleSet(a); <span class="tok-comment">// zero a</span>
-</span>
-<span class="line" id="L1674">        tmp.toggleSet(tmp); <span class="tok-comment">// zero tmp</span>
-</span>
-<span class="line" id="L1675"></span>
-<span class="line" id="L1676">        <span class="tok-kw">try</span> a.resize(size, <span class="tok-null">true</span>);</span>
-<span class="line" id="L1677">        <span class="tok-kw">try</span> tmp.resize(size, <span class="tok-null">false</span>);</span>
-<span class="line" id="L1678"></span>
-<span class="line" id="L1679">        <span class="tok-kw">if</span> (size &gt; old_len) {</span>
-<span class="line" id="L1680">            <span class="tok-kw">try</span> testing.expectEqual(size - old_len, a.count());</span>
-<span class="line" id="L1681">        } <span class="tok-kw">else</span> {</span>
-<span class="line" id="L1682">            <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">0</span>), a.count());</span>
-<span class="line" id="L1683">        }</span>
-<span class="line" id="L1684">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">0</span>), tmp.count());</span>
-<span class="line" id="L1685"></span>
-<span class="line" id="L1686">        <span class="tok-kw">var</span> b = <span class="tok-kw">try</span> DynamicBitSet.initFull(allocator, size);</span>
-<span class="line" id="L1687">        <span class="tok-kw">defer</span> b.deinit();</span>
-<span class="line" id="L1688">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, size), b.count());</span>
+<span class="line" id="L1678">        empty.toggleSet(empty);</span>
+<span class="line" id="L1679"></span>
+<span class="line" id="L1680">        <span class="tok-kw">try</span> a.resize(allocator, size, <span class="tok-null">true</span>);</span>
+<span class="line" id="L1681">        <span class="tok-kw">try</span> empty.resize(allocator, size, <span class="tok-null">false</span>);</span>
+<span class="line" id="L1682"></span>
+<span class="line" id="L1683">        <span class="tok-kw">if</span> (size &gt; old_len) {</span>
+<span class="line" id="L1684">            <span class="tok-kw">try</span> testing.expectEqual(size - old_len, a.count());</span>
+<span class="line" id="L1685">        } <span class="tok-kw">else</span> {</span>
+<span class="line" id="L1686">            <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">0</span>), a.count());</span>
+<span class="line" id="L1687">        }</span>
+<span class="line" id="L1688">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">0</span>), empty.count());</span>
 <span class="line" id="L1689"></span>
-<span class="line" id="L1690">        <span class="tok-kw">try</span> testEql(tmp, b, size);</span>
-<span class="line" id="L1691">        <span class="tok-kw">try</span> testBitSet(&amp;a, &amp;b, size);</span>
-<span class="line" id="L1692">    }</span>
-<span class="line" id="L1693">}</span>
-<span class="line" id="L1694"></span>
-<span class="line" id="L1695"><span class="tok-kw">test</span> <span class="tok-str">&quot;StaticBitSet&quot;</span> {</span>
-<span class="line" id="L1696">    <span class="tok-kw">try</span> testing.expectEqual(IntegerBitSet(<span class="tok-number">0</span>), StaticBitSet(<span class="tok-number">0</span>));</span>
-<span class="line" id="L1697">    <span class="tok-kw">try</span> testing.expectEqual(IntegerBitSet(<span class="tok-number">5</span>), StaticBitSet(<span class="tok-number">5</span>));</span>
-<span class="line" id="L1698">    <span class="tok-kw">try</span> testing.expectEqual(IntegerBitSet(<span class="tok-builtin">@bitSizeOf</span>(<span class="tok-type">usize</span>)), StaticBitSet(<span class="tok-builtin">@bitSizeOf</span>(<span class="tok-type">usize</span>)));</span>
-<span class="line" id="L1699">    <span class="tok-kw">try</span> testing.expectEqual(ArrayBitSet(<span class="tok-type">usize</span>, <span class="tok-builtin">@bitSizeOf</span>(<span class="tok-type">usize</span>) + <span class="tok-number">1</span>), StaticBitSet(<span class="tok-builtin">@bitSizeOf</span>(<span class="tok-type">usize</span>) + <span class="tok-number">1</span>));</span>
-<span class="line" id="L1700">    <span class="tok-kw">try</span> testing.expectEqual(ArrayBitSet(<span class="tok-type">usize</span>, <span class="tok-number">500</span>), StaticBitSet(<span class="tok-number">500</span>));</span>
-<span class="line" id="L1701">}</span>
-<span class="line" id="L1702"></span>
+<span class="line" id="L1690">        <span class="tok-kw">var</span> full = <span class="tok-kw">try</span> DynamicBitSetUnmanaged.initFull(allocator, size);</span>
+<span class="line" id="L1691">        <span class="tok-kw">defer</span> full.deinit(allocator);</span>
+<span class="line" id="L1692">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, size), full.count());</span>
+<span class="line" id="L1693"></span>
+<span class="line" id="L1694">        <span class="tok-kw">try</span> testEql(empty, full, size);</span>
+<span class="line" id="L1695">        {</span>
+<span class="line" id="L1696">            <span class="tok-kw">var</span> even = <span class="tok-kw">try</span> DynamicBitSetUnmanaged.initEmpty(allocator, size);</span>
+<span class="line" id="L1697">            <span class="tok-kw">defer</span> even.deinit(allocator);</span>
+<span class="line" id="L1698">            fillEven(&amp;even, size);</span>
+<span class="line" id="L1699"></span>
+<span class="line" id="L1700">            <span class="tok-kw">var</span> odd = <span class="tok-kw">try</span> DynamicBitSetUnmanaged.initEmpty(allocator, size);</span>
+<span class="line" id="L1701">            <span class="tok-kw">defer</span> odd.deinit(allocator);</span>
+<span class="line" id="L1702">            fillOdd(&amp;odd, size);</span>
+<span class="line" id="L1703"></span>
+<span class="line" id="L1704">            <span class="tok-kw">try</span> testSubsetOf(empty, full, even, odd, size);</span>
+<span class="line" id="L1705">            <span class="tok-kw">try</span> testSupersetOf(empty, full, even, odd, size);</span>
+<span class="line" id="L1706">        }</span>
+<span class="line" id="L1707">        <span class="tok-kw">try</span> testBitSet(&amp;a, &amp;full, size);</span>
+<span class="line" id="L1708">    }</span>
+<span class="line" id="L1709">}</span>
+<span class="line" id="L1710"></span>
+<span class="line" id="L1711"><span class="tok-kw">test</span> <span class="tok-str">&quot;DynamicBitSet&quot;</span> {</span>
+<span class="line" id="L1712">    <span class="tok-kw">const</span> allocator = std.testing.allocator;</span>
+<span class="line" id="L1713">    <span class="tok-kw">var</span> a = <span class="tok-kw">try</span> DynamicBitSet.initEmpty(allocator, <span class="tok-number">300</span>);</span>
+<span class="line" id="L1714">    <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">0</span>), a.count());</span>
+<span class="line" id="L1715">    a.deinit();</span>
+<span class="line" id="L1716"></span>
+<span class="line" id="L1717">    a = <span class="tok-kw">try</span> DynamicBitSet.initEmpty(allocator, <span class="tok-number">0</span>);</span>
+<span class="line" id="L1718">    <span class="tok-kw">defer</span> a.deinit();</span>
+<span class="line" id="L1719">    <span class="tok-kw">for</span> ([_]<span class="tok-type">usize</span>{ <span class="tok-number">1</span>, <span class="tok-number">2</span>, <span class="tok-number">31</span>, <span class="tok-number">32</span>, <span class="tok-number">33</span>, <span class="tok-number">0</span>, <span class="tok-number">65</span>, <span class="tok-number">64</span>, <span class="tok-number">63</span>, <span class="tok-number">500</span>, <span class="tok-number">254</span>, <span class="tok-number">3000</span> }) |size| {</span>
+<span class="line" id="L1720">        <span class="tok-kw">const</span> old_len = a.capacity();</span>
+<span class="line" id="L1721"></span>
+<span class="line" id="L1722">        <span class="tok-kw">var</span> tmp = <span class="tok-kw">try</span> a.clone(allocator);</span>
+<span class="line" id="L1723">        <span class="tok-kw">defer</span> tmp.deinit();</span>
+<span class="line" id="L1724">        <span class="tok-kw">try</span> testing.expectEqual(old_len, tmp.capacity());</span>
+<span class="line" id="L1725">        <span class="tok-kw">var</span> i: <span class="tok-type">usize</span> = <span class="tok-number">0</span>;</span>
+<span class="line" id="L1726">        <span class="tok-kw">while</span> (i &lt; old_len) : (i += <span class="tok-number">1</span>) {</span>
+<span class="line" id="L1727">            <span class="tok-kw">try</span> testing.expectEqual(a.isSet(i), tmp.isSet(i));</span>
+<span class="line" id="L1728">        }</span>
+<span class="line" id="L1729"></span>
+<span class="line" id="L1730">        a.toggleSet(a); <span class="tok-comment">// zero a</span>
+</span>
+<span class="line" id="L1731">        tmp.toggleSet(tmp); <span class="tok-comment">// zero tmp</span>
+</span>
+<span class="line" id="L1732"></span>
+<span class="line" id="L1733">        <span class="tok-kw">try</span> a.resize(size, <span class="tok-null">true</span>);</span>
+<span class="line" id="L1734">        <span class="tok-kw">try</span> tmp.resize(size, <span class="tok-null">false</span>);</span>
+<span class="line" id="L1735"></span>
+<span class="line" id="L1736">        <span class="tok-kw">if</span> (size &gt; old_len) {</span>
+<span class="line" id="L1737">            <span class="tok-kw">try</span> testing.expectEqual(size - old_len, a.count());</span>
+<span class="line" id="L1738">        } <span class="tok-kw">else</span> {</span>
+<span class="line" id="L1739">            <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">0</span>), a.count());</span>
+<span class="line" id="L1740">        }</span>
+<span class="line" id="L1741">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, <span class="tok-number">0</span>), tmp.count());</span>
+<span class="line" id="L1742"></span>
+<span class="line" id="L1743">        <span class="tok-kw">var</span> b = <span class="tok-kw">try</span> DynamicBitSet.initFull(allocator, size);</span>
+<span class="line" id="L1744">        <span class="tok-kw">defer</span> b.deinit();</span>
+<span class="line" id="L1745">        <span class="tok-kw">try</span> testing.expectEqual(<span class="tok-builtin">@as</span>(<span class="tok-type">usize</span>, size), b.count());</span>
+<span class="line" id="L1746"></span>
+<span class="line" id="L1747">        <span class="tok-kw">try</span> testEql(tmp, b, size);</span>
+<span class="line" id="L1748">        <span class="tok-kw">try</span> testBitSet(&amp;a, &amp;b, size);</span>
+<span class="line" id="L1749">    }</span>
+<span class="line" id="L1750">}</span>
+<span class="line" id="L1751"></span>
+<span class="line" id="L1752"><span class="tok-kw">test</span> <span class="tok-str">&quot;StaticBitSet&quot;</span> {</span>
+<span class="line" id="L1753">    <span class="tok-kw">try</span> testing.expectEqual(IntegerBitSet(<span class="tok-number">0</span>), StaticBitSet(<span class="tok-number">0</span>));</span>
+<span class="line" id="L1754">    <span class="tok-kw">try</span> testing.expectEqual(IntegerBitSet(<span class="tok-number">5</span>), StaticBitSet(<span class="tok-number">5</span>));</span>
+<span class="line" id="L1755">    <span class="tok-kw">try</span> testing.expectEqual(IntegerBitSet(<span class="tok-builtin">@bitSizeOf</span>(<span class="tok-type">usize</span>)), StaticBitSet(<span class="tok-builtin">@bitSizeOf</span>(<span class="tok-type">usize</span>)));</span>
+<span class="line" id="L1756">    <span class="tok-kw">try</span> testing.expectEqual(ArrayBitSet(<span class="tok-type">usize</span>, <span class="tok-builtin">@bitSizeOf</span>(<span class="tok-type">usize</span>) + <span class="tok-number">1</span>), StaticBitSet(<span class="tok-builtin">@bitSizeOf</span>(<span class="tok-type">usize</span>) + <span class="tok-number">1</span>));</span>
+<span class="line" id="L1757">    <span class="tok-kw">try</span> testing.expectEqual(ArrayBitSet(<span class="tok-type">usize</span>, <span class="tok-number">500</span>), StaticBitSet(<span class="tok-number">500</span>));</span>
+<span class="line" id="L1758">}</span>
+<span class="line" id="L1759"></span>
 </code></pre></body>
 </html>

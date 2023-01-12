@@ -131,7 +131,7 @@
 <span class="line" id="L17"></span>
 <span class="line" id="L18"><span class="tok-kw">const</span> RunStep = <span class="tok-builtin">@This</span>();</span>
 <span class="line" id="L19"></span>
-<span class="line" id="L20"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> base_id = .run;</span>
+<span class="line" id="L20"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> base_id: Step.Id = .run;</span>
 <span class="line" id="L21"></span>
 <span class="line" id="L22">step: Step,</span>
 <span class="line" id="L23">builder: *Builder,</span>
@@ -173,7 +173,7 @@
 <span class="line" id="L59">    <span class="tok-kw">const</span> self = builder.allocator.create(RunStep) <span class="tok-kw">catch</span> <span class="tok-kw">unreachable</span>;</span>
 <span class="line" id="L60">    self.* = RunStep{</span>
 <span class="line" id="L61">        .builder = builder,</span>
-<span class="line" id="L62">        .step = Step.init(.run, name, builder.allocator, make),</span>
+<span class="line" id="L62">        .step = Step.init(base_id, name, builder.allocator, make),</span>
 <span class="line" id="L63">        .argv = ArrayList(Arg).init(builder.allocator),</span>
 <span class="line" id="L64">        .cwd = <span class="tok-null">null</span>,</span>
 <span class="line" id="L65">        .env_map = <span class="tok-null">null</span>,</span>

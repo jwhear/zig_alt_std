@@ -310,7 +310,7 @@
 <span class="line" id="L195">            }),</span>
 <span class="line" id="L196">        },</span>
 <span class="line" id="L197">        .nvptx =&gt; <span class="tok-kw">return</span> std.fmt.allocPrint(allocator, <span class="tok-str">&quot;{s}.ptx&quot;</span>, .{root_name}),</span>
-<span class="line" id="L198">        .dxcontainer =&gt; <span class="tok-builtin">@panic</span>(<span class="tok-str">&quot;TODO what's the file extension for these?&quot;</span>),</span>
+<span class="line" id="L198">        .dxcontainer =&gt; <span class="tok-kw">return</span> std.fmt.allocPrint(allocator, <span class="tok-str">&quot;{s}.dxil&quot;</span>, .{root_name}),</span>
 <span class="line" id="L199">    }</span>
 <span class="line" id="L200">}</span>
 <span class="line" id="L201"></span>

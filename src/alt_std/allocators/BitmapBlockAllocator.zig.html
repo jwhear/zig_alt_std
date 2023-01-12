@@ -489,7 +489,7 @@
 <span class="line" id="L335">                            .{ old_first_avail, self.first_available_block, start, len });</span>
 <span class="line" id="L336">    }</span>
 <span class="line" id="L337"></span>
-<span class="line" id="L338">    std.debug.assert(start + len &lt; self.in_use_bitmap.capacity());</span>
+<span class="line" id="L338">    std.debug.assert(start + len &lt;= self.in_use_bitmap.capacity());</span>
 <span class="line" id="L339">    <span class="tok-kw">var</span> index: <span class="tok-type">usize</span> = <span class="tok-number">0</span>;</span>
 <span class="line" id="L340">    <span class="tok-kw">while</span> (index &lt; len) : (index += <span class="tok-number">1</span>) {</span>
 <span class="line" id="L341">        std.debug.assert(self.in_use_bitmap.isSet(start + index) != as);</span>

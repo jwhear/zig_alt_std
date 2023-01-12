@@ -29,6 +29,7 @@ var zigAnalysis;
   const domListValues = document.getElementById("listValues");
   const domFnProto = document.getElementById("fnProto");
   const domFnProtoCode = document.getElementById("fnProtoCode");
+  const domFnSourceLink = document.getElementById("fnSourceLink");
   const domSectParams = document.getElementById("sectParams");
   const domListParams = document.getElementById("listParams");
   const domTldDocs = document.getElementById("tldDocs");
@@ -92,8 +93,7 @@ var zigAnalysis;
     // empty array means refers to the package itself
     declNames: [],
     // these will be all types, except the last one may be a type or a decl
-    declObjs: [],
-
+    declObjs: [],    
     // (a, b, c, d) comptime call; result is the value the docs refer to
     callName: null,
   };
@@ -450,6 +450,8 @@ var zigAnalysis;
       curNav.declObjs.push(currentType);
     }
     
+    
+    
     window.x = currentType;
 
     renderNav();
@@ -548,6 +550,8 @@ var zigAnalysis;
       wantLink: true,
       fnDecl,
     });
+    
+    domFnSourceLink.innerHTML = "[<a target=\"_blank\" href=\"" + sourceFileLink(fnDecl) + "\">src</a>]";
 
     let docsSource = null;
     let srcNode = getAstNode(fnDecl.src);
@@ -816,6 +820,27 @@ var zigAnalysis;
     return navLink(curNav.pkgNames, curNav.declNames.concat([childName]));
   }
 
+  function findDeclNavLink(declName) {
+    if (curNav.declObjs.length == 0) return null;
+    const curFile = getAstNode(curNav.declObjs[curNav.declObjs.length-1].src).file;
+    
+    for (let i = curNav.declObjs.length -1; i >= 0; i--) {
+      const curDecl = curNav.declObjs[i];
+      const curDeclName = curNav.declNames[i-1];
+      if (curDeclName == declName) {
+        const declPath = curNav.declNames.slice(0,i);
+        return navLink(curNav.pkgNames, declPath);
+      } 
+
+      if (findSubDecl(curDecl, declName) != null) { 
+        const declPath = curNav.declNames.slice(0,i).concat([declName]);
+        return navLink(curNav.pkgNames, declPath);
+      }
+    }
+
+    //throw("could not resolve links for '" + declName + "'");
+  }
+
   //
   //  function navLinkCall(callObj) {
   //      let declNamesCopy = curNav.declNames.concat([]);
@@ -876,7 +901,7 @@ var zigAnalysis;
         return "false";
       }
       case "&": {
-        return "&" + exprName(zigAnalysis.exprs[expr["&"]]);
+        return "&" + exprName(zigAnalysis.exprs[expr["&"]], opts);
       }
       case "compileError": {
         let compileError = expr.compileError;
@@ -893,18 +918,18 @@ var zigAnalysis;
         let payloadHtml = "";
         const lhsExpr = zigAnalysis.exprs[expr.slice.lhs];
         const startExpr = zigAnalysis.exprs[expr.slice.start];
-        let decl = exprName(lhsExpr);
-        let start = exprName(startExpr);
+        let decl = exprName(lhsExpr, opts);
+        let start = exprName(startExpr, opts);
         let end = "";
         let sentinel = "";
         if (expr.slice["end"]) {
           const endExpr = zigAnalysis.exprs[expr.slice.end];
-          let end_ = exprName(endExpr);
+          let end_ = exprName(endExpr, opts);
           end += end_;
         }
         if (expr.slice["sentinel"]) {
           const sentinelExpr = zigAnalysis.exprs[expr.slice.sentinel];
-          let sentinel_ = exprName(sentinelExpr);
+          let sentinel_ = exprName(sentinelExpr, opts);
           sentinel += " :" + sentinel_;
         }
         payloadHtml += decl + "[" + start + ".." + end + sentinel + "]";
@@ -912,7 +937,7 @@ var zigAnalysis;
       }
       case "sliceIndex": {
         const sliceIndex = zigAnalysis.exprs[expr.sliceIndex];
-        return exprName(sliceIndex, opts);
+        return exprName(sliceIndex, opts, opts);
       }
       case "cmpxchg": {
         const typeIndex = zigAnalysis.exprs[expr.cmpxchg.type];
@@ -1015,19 +1040,6 @@ var zigAnalysis;
       case "switchIndex": {
         const switchIndex = zigAnalysis.exprs[expr.switchIndex];
         return exprName(switchIndex, opts);
-      }
-      case "refPath": {
-        let name = exprName(expr.refPath[0]);
-        for (let i = 1; i < expr.refPath.length; i++) {
-          let component = undefined;
-          if ("string" in expr.refPath[i]) {
-            component = expr.refPath[i].string;
-          } else {
-            component = exprName(expr.refPath[i]);
-          }
-          name += "." + component;
-        }
-        return name;
       }
       case "fieldRef": {
         const enumObj = exprName({ type: expr.fieldRef.type }, opts);
@@ -1578,10 +1590,46 @@ var zigAnalysis;
         return exprName(exprArg, opts);
       }
       case "declRef": {
-        return getDecl(expr.declRef).name;
+        const name = getDecl(expr.declRef).name;
+      
+        if (opts.wantHtml) {
+          let payloadHtml = "";
+          if (opts.wantLink) {
+            payloadHtml += '<a href="'+ findDeclNavLink(name) +'">';          
+          }
+          payloadHtml +=
+            '<span class="tok-kw" style="color:lightblue;">' +
+              name +
+            "</span>";
+          if (opts.wantLink) payloadHtml += "</a>";
+          return payloadHtml;
+        } else {
+          return name;
+        }
       }
       case "refPath": {
-        return expr.refPath.map((x) => exprName(x, opts)).join(".");
+        let firstComponent = expr.refPath[0];
+        let name = exprName(firstComponent, opts);
+        let url = undefined;
+        if (opts.wantLink && "declRef" in firstComponent) {
+          url = findDeclNavLink(getDecl(firstComponent.declRef).name);
+        }
+        for (let i = 1; i < expr.refPath.length; i++) {
+          let component = undefined;
+          if ("string" in expr.refPath[i]) {
+            component = expr.refPath[i].string;
+          } else {
+            component = exprName(expr.refPath[i], {...opts, wantLink: false});
+            if (opts.wantLink && "declRef" in expr.refPath[i]) {
+              url += "." + getDecl(expr.refPath[i].declRef).name;
+              component = '<a href="'+ url +'">' +
+                component +
+              "</a>";            
+            }
+          }
+          name += "." + component;
+        }
+        return name;
       }
       case "int": {
         return "" + expr.int;
@@ -1839,7 +1887,14 @@ var zigAnalysis;
           }
           case typeKinds.Fn: {
             let fnObj = typeObj;
+            let fnDecl = opts.fnDecl;
+            let linkFnNameDecl = opts.linkFnNameDecl;
+            opts.fnDecl = null;
+            opts.linkFnNameDecl = null;
             let payloadHtml = "";
+            if (opts.addParensIfFnSignature && fnObj.src == 0){
+              payloadHtml += "(";
+            }
             if (opts.wantHtml) {
               if (fnObj.is_extern) {
                 payloadHtml += "pub extern ";
@@ -1847,21 +1902,16 @@ var zigAnalysis;
               if (fnObj.has_lib_name) {
                 payloadHtml += '"' + fnObj.lib_name + '" ';
               }
-              payloadHtml += '<span class="tok-kw">fn</span>';
-              if (opts.fnDecl) {
-                payloadHtml += ' <span class="tok-fn">';
-                if (opts.linkFnNameDecl) {
+              payloadHtml += '<span class="tok-kw">fn </span>';
+              if (fnDecl) {
+                payloadHtml += '<span class="tok-fn">';
+                if (linkFnNameDecl) {
                   payloadHtml +=
-                    '<a href="' +
-                    opts.linkFnNameDecl +
-                    '">' +
-                    escapeHtml(opts.fnDecl.name) +
+                    '<a href="' + linkFnNameDecl + '">' +
+                      escapeHtml(fnDecl.name) +
                     "</a>";
                 } else {
-                  payloadHtml += escapeHtml(opts.fnDecl.name);
-                  payloadHtml = "<a target=\"_blank\" href=\"" +
-                    sourceFileLink(opts.fnDecl) + "\">" +
-                    escapeHtml(opts.fnDecl.name) + "</a>";
+                  payloadHtml += escapeHtml(fnDecl.name);
                 }
                 payloadHtml += "</span>";
               }
@@ -1872,10 +1922,12 @@ var zigAnalysis;
             if (fnObj.params) {
               let fields = null;
               let isVarArgs = false;
-              let fnNode = getAstNode(fnObj.src);
-              fields = fnNode.fields;
-              isVarArgs = fnNode.varArgs;
-
+              if (fnObj.src != 0) {
+                let fnNode = getAstNode(fnObj.src);
+                fields = fnNode.fields;
+                isVarArgs = fnNode.varArgs;
+              }
+          
               for (let i = 0; i < fnObj.params.length; i += 1) {
                 if (i != 0) {
                   payloadHtml += ", ";
@@ -1922,79 +1974,20 @@ var zigAnalysis;
                 if (isVarArgs && i === fnObj.params.length - 1) {
                   payloadHtml += "...";
                 } else if ("alignOf" in value) {
-                  if (opts.wantHtml) {
-                    payloadHtml += '<a href="">';
-                    payloadHtml +=
-                      '<span class="tok-kw" style="color:lightblue;">' +
-                      exprName(value, opts) +
-                      "</span>";
-                    payloadHtml += "</a>";
-                  } else {
-                    payloadHtml += exprName(value, opts);
-                  }
+                  payloadHtml += exprName(value, opts);
                 } else if ("typeOf" in value) {
-                  if (opts.wantHtml) {
-                    payloadHtml += '<a href="">';
-                    payloadHtml +=
-                      '<span class="tok-kw" style="color:lightblue;">' +
-                      exprName(value, opts) +
-                      "</span>";
-                    payloadHtml += "</a>";
-                  } else {
-                    payloadHtml += exprName(value, opts);
-                  }
+                  payloadHtml += exprName(value, opts);
                 } else if ("typeOf_peer" in value) {
-                  if (opts.wantHtml) {
-                    payloadHtml += '<a href="">';
-                    payloadHtml +=
-                      '<span class="tok-kw" style="color:lightblue;">' +
-                      exprName(value, opts) +
-                      "</span>";
-                    payloadHtml += "</a>";
-                  } else {
                     payloadHtml += exprName(value, opts);
-                  }
                 } else if ("declRef" in value) {
-                  if (opts.wantHtml) {
-                    payloadHtml += '<a href="">';
-                    payloadHtml +=
-                      '<span class="tok-kw" style="color:lightblue;">' +
-                      exprName(value, opts) +
-                      "</span>";
-                    payloadHtml += "</a>";
-                  } else {
                     payloadHtml += exprName(value, opts);
-                  }
                 } else if ("call" in value) {
-                  if (opts.wantHtml) {
-                    payloadHtml += '<a href="">';
-                    payloadHtml +=
-                      '<span class="tok-kw" style="color:lightblue;">' +
-                      exprName(value, opts) +
-                      "</span>";
-                    payloadHtml += "</a>";
-                  } else {
                     payloadHtml += exprName(value, opts);
-                  }
                 } else if ("refPath" in value) {
-                  if (opts.wantHtml) {
-                    payloadHtml += '<a href="">';
-                    payloadHtml +=
-                      '<span class="tok-kw" style="color:lightblue;">' +
-                      exprName(value, opts) +
-                      "</span>";
-                    payloadHtml += "</a>";
-                  } else {
                     payloadHtml += exprName(value, opts);
-                  }
                 } else if ("type" in value) {
-                  let name = exprName(value, {
-                    wantHtml: false,
-                    wantLink: false,
-                    fnDecl: opts.fnDecl,
-                    linkFnNameDecl: opts.linkFnNameDecl,
-                  });
-                  payloadHtml += '<span class="tok-kw">' + name + "</span>";
+                  payloadHtml += exprName(value, opts);
+                  //payloadHtml += '<span class="tok-kw">' + name + "</span>";
                 } else if ("binOpIndex" in value) {
                   payloadHtml += exprName(value, opts);
                 } else if ("comptimeExpr" in value) {
@@ -2032,11 +2025,18 @@ var zigAnalysis;
               payloadHtml += "!";
             }
             if (fnObj.ret != null) {
-              payloadHtml += exprName(fnObj.ret, opts);
+              payloadHtml += exprName(fnObj.ret, {
+                ...opts, 
+                addParensIfFnSignature: true,
+              });
             } else if (opts.wantHtml) {
               payloadHtml += '<span class="tok-kw">anytype</span>';
             } else {
               payloadHtml += "anytype";
+            }
+
+            if (opts.addParensIfFnSignature && fnObj.src == 0){
+              payloadHtml += ")";
             }
             return payloadHtml;
           }
@@ -2392,11 +2392,10 @@ var zigAnalysis;
     }
 
     if (typesList.length !== 0) {
-      window.x = typesList;
       resizeDomList(
         domListTypes,
         typesList.length,
-        '<li><a href="#"></a></li>'
+        '<li><a href=""></a></li>'
       );
       for (let i = 0; i < typesList.length; i += 1) {
         let liDom = domListTypes.children[i];
@@ -2467,9 +2466,19 @@ var zigAnalysis;
 
         let docs = getAstNode(decl.src).docs;
         if (docs != null) {
-          tdDesc.innerHTML = shortDescMarkdown(docs);
+          docs = docs.trim();
+          var short = shortDesc(docs);
+          if (short != docs) {
+            short = markdown(short);
+            var long = markdown(docs);
+            tdDesc.innerHTML = 
+            "<details><summary><div class=\"sum-less\">" + short + "</div>" + "<div class=\"sum-more\">" + long + "</div></summary></details>";
+          }
+          else {
+            tdDesc.innerHTML = markdown(short);
+          }
         } else {
-          tdDesc.textContent = "";
+          tdDesc.innerHTML = "<p><i>No documentation provided.</i><p>";
         }
       }
       domSectFns.classList.remove("hidden");
@@ -2498,8 +2507,7 @@ var zigAnalysis;
         } else {
           let fieldTypeExpr = container.fields[i];
           html += ": ";
-          let name = exprName(fieldTypeExpr, false, false);
-          html += '<span class="tok-kw">' + name + "</span>";
+          html += exprName(fieldTypeExpr, {wantHtml:true, wantLink:true});
           let tsn = typeShorthandName(fieldTypeExpr);
           if (tsn) {
             html += "<span> (" + tsn + ")</span>";
@@ -2660,7 +2668,6 @@ var zigAnalysis;
       "Enum",
       "Union",
       "Fn",
-      "BoundFn",
       "Opaque",
       "Frame",
       "AnyFrame",
@@ -2734,17 +2741,29 @@ var zigAnalysis;
     }
   }
 
-  function findSubDecl(parentType, childName) {
+  function findSubDecl(parentTypeOrDecl, childName) {
+    let parentType = parentTypeOrDecl;
     {
-      // Generic functions
+      // Generic functions / resorlving decls
       if ("value" in parentType) {
         const rv = resolveValue(parentType.value);
         if ("type" in rv.expr) {
           const t = getType(rv.expr.type);
+          parentType = t;
           if (t.kind == typeKinds.Fn && t.generic_ret != null) {
-            const rgr = resolveValue({ expr: t.generic_ret });
-            if ("type" in rgr.expr) {
-              parentType = getType(rgr.expr.type);
+            let resolvedGenericRet = resolveValue({ expr: t.generic_ret });
+
+            if ("call" in resolvedGenericRet.expr) {
+              let call = zigAnalysis.calls[resolvedGenericRet.expr.call];
+              let resolvedFunc = resolveValue({ expr: call.func });
+              if (!("type" in resolvedFunc.expr)) return null;
+              let callee = getType(resolvedFunc.expr.type);
+              if (!callee.generic_ret) return null;
+              resolvedGenericRet = resolveValue({ expr: callee.generic_ret });
+            }
+            
+            if ("type" in resolvedGenericRet.expr) {
+              parentType = getType(resolvedGenericRet.expr.type);
             }
           }
         }
@@ -2888,7 +2907,7 @@ var zigAnalysis;
     });
   }
 
-  function shortDescMarkdown(docs) {
+  function shortDesc(docs){
     const trimmed_docs = docs.trim();
     let index = trimmed_docs.indexOf("\n\n");
     let cut = false;
@@ -2904,7 +2923,11 @@ var zigAnalysis;
 
     let slice = trimmed_docs.slice(0, index);
     if (cut) slice += "...";
-    return markdown(slice);
+    return slice;
+  }
+
+  function shortDescMarkdown(docs) {
+    return markdown(shortDesc(docs));
   }
 
   function markdown(input) {
@@ -3100,6 +3123,13 @@ var zigAnalysis;
         }
       }
       flushRun();
+
+      if (in_code) {
+        in_code = false;
+        parsing_code = false;
+        innerHTML += "</code>";
+        codetag = "";
+      }
 
       while (stack.length > 0) {
         const fmt = stack.pop();
