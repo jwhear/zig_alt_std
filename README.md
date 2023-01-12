@@ -30,6 +30,15 @@ Contains the functions expected in an algorithm module (ala C++ STL/D/etc).  All
 ### alt_std.allocators
 Contains allocators that are either useful on their own or as building blocks of more sophisticated composite allocators.  These should complement and work with those already in `std.heap`.
 
+### alt_std.levenshtein
+Algorithms for computing the Levenshtein edit distance between two strings.  Most users should use `alt_std.levenshtein.distance` for the most flexible and general-purpose implementation.  If you don't need custom edit costs and can guarantee your strings will be 64 bytes or less in length (a reasonable limitation for human languages), the `alt_std.levenshtein.distance64` does not allocate, cannot fail, and is ~13x faster than most implementations.  To benchmark on your hardware, run:
+
+```
+zig build run-bench-levenshtein -Drelease-fast=true -Dtarget=native -Dcpu=native
+```
+
+Note that `alt_std.levenshtein.distance` automatically dispatches to the fast `distance64` implementation when possible.
+
 ## Contribution
 ### Bug Fixes
 If you find a bug, please do report it.  While I will respond to issues on this project, the ideal way to report an issue is to make a merge request with a minimal, failing test case as part of the function's test suite.  If you also have a fix for the code in question, great!
