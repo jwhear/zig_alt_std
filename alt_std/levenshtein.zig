@@ -83,19 +83,27 @@ pub fn distanceNaive(
 /// Caller is responsible for enforcing that `a.len <= 64 and b.len <= 64`.
 /// This implementation does not support custom edit costs; all costs are 1.
 pub fn distance64(a: []const u8, b: []const u8) u64 {
-    // This implementation is based on the following paper:
+    // This function implements the algorithm described in this paper:
     //   Myers, Gene. (1970). A Fast Bit-Vector Algorithm for Approximate String Matching Based on Dynamic Programming. Journal of the ACM. 46. 10.1145/316542.316550.
     //
     // The algorithm is extremely cool but quite dense--as a result, we do not
     //  attempt to exhaustively comment here; if you want to understand how this
     //  works reading the paper is your best bet.
+    // The advantage of this algorithm is that it is extremely fast; approximately
+    //  10x-13x faster than the fallback algorithm in this module.  Testing on
+    //  an 11th Gen Intel(R) Core(TM) i5-1 135G7 @ 2.40GHz results in only ~130ns/call!
+    // This speedup is accomplished by translating the matrix logic into bitwise
+    //  operations on u64s, and decomposing iteration into two flat loops: one
+    //  over each of of `a` and `b`.
     const short = if (a.len < b.len) a else b;
     const long = if (a.len < b.len) b else a;
     std.debug.assert(long.len <= 64);
 
+	var score: u64 = @intCast(u64, long.len);
+
     // Early out if one of the strings is empty
     if (short.len == 0) {
-        return long.len;
+        return score;
     }
 
     // Alphabet preprocessing step.
@@ -103,7 +111,6 @@ pub fn distance64(a: []const u8, b: []const u8) u64 {
     //  peq['d'] = 0b101; // 'd' occurs at first and third position
     //  peq['o'] = 0b010; // '0' occurs at the second position
     var peq: [256]u64 = [_]u64{0} ** 256;
-	var score: u64 = @intCast(u64, long.len);
 	for (long) |c, idx| {
 		peq[c] |= @as(u64, 1) << @intCast(u6, idx);
 	}
@@ -115,14 +122,11 @@ pub fn distance64(a: []const u8, b: []const u8) u64 {
 	var mv = @as(u64, 0);  // all 0s to start
 
 	for (short) |c| {
-    	// The positions of this character in `long`
 		var eq = peq[c];
 
-        // If c doesn't appear in `long`, then eq=0 and xv==mv
 		var xv = eq | mv;
 		const xh = (((eq & pv) +% pv) ^ pv) | eq;
 
-        // Add to `mv` all the bits that aren't in either eq or pv
 		var ph = mv | ~(xh | pv);
 		const mh = pv & xh;
 

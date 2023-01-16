@@ -59,7 +59,7 @@ pub fn build(b: *Builder) !void {
             // Create an install step
             const install_exe = b.addInstallArtifact(exe);
             const install_step = b.step(
-                try std.fmt.allocPrint(b.allocator, "build-bench-{s}", .{binary}),
+                try std.fmt.allocPrint(b.allocator, "bench-{s}", .{binary}),
                 try std.fmt.allocPrint(b.allocator, "Compile the {s} benchmark", .{binary}),
             );
             install_step.dependOn(&install_exe.step);
