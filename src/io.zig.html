@@ -230,76 +230,77 @@
 <span class="line" id="L114"></span>
 <span class="line" id="L115"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> BufferedReader = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/buffered_reader.zig&quot;</span>).BufferedReader;</span>
 <span class="line" id="L116"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> bufferedReader = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/buffered_reader.zig&quot;</span>).bufferedReader;</span>
-<span class="line" id="L117"></span>
-<span class="line" id="L118"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> PeekStream = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/peek_stream.zig&quot;</span>).PeekStream;</span>
-<span class="line" id="L119"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> peekStream = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/peek_stream.zig&quot;</span>).peekStream;</span>
-<span class="line" id="L120"></span>
-<span class="line" id="L121"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> FixedBufferStream = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/fixed_buffer_stream.zig&quot;</span>).FixedBufferStream;</span>
-<span class="line" id="L122"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> fixedBufferStream = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/fixed_buffer_stream.zig&quot;</span>).fixedBufferStream;</span>
-<span class="line" id="L123"></span>
-<span class="line" id="L124"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> CWriter = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/c_writer.zig&quot;</span>).CWriter;</span>
-<span class="line" id="L125"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> cWriter = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/c_writer.zig&quot;</span>).cWriter;</span>
-<span class="line" id="L126"></span>
-<span class="line" id="L127"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> LimitedReader = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/limited_reader.zig&quot;</span>).LimitedReader;</span>
-<span class="line" id="L128"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> limitedReader = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/limited_reader.zig&quot;</span>).limitedReader;</span>
-<span class="line" id="L129"></span>
-<span class="line" id="L130"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> CountingWriter = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/counting_writer.zig&quot;</span>).CountingWriter;</span>
-<span class="line" id="L131"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> countingWriter = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/counting_writer.zig&quot;</span>).countingWriter;</span>
-<span class="line" id="L132"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> CountingReader = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/counting_reader.zig&quot;</span>).CountingReader;</span>
-<span class="line" id="L133"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> countingReader = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/counting_reader.zig&quot;</span>).countingReader;</span>
-<span class="line" id="L134"></span>
-<span class="line" id="L135"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> MultiWriter = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/multi_writer.zig&quot;</span>).MultiWriter;</span>
-<span class="line" id="L136"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> multiWriter = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/multi_writer.zig&quot;</span>).multiWriter;</span>
-<span class="line" id="L137"></span>
-<span class="line" id="L138"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> BitReader = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/bit_reader.zig&quot;</span>).BitReader;</span>
-<span class="line" id="L139"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> bitReader = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/bit_reader.zig&quot;</span>).bitReader;</span>
-<span class="line" id="L140"></span>
-<span class="line" id="L141"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> BitWriter = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/bit_writer.zig&quot;</span>).BitWriter;</span>
-<span class="line" id="L142"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> bitWriter = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/bit_writer.zig&quot;</span>).bitWriter;</span>
-<span class="line" id="L143"></span>
-<span class="line" id="L144"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> ChangeDetectionStream = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/change_detection_stream.zig&quot;</span>).ChangeDetectionStream;</span>
-<span class="line" id="L145"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> changeDetectionStream = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/change_detection_stream.zig&quot;</span>).changeDetectionStream;</span>
-<span class="line" id="L146"></span>
-<span class="line" id="L147"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> FindByteWriter = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/find_byte_writer.zig&quot;</span>).FindByteWriter;</span>
-<span class="line" id="L148"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> findByteWriter = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/find_byte_writer.zig&quot;</span>).findByteWriter;</span>
-<span class="line" id="L149"></span>
-<span class="line" id="L150"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> FindByteOutStream = <span class="tok-builtin">@compileError</span>(<span class="tok-str">&quot;deprecated; use `FindByteWriter`&quot;</span>);</span>
-<span class="line" id="L151"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> findByteOutStream = <span class="tok-builtin">@compileError</span>(<span class="tok-str">&quot;deprecated; use `findByteWriter`&quot;</span>);</span>
-<span class="line" id="L152"></span>
-<span class="line" id="L153"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> BufferedAtomicFile = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/buffered_atomic_file.zig&quot;</span>).BufferedAtomicFile;</span>
-<span class="line" id="L154"></span>
-<span class="line" id="L155"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> StreamSource = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/stream_source.zig&quot;</span>).StreamSource;</span>
-<span class="line" id="L156"></span>
-<span class="line" id="L157"><span class="tok-comment">/// A Writer that doesn't write to anything.</span></span>
-<span class="line" id="L158"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> null_writer = <span class="tok-builtin">@as</span>(NullWriter, .{ .context = {} });</span>
-<span class="line" id="L159"></span>
-<span class="line" id="L160"><span class="tok-kw">const</span> NullWriter = Writer(<span class="tok-type">void</span>, <span class="tok-kw">error</span>{}, dummyWrite);</span>
-<span class="line" id="L161"><span class="tok-kw">fn</span> <span class="tok-fn">dummyWrite</span>(context: <span class="tok-type">void</span>, data: []<span class="tok-kw">const</span> <span class="tok-type">u8</span>) <span class="tok-kw">error</span>{}!<span class="tok-type">usize</span> {</span>
-<span class="line" id="L162">    _ = context;</span>
-<span class="line" id="L163">    <span class="tok-kw">return</span> data.len;</span>
-<span class="line" id="L164">}</span>
-<span class="line" id="L165"></span>
-<span class="line" id="L166"><span class="tok-kw">test</span> <span class="tok-str">&quot;null_writer&quot;</span> {</span>
-<span class="line" id="L167">    null_writer.writeAll(<span class="tok-str">&quot;yay&quot;</span> ** <span class="tok-number">10</span>) <span class="tok-kw">catch</span> |err| <span class="tok-kw">switch</span> (err) {};</span>
-<span class="line" id="L168">}</span>
-<span class="line" id="L169"></span>
-<span class="line" id="L170"><span class="tok-kw">test</span> {</span>
-<span class="line" id="L171">    _ = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/bit_reader.zig&quot;</span>);</span>
-<span class="line" id="L172">    _ = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/bit_writer.zig&quot;</span>);</span>
-<span class="line" id="L173">    _ = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/buffered_atomic_file.zig&quot;</span>);</span>
-<span class="line" id="L174">    _ = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/buffered_reader.zig&quot;</span>);</span>
-<span class="line" id="L175">    _ = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/buffered_writer.zig&quot;</span>);</span>
-<span class="line" id="L176">    _ = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/c_writer.zig&quot;</span>);</span>
-<span class="line" id="L177">    _ = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/counting_writer.zig&quot;</span>);</span>
-<span class="line" id="L178">    _ = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/counting_reader.zig&quot;</span>);</span>
-<span class="line" id="L179">    _ = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/fixed_buffer_stream.zig&quot;</span>);</span>
-<span class="line" id="L180">    _ = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/reader.zig&quot;</span>);</span>
-<span class="line" id="L181">    _ = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/writer.zig&quot;</span>);</span>
-<span class="line" id="L182">    _ = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/peek_stream.zig&quot;</span>);</span>
-<span class="line" id="L183">    _ = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/seekable_stream.zig&quot;</span>);</span>
-<span class="line" id="L184">    _ = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/stream_source.zig&quot;</span>);</span>
-<span class="line" id="L185">    _ = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/test.zig&quot;</span>);</span>
-<span class="line" id="L186">}</span>
-<span class="line" id="L187"></span>
+<span class="line" id="L117"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> bufferedReaderSize = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/buffered_reader.zig&quot;</span>).bufferedReaderSize;</span>
+<span class="line" id="L118"></span>
+<span class="line" id="L119"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> PeekStream = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/peek_stream.zig&quot;</span>).PeekStream;</span>
+<span class="line" id="L120"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> peekStream = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/peek_stream.zig&quot;</span>).peekStream;</span>
+<span class="line" id="L121"></span>
+<span class="line" id="L122"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> FixedBufferStream = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/fixed_buffer_stream.zig&quot;</span>).FixedBufferStream;</span>
+<span class="line" id="L123"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> fixedBufferStream = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/fixed_buffer_stream.zig&quot;</span>).fixedBufferStream;</span>
+<span class="line" id="L124"></span>
+<span class="line" id="L125"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> CWriter = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/c_writer.zig&quot;</span>).CWriter;</span>
+<span class="line" id="L126"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> cWriter = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/c_writer.zig&quot;</span>).cWriter;</span>
+<span class="line" id="L127"></span>
+<span class="line" id="L128"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> LimitedReader = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/limited_reader.zig&quot;</span>).LimitedReader;</span>
+<span class="line" id="L129"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> limitedReader = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/limited_reader.zig&quot;</span>).limitedReader;</span>
+<span class="line" id="L130"></span>
+<span class="line" id="L131"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> CountingWriter = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/counting_writer.zig&quot;</span>).CountingWriter;</span>
+<span class="line" id="L132"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> countingWriter = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/counting_writer.zig&quot;</span>).countingWriter;</span>
+<span class="line" id="L133"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> CountingReader = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/counting_reader.zig&quot;</span>).CountingReader;</span>
+<span class="line" id="L134"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> countingReader = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/counting_reader.zig&quot;</span>).countingReader;</span>
+<span class="line" id="L135"></span>
+<span class="line" id="L136"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> MultiWriter = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/multi_writer.zig&quot;</span>).MultiWriter;</span>
+<span class="line" id="L137"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> multiWriter = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/multi_writer.zig&quot;</span>).multiWriter;</span>
+<span class="line" id="L138"></span>
+<span class="line" id="L139"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> BitReader = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/bit_reader.zig&quot;</span>).BitReader;</span>
+<span class="line" id="L140"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> bitReader = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/bit_reader.zig&quot;</span>).bitReader;</span>
+<span class="line" id="L141"></span>
+<span class="line" id="L142"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> BitWriter = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/bit_writer.zig&quot;</span>).BitWriter;</span>
+<span class="line" id="L143"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> bitWriter = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/bit_writer.zig&quot;</span>).bitWriter;</span>
+<span class="line" id="L144"></span>
+<span class="line" id="L145"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> ChangeDetectionStream = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/change_detection_stream.zig&quot;</span>).ChangeDetectionStream;</span>
+<span class="line" id="L146"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> changeDetectionStream = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/change_detection_stream.zig&quot;</span>).changeDetectionStream;</span>
+<span class="line" id="L147"></span>
+<span class="line" id="L148"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> FindByteWriter = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/find_byte_writer.zig&quot;</span>).FindByteWriter;</span>
+<span class="line" id="L149"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> findByteWriter = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/find_byte_writer.zig&quot;</span>).findByteWriter;</span>
+<span class="line" id="L150"></span>
+<span class="line" id="L151"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> FindByteOutStream = <span class="tok-builtin">@compileError</span>(<span class="tok-str">&quot;deprecated; use `FindByteWriter`&quot;</span>);</span>
+<span class="line" id="L152"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> findByteOutStream = <span class="tok-builtin">@compileError</span>(<span class="tok-str">&quot;deprecated; use `findByteWriter`&quot;</span>);</span>
+<span class="line" id="L153"></span>
+<span class="line" id="L154"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> BufferedAtomicFile = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/buffered_atomic_file.zig&quot;</span>).BufferedAtomicFile;</span>
+<span class="line" id="L155"></span>
+<span class="line" id="L156"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> StreamSource = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/stream_source.zig&quot;</span>).StreamSource;</span>
+<span class="line" id="L157"></span>
+<span class="line" id="L158"><span class="tok-comment">/// A Writer that doesn't write to anything.</span></span>
+<span class="line" id="L159"><span class="tok-kw">pub</span> <span class="tok-kw">const</span> null_writer = <span class="tok-builtin">@as</span>(NullWriter, .{ .context = {} });</span>
+<span class="line" id="L160"></span>
+<span class="line" id="L161"><span class="tok-kw">const</span> NullWriter = Writer(<span class="tok-type">void</span>, <span class="tok-kw">error</span>{}, dummyWrite);</span>
+<span class="line" id="L162"><span class="tok-kw">fn</span> <span class="tok-fn">dummyWrite</span>(context: <span class="tok-type">void</span>, data: []<span class="tok-kw">const</span> <span class="tok-type">u8</span>) <span class="tok-kw">error</span>{}!<span class="tok-type">usize</span> {</span>
+<span class="line" id="L163">    _ = context;</span>
+<span class="line" id="L164">    <span class="tok-kw">return</span> data.len;</span>
+<span class="line" id="L165">}</span>
+<span class="line" id="L166"></span>
+<span class="line" id="L167"><span class="tok-kw">test</span> <span class="tok-str">&quot;null_writer&quot;</span> {</span>
+<span class="line" id="L168">    null_writer.writeAll(<span class="tok-str">&quot;yay&quot;</span> ** <span class="tok-number">10</span>) <span class="tok-kw">catch</span> |err| <span class="tok-kw">switch</span> (err) {};</span>
+<span class="line" id="L169">}</span>
+<span class="line" id="L170"></span>
+<span class="line" id="L171"><span class="tok-kw">test</span> {</span>
+<span class="line" id="L172">    _ = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/bit_reader.zig&quot;</span>);</span>
+<span class="line" id="L173">    _ = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/bit_writer.zig&quot;</span>);</span>
+<span class="line" id="L174">    _ = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/buffered_atomic_file.zig&quot;</span>);</span>
+<span class="line" id="L175">    _ = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/buffered_reader.zig&quot;</span>);</span>
+<span class="line" id="L176">    _ = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/buffered_writer.zig&quot;</span>);</span>
+<span class="line" id="L177">    _ = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/c_writer.zig&quot;</span>);</span>
+<span class="line" id="L178">    _ = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/counting_writer.zig&quot;</span>);</span>
+<span class="line" id="L179">    _ = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/counting_reader.zig&quot;</span>);</span>
+<span class="line" id="L180">    _ = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/fixed_buffer_stream.zig&quot;</span>);</span>
+<span class="line" id="L181">    _ = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/reader.zig&quot;</span>);</span>
+<span class="line" id="L182">    _ = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/writer.zig&quot;</span>);</span>
+<span class="line" id="L183">    _ = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/peek_stream.zig&quot;</span>);</span>
+<span class="line" id="L184">    _ = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/seekable_stream.zig&quot;</span>);</span>
+<span class="line" id="L185">    _ = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/stream_source.zig&quot;</span>);</span>
+<span class="line" id="L186">    _ = <span class="tok-builtin">@import</span>(<span class="tok-str">&quot;io/test.zig&quot;</span>);</span>
+<span class="line" id="L187">}</span>
+<span class="line" id="L188"></span>
 </code></pre></body>
 </html>

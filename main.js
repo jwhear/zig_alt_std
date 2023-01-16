@@ -1933,8 +1933,10 @@ var zigAnalysis;
                   payloadHtml += ", ";
                 }
 
-                payloadHtml +=
-                  "<span class='argBreaker'><br>&nbsp;&nbsp;&nbsp;&nbsp;</span>";
+                if (opts.wantHtml) {
+                  payloadHtml +=
+                    "<span class='argBreaker'><br>&nbsp;&nbsp;&nbsp;&nbsp;</span>";
+                }
                 let value = fnObj.params[i];
                 let paramValue = resolveValue({ expr: value });
 
@@ -2007,7 +2009,9 @@ var zigAnalysis;
               }
             }
 
-            payloadHtml += "<span class='argBreaker'>,<br></span>";
+            if (opts.wantHtml) {
+              payloadHtml += "<span class='argBreaker'>,<br></span>";
+            }
             payloadHtml += ") ";
 
             if (fnObj.has_align) {
@@ -2078,7 +2082,7 @@ var zigAnalysis;
     ) {
       name = "std";
     } else {
-      name = exprName({ type: typeObj }, false, false);
+      name = exprName({ type: typeObj }, {wantHtml: false, wantLink: false});
     }
     if (name != null && name != "") {
       domHdrName.innerText =
@@ -2472,7 +2476,7 @@ var zigAnalysis;
             short = markdown(short);
             var long = markdown(docs);
             tdDesc.innerHTML = 
-            "<details><summary><div class=\"sum-less\">" + short + "</div>" + "<div class=\"sum-more\">" + long + "</div></summary></details>";
+            "<div class=\"expand\" ><span class=\"button\" onclick=\"toggleExpand(event)\"></span><div class=\"sum-less\">" + short + "</div>" + "<div class=\"sum-more\">" + long + "</div></details>";
           }
           else {
             tdDesc.innerHTML = markdown(short);
@@ -3714,5 +3718,11 @@ var zigAnalysis;
 
 })();
 
+function toggleExpand(event) {
+  const parent = event.target.parentElement;
+  parent.toggleAttribute("open");
 
-
+  if (!parent.open && parent.getBoundingClientRect().top < 0) {
+    parent.parentElement.parentElement.scrollIntoView(true);
+  }
+}
