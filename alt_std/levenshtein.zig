@@ -83,34 +83,12 @@ pub fn distanceNaive(
 /// Caller is responsible for enforcing that `a.len <= 64 and b.len <= 64`.
 /// This implementation does not support custom edit costs; all costs are 1.
 pub fn distance64(a: []const u8, b: []const u8) u64 {
-    // This was ported from https://github.com/ka-weihe/fast-levenshtein
-    // The comments are my own from an attempt to reverse-engineer the logic
-    //  and thus may not be entirely correct.
+    // This implementation is based on the following paper:
+    //   Myers, Gene. (1970). A Fast Bit-Vector Algorithm for Approximate String Matching Based on Dynamic Programming. Journal of the ACM. 46. 10.1145/316542.316550.
     //
-    // Original author: ka-weihe
-    // Original license:
-    //   MIT License
-    //   
-    //   Copyright (c) 2020 ka-weihe
-    //   
-    //   Permission is hereby granted, free of charge, to any person obtaining a copy
-    //   of this software and associated documentation files (the "Software"), to deal
-    //   in the Software without restriction, including without limitation the rights
-    //   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-    //   copies of the Software, and to permit persons to whom the Software is
-    //   furnished to do so, subject to the following conditions:
-    //   
-    //   The above copyright notice and this permission notice shall be included in all
-    //   copies or substantial portions of the Software.
-    //   
-    //   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    //   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    //   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-    //   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    //   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    //   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-    //   SOFTWARE.
-
+    // The algorithm is extremely cool but quite dense--as a result, we do not
+    //  attempt to exhaustively comment here; if you want to understand how this
+    //  works reading the paper is your best bet.
     const short = if (a.len < b.len) a else b;
     const long = if (a.len < b.len) b else a;
     std.debug.assert(long.len <= 64);
@@ -120,62 +98,47 @@ pub fn distance64(a: []const u8, b: []const u8) u64 {
         return long.len;
     }
 
-    // The naive method of computing Levenshtein requires allocating a matrix
-    //  a.len+1 × b.len+1.  By constraining to length <= 64, we can use a static-sized
-    //  representation.  We store one u64 for each possible byte (256); the set
-    //  bits indicate at which position(s) the byte occurs in the longer string.
-    // So for long == "dod", we'd initialize the matrix like this:
-    //  matrix['d'] = 0b101; // 'd' occurs at first and third position
-    //  matrix['o'] = 0b010; // '0' occurs at the second position
-    var matrix: [256]u64 = [_]u64{0} ** 256;
-
-    // store the longer string in matrix
-	var dist: u64 = 0;
-	for (long) |c| {
-		matrix[c] |= @as(u64, 1) << @intCast(u6, dist);
-		dist += 1;
+    // Alphabet preprocessing step.
+    // Example, if `short` is "dog":
+    //  peq['d'] = 0b101; // 'd' occurs at first and third position
+    //  peq['o'] = 0b010; // '0' occurs at the second position
+    var peq: [256]u64 = [_]u64{0} ** 256;
+	var score: u64 = @intCast(u64, long.len);
+	for (long) |c, idx| {
+		peq[c] |= @as(u64, 1) << @intCast(u6, idx);
 	}
 
 	// The last bit OR'd in
-	const last_set = @as(u64, 1) << @intCast(u6, dist - 1);
+	// In the paper this is the term `10^(m-1)`
+	const last_set = @as(u64, 1) << @intCast(u6, score - 1);
 	var pv = ~@as(u64, 0); // all 1s to start
 	var mv = @as(u64, 0);  // all 0s to start
 
-	// Iterate the shorter string to see if we can bring the edit distance down
-	//  from its current value of (dist == long.len)
 	for (short) |c| {
     	// The positions of this character in `long`
-		var eq = matrix[c];
+		var eq = peq[c];
 
         // If c doesn't appear in `long`, then eq=0 and xv==mv
 		var xv = eq | mv;
-
-        // (eq & pv) ; mask eq to the positions only available this far into the string
-        // %+ pv     ; if long and short are the same for this character, this
-        //           ;  wraps around to 0 (%+), otherwise becomes pv.
-        // ^ pv      ; discover if there are any differences
-		eq |= ((eq & pv) +% pv) ^ pv;
+		const xh = (((eq & pv) +% pv) ^ pv) | eq;
 
         // Add to `mv` all the bits that aren't in either eq or pv
-        // TODO what does this represent?
-		mv |= ~(eq | pv);
-		pv &= eq;
+		var ph = mv | ~(xh | pv);
+		const mh = pv & xh;
 
-        // This fires when we're on the final character and it's different
-		if ((mv & last_set) != 0) {
-			dist += 1;
+		if ((ph & last_set) != 0) {
+			score += 1;
 		}
 
-		// Decrease distance: short and long agree at this position
-		if ((pv & last_set) != 0) {
-			dist -= 1;
+		if ((mh & last_set) != 0) {
+			score -= 1;
 		}
 		// Shift the bits up, filling with ones
-		mv = (mv << 1) | 1;
-		pv = (pv << 1) | ~(xv | mv);
-		mv &= xv;
+		ph = (ph << 1) | 1;
+		pv = (mh << 1) | ~(xv | ph);
+		mv = ph & xv;
 	}
-	return dist;
+	return score;
 }
 test "distance64" {
     const dist = distance64;
@@ -191,6 +154,7 @@ test "distance64" {
     try ee(@as(u64, 52), dist("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz", ""));
     try ee(@as(u64, 50), dist("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz", "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"));
     try ee(@as(u64, 2), dist("eleven", "even"));
+    try ee(@as(u64, 2), dist("abab", "aabb"));
 }
 
 /// Computes the Levenshtein distance for two strings.  This implementation may
