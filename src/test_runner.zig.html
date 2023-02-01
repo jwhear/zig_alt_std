@@ -124,7 +124,7 @@
 <span class="line" id="L11"></span>
 <span class="line" id="L12"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">main</span>() <span class="tok-type">void</span> {</span>
 <span class="line" id="L13">    <span class="tok-kw">if</span> (builtin.zig_backend != .stage1 <span class="tok-kw">and</span></span>
-<span class="line" id="L14">        (builtin.zig_backend != .stage2_llvm <span class="tok-kw">or</span> builtin.cpu.arch == .wasm32) <span class="tok-kw">and</span></span>
+<span class="line" id="L14">        builtin.zig_backend != .stage2_llvm <span class="tok-kw">and</span></span>
 <span class="line" id="L15">        builtin.zig_backend != .stage2_c)</span>
 <span class="line" id="L16">    {</span>
 <span class="line" id="L17">        <span class="tok-kw">return</span> main2() <span class="tok-kw">catch</span> <span class="tok-builtin">@panic</span>(<span class="tok-str">&quot;test failure&quot;</span>);</span>

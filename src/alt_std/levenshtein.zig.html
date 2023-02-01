@@ -210,230 +210,240 @@
 </span>
 <span class="line" id="L88">    <span class="tok-comment">//</span>
 </span>
-<span class="line" id="L89">    <span class="tok-comment">// The algorithm is extremely cool but quite dense--as a result, we do not</span>
+<span class="line" id="L89">    <span class="tok-comment">// Highly recommended is a an explanatory paper by Heikki Hyyrö:</span>
 </span>
-<span class="line" id="L90">    <span class="tok-comment">//  attempt to exhaustively comment here; if you want to understand how this</span>
+<span class="line" id="L90">    <span class="tok-comment">//   Hyyrö, H. (2001). Explaining and Extending the Bit-parallel Approximate String Matching Algorithm of Myers.</span>
 </span>
-<span class="line" id="L91">    <span class="tok-comment">//  works reading the paper is your best bet.</span>
+<span class="line" id="L91">    <span class="tok-comment">// Note: the Hyyrö paper provides a simple extension to this algorithm for</span>
 </span>
-<span class="line" id="L92">    <span class="tok-comment">// The advantage of this algorithm is that it is extremely fast; approximately</span>
+<span class="line" id="L92">    <span class="tok-comment">//  adding transposition as an edit type (Damerau–Levenshtein distance).</span>
 </span>
-<span class="line" id="L93">    <span class="tok-comment">//  10x-13x faster than the fallback algorithm in this module.  Testing on</span>
+<span class="line" id="L93">    <span class="tok-comment">//</span>
 </span>
-<span class="line" id="L94">    <span class="tok-comment">//  an 11th Gen Intel(R) Core(TM) i5-1 135G7 @ 2.40GHz results in only ~130ns/call!</span>
+<span class="line" id="L94">    <span class="tok-comment">// The algorithm is extremely cool but quite dense--as a result, we do not</span>
 </span>
-<span class="line" id="L95">    <span class="tok-comment">// This speedup is accomplished by translating the matrix logic into bitwise</span>
+<span class="line" id="L95">    <span class="tok-comment">//  attempt to exhaustively comment here; if you want to understand how this</span>
 </span>
-<span class="line" id="L96">    <span class="tok-comment">//  operations on u64s, and decomposing iteration into two flat loops: one</span>
+<span class="line" id="L96">    <span class="tok-comment">//  works reading the paper is your best bet.</span>
 </span>
-<span class="line" id="L97">    <span class="tok-comment">//  over each of of `a` and `b`.</span>
+<span class="line" id="L97">    <span class="tok-comment">// The advantage of this algorithm is that it is extremely fast; approximately</span>
 </span>
-<span class="line" id="L98">    <span class="tok-kw">const</span> short = <span class="tok-kw">if</span> (a.len &lt; b.len) a <span class="tok-kw">else</span> b;</span>
-<span class="line" id="L99">    <span class="tok-kw">const</span> long = <span class="tok-kw">if</span> (a.len &lt; b.len) b <span class="tok-kw">else</span> a;</span>
-<span class="line" id="L100">    std.debug.assert(long.len &lt;= <span class="tok-number">64</span>);</span>
-<span class="line" id="L101"></span>
-<span class="line" id="L102">	<span class="tok-kw">var</span> score: <span class="tok-type">u64</span> = <span class="tok-builtin">@intCast</span>(<span class="tok-type">u64</span>, long.len);</span>
-<span class="line" id="L103"></span>
-<span class="line" id="L104">    <span class="tok-comment">// Early out if one of the strings is empty</span>
+<span class="line" id="L98">    <span class="tok-comment">//  10x-13x faster than the fallback algorithm in this module.  Testing on</span>
 </span>
-<span class="line" id="L105">    <span class="tok-kw">if</span> (short.len == <span class="tok-number">0</span>) {</span>
-<span class="line" id="L106">        <span class="tok-kw">return</span> score;</span>
-<span class="line" id="L107">    }</span>
+<span class="line" id="L99">    <span class="tok-comment">//  an 11th Gen Intel(R) Core(TM) i5-1 135G7 @ 2.40GHz results in only ~130ns/call!</span>
+</span>
+<span class="line" id="L100">    <span class="tok-comment">// This speedup is accomplished by translating the matrix logic into bitwise</span>
+</span>
+<span class="line" id="L101">    <span class="tok-comment">//  operations on u64s, and decomposing iteration into two flat loops: one</span>
+</span>
+<span class="line" id="L102">    <span class="tok-comment">//  over each of of `a` and `b`.</span>
+</span>
+<span class="line" id="L103">    <span class="tok-kw">const</span> short = <span class="tok-kw">if</span> (a.len &lt; b.len) a <span class="tok-kw">else</span> b;</span>
+<span class="line" id="L104">    <span class="tok-kw">const</span> long = <span class="tok-kw">if</span> (a.len &lt; b.len) b <span class="tok-kw">else</span> a;</span>
+<span class="line" id="L105">    std.debug.assert(long.len &lt;= <span class="tok-number">64</span>);</span>
+<span class="line" id="L106"></span>
+<span class="line" id="L107">    <span class="tok-kw">var</span> score: <span class="tok-type">u64</span> = <span class="tok-builtin">@intCast</span>(<span class="tok-type">u64</span>, long.len);</span>
 <span class="line" id="L108"></span>
-<span class="line" id="L109">    <span class="tok-comment">// Alphabet preprocessing step.</span>
+<span class="line" id="L109">    <span class="tok-comment">// Early out if one of the strings is empty</span>
 </span>
-<span class="line" id="L110">    <span class="tok-comment">// Example, if `short` is &quot;dog&quot;:</span>
+<span class="line" id="L110">    <span class="tok-kw">if</span> (short.len == <span class="tok-number">0</span>) {</span>
+<span class="line" id="L111">        <span class="tok-kw">return</span> score;</span>
+<span class="line" id="L112">    }</span>
+<span class="line" id="L113"></span>
+<span class="line" id="L114">    <span class="tok-comment">// Alphabet preprocessing step.</span>
 </span>
-<span class="line" id="L111">    <span class="tok-comment">//  peq['d'] = 0b101; // 'd' occurs at first and third position</span>
+<span class="line" id="L115">    <span class="tok-comment">// Example, if `short` is &quot;dog&quot;:</span>
 </span>
-<span class="line" id="L112">    <span class="tok-comment">//  peq['o'] = 0b010; // '0' occurs at the second position</span>
+<span class="line" id="L116">    <span class="tok-comment">//  peq['d'] = 0b101; // 'd' occurs at first and third position</span>
 </span>
-<span class="line" id="L113">    <span class="tok-kw">var</span> peq: [<span class="tok-number">256</span>]<span class="tok-type">u64</span> = [_]<span class="tok-type">u64</span>{<span class="tok-number">0</span>} ** <span class="tok-number">256</span>;</span>
-<span class="line" id="L114">	<span class="tok-kw">for</span> (long) |c, idx| {</span>
-<span class="line" id="L115">		peq[c] |= <span class="tok-builtin">@as</span>(<span class="tok-type">u64</span>, <span class="tok-number">1</span>) &lt;&lt; <span class="tok-builtin">@intCast</span>(<span class="tok-type">u6</span>, idx);</span>
-<span class="line" id="L116">	}</span>
-<span class="line" id="L117"></span>
-<span class="line" id="L118">	<span class="tok-comment">// The last bit OR'd in</span>
+<span class="line" id="L117">    <span class="tok-comment">//  peq['o'] = 0b010; // '0' occurs at the second position</span>
 </span>
-<span class="line" id="L119">	<span class="tok-comment">// In the paper this is the term `10^(m-1)`</span>
+<span class="line" id="L118">    <span class="tok-kw">var</span> peq: [<span class="tok-number">256</span>]<span class="tok-type">u64</span> = [_]<span class="tok-type">u64</span>{<span class="tok-number">0</span>} ** <span class="tok-number">256</span>;</span>
+<span class="line" id="L119">    <span class="tok-kw">for</span> (long) |c, idx| {</span>
+<span class="line" id="L120">        peq[c] |= <span class="tok-builtin">@as</span>(<span class="tok-type">u64</span>, <span class="tok-number">1</span>) &lt;&lt; <span class="tok-builtin">@intCast</span>(<span class="tok-type">u6</span>, idx);</span>
+<span class="line" id="L121">    }</span>
+<span class="line" id="L122"></span>
+<span class="line" id="L123">    <span class="tok-comment">// The last bit OR'd in</span>
 </span>
-<span class="line" id="L120">	<span class="tok-kw">const</span> last_set = <span class="tok-builtin">@as</span>(<span class="tok-type">u64</span>, <span class="tok-number">1</span>) &lt;&lt; <span class="tok-builtin">@intCast</span>(<span class="tok-type">u6</span>, score - <span class="tok-number">1</span>);</span>
-<span class="line" id="L121">	<span class="tok-kw">var</span> pv = ~<span class="tok-builtin">@as</span>(<span class="tok-type">u64</span>, <span class="tok-number">0</span>); <span class="tok-comment">// all 1s to start</span>
+<span class="line" id="L124">    <span class="tok-comment">// In the paper this is the term `10^(m-1)`</span>
 </span>
-<span class="line" id="L122">	<span class="tok-kw">var</span> mv = <span class="tok-builtin">@as</span>(<span class="tok-type">u64</span>, <span class="tok-number">0</span>);  <span class="tok-comment">// all 0s to start</span>
+<span class="line" id="L125">    <span class="tok-kw">const</span> last_set = <span class="tok-builtin">@as</span>(<span class="tok-type">u64</span>, <span class="tok-number">1</span>) &lt;&lt; <span class="tok-builtin">@intCast</span>(<span class="tok-type">u6</span>, score - <span class="tok-number">1</span>);</span>
+<span class="line" id="L126">    <span class="tok-kw">var</span> pv = ~<span class="tok-builtin">@as</span>(<span class="tok-type">u64</span>, <span class="tok-number">0</span>); <span class="tok-comment">// all 1s to start</span>
 </span>
-<span class="line" id="L123"></span>
-<span class="line" id="L124">	<span class="tok-kw">for</span> (short) |c| {</span>
-<span class="line" id="L125">		<span class="tok-kw">var</span> eq = peq[c];</span>
-<span class="line" id="L126"></span>
-<span class="line" id="L127">		<span class="tok-kw">var</span> xv = eq | mv;</span>
-<span class="line" id="L128">		<span class="tok-kw">const</span> xh = (((eq &amp; pv) +% pv) ^ pv) | eq;</span>
-<span class="line" id="L129"></span>
-<span class="line" id="L130">		<span class="tok-kw">var</span> ph = mv | ~(xh | pv);</span>
-<span class="line" id="L131">		<span class="tok-kw">const</span> mh = pv &amp; xh;</span>
-<span class="line" id="L132"></span>
-<span class="line" id="L133">		<span class="tok-kw">if</span> ((ph &amp; last_set) != <span class="tok-number">0</span>) {</span>
-<span class="line" id="L134">			score += <span class="tok-number">1</span>;</span>
-<span class="line" id="L135">		}</span>
-<span class="line" id="L136"></span>
-<span class="line" id="L137">		<span class="tok-kw">if</span> ((mh &amp; last_set) != <span class="tok-number">0</span>) {</span>
-<span class="line" id="L138">			score -= <span class="tok-number">1</span>;</span>
-<span class="line" id="L139">		}</span>
-<span class="line" id="L140">		<span class="tok-comment">// Shift the bits up, filling with ones</span>
+<span class="line" id="L127">    <span class="tok-kw">var</span> mv = <span class="tok-builtin">@as</span>(<span class="tok-type">u64</span>, <span class="tok-number">0</span>);  <span class="tok-comment">// all 0s to start</span>
 </span>
-<span class="line" id="L141">		ph = (ph &lt;&lt; <span class="tok-number">1</span>) | <span class="tok-number">1</span>;</span>
-<span class="line" id="L142">		pv = (mh &lt;&lt; <span class="tok-number">1</span>) | ~(xv | ph);</span>
-<span class="line" id="L143">		mv = ph &amp; xv;</span>
-<span class="line" id="L144">	}</span>
-<span class="line" id="L145">	<span class="tok-kw">return</span> score;</span>
-<span class="line" id="L146">}</span>
-<span class="line" id="L147"><span class="tok-kw">test</span> <span class="tok-str">&quot;distance64&quot;</span> {</span>
-<span class="line" id="L148">    <span class="tok-kw">const</span> dist = distance64;</span>
-<span class="line" id="L149">    <span class="tok-kw">const</span> ee = std.testing.expectEqual;</span>
-<span class="line" id="L150">    <span class="tok-kw">try</span> ee(<span class="tok-builtin">@as</span>(<span class="tok-type">u64</span>, <span class="tok-number">0</span>), dist(<span class="tok-str">&quot;aabb&quot;</span>, <span class="tok-str">&quot;aabb&quot;</span>));</span>
-<span class="line" id="L151">    <span class="tok-kw">try</span> ee(<span class="tok-builtin">@as</span>(<span class="tok-type">u64</span>, <span class="tok-number">1</span>), dist(<span class="tok-str">&quot;aabb&quot;</span>, <span class="tok-str">&quot;acbb&quot;</span>));</span>
-<span class="line" id="L152">    <span class="tok-kw">try</span> ee(<span class="tok-builtin">@as</span>(<span class="tok-type">u64</span>, <span class="tok-number">3</span>), dist(<span class="tok-str">&quot;&quot;</span>, <span class="tok-str">&quot;dog&quot;</span>));</span>
-<span class="line" id="L153">    <span class="tok-kw">try</span> ee(<span class="tok-builtin">@as</span>(<span class="tok-type">u64</span>, <span class="tok-number">3</span>), dist(<span class="tok-str">&quot;dog&quot;</span>, <span class="tok-str">&quot;&quot;</span>));</span>
-<span class="line" id="L154">    <span class="tok-kw">try</span> ee(<span class="tok-builtin">@as</span>(<span class="tok-type">u64</span>, <span class="tok-number">1</span>), dist(<span class="tok-str">&quot;dog&quot;</span>, <span class="tok-str">&quot;dig&quot;</span>));</span>
-<span class="line" id="L155">    <span class="tok-kw">try</span> ee(<span class="tok-builtin">@as</span>(<span class="tok-type">u64</span>, <span class="tok-number">1</span>), dist(<span class="tok-str">&quot;dog&quot;</span>, <span class="tok-str">&quot;do&quot;</span>));</span>
-<span class="line" id="L156">    <span class="tok-kw">try</span> ee(<span class="tok-builtin">@as</span>(<span class="tok-type">u64</span>, <span class="tok-number">1</span>), dist(<span class="tok-str">&quot;d&quot;</span>, <span class="tok-str">&quot;do&quot;</span>));</span>
-<span class="line" id="L157">    <span class="tok-kw">try</span> ee(<span class="tok-builtin">@as</span>(<span class="tok-type">u64</span>, <span class="tok-number">26</span>), dist(<span class="tok-str">&quot;abcdefghijklmnopqrstuvwxyz&quot;</span>, <span class="tok-str">&quot;&quot;</span>));</span>
-<span class="line" id="L158">    <span class="tok-kw">try</span> ee(<span class="tok-builtin">@as</span>(<span class="tok-type">u64</span>, <span class="tok-number">52</span>), dist(<span class="tok-str">&quot;abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz&quot;</span>, <span class="tok-str">&quot;&quot;</span>));</span>
-<span class="line" id="L159">    <span class="tok-kw">try</span> ee(<span class="tok-builtin">@as</span>(<span class="tok-type">u64</span>, <span class="tok-number">50</span>), dist(<span class="tok-str">&quot;abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz&quot;</span>, <span class="tok-str">&quot;zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz&quot;</span>));</span>
-<span class="line" id="L160">    <span class="tok-kw">try</span> ee(<span class="tok-builtin">@as</span>(<span class="tok-type">u64</span>, <span class="tok-number">2</span>), dist(<span class="tok-str">&quot;eleven&quot;</span>, <span class="tok-str">&quot;even&quot;</span>));</span>
-<span class="line" id="L161">    <span class="tok-kw">try</span> ee(<span class="tok-builtin">@as</span>(<span class="tok-type">u64</span>, <span class="tok-number">2</span>), dist(<span class="tok-str">&quot;abab&quot;</span>, <span class="tok-str">&quot;aabb&quot;</span>));</span>
-<span class="line" id="L162">}</span>
-<span class="line" id="L163"></span>
-<span class="line" id="L164"><span class="tok-comment">/// Computes the Levenshtein distance for two strings.  This implementation may</span></span>
-<span class="line" id="L165"><span class="tok-comment">///  allocate and can fail only if allocation fails.</span></span>
-<span class="line" id="L166"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">distanceAlloc</span>(</span>
-<span class="line" id="L167">    allocator: std.mem.Allocator,</span>
-<span class="line" id="L168">    a: []<span class="tok-kw">const</span> <span class="tok-type">u8</span>, b: []<span class="tok-kw">const</span> <span class="tok-type">u8</span>,</span>
-<span class="line" id="L169">    edit_costs: EditCosts</span>
-<span class="line" id="L170">) <span class="tok-kw">error</span>{OutOfMemory}!<span class="tok-type">u64</span> {</span>
-<span class="line" id="L171">    <span class="tok-comment">// Ported from the D standard library:</span>
+<span class="line" id="L128"></span>
+<span class="line" id="L129">    <span class="tok-kw">for</span> (short) |c| {</span>
+<span class="line" id="L130">        <span class="tok-kw">var</span> eq = peq[c];</span>
+<span class="line" id="L131"></span>
+<span class="line" id="L132">        <span class="tok-kw">var</span> xv = eq | mv;</span>
+<span class="line" id="L133">        <span class="tok-kw">const</span> xh = (((eq &amp; pv) +% pv) ^ pv) | eq;</span>
+<span class="line" id="L134"></span>
+<span class="line" id="L135">        <span class="tok-kw">var</span> ph = mv | ~(xh | pv);</span>
+<span class="line" id="L136">        <span class="tok-kw">const</span> mh = pv &amp; xh;</span>
+<span class="line" id="L137"></span>
+<span class="line" id="L138">        <span class="tok-kw">if</span> ((ph &amp; last_set) != <span class="tok-number">0</span>) {</span>
+<span class="line" id="L139">            score += <span class="tok-number">1</span>;</span>
+<span class="line" id="L140">        }</span>
+<span class="line" id="L141"></span>
+<span class="line" id="L142">        <span class="tok-kw">if</span> ((mh &amp; last_set) != <span class="tok-number">0</span>) {</span>
+<span class="line" id="L143">            score -= <span class="tok-number">1</span>;</span>
+<span class="line" id="L144">        }</span>
+<span class="line" id="L145">        <span class="tok-comment">// Shift the bits up, filling with ones</span>
 </span>
-<span class="line" id="L172">    <span class="tok-comment">//  https://github.com/dlang/phobos/blob/71371234e768a3ce14d9d53fd6725938abd51238/std/algorithm/comparison.d#L1407</span>
+<span class="line" id="L146">        ph = (ph &lt;&lt; <span class="tok-number">1</span>) | <span class="tok-number">1</span>;</span>
+<span class="line" id="L147">        pv = (mh &lt;&lt; <span class="tok-number">1</span>) | ~(xv | ph);</span>
+<span class="line" id="L148">        mv = ph &amp; xv;</span>
+<span class="line" id="L149">    }</span>
+<span class="line" id="L150">    <span class="tok-kw">return</span> score;</span>
+<span class="line" id="L151">}</span>
+<span class="line" id="L152"><span class="tok-kw">test</span> <span class="tok-str">&quot;distance64&quot;</span> {</span>
+<span class="line" id="L153">    <span class="tok-kw">const</span> dist = distance64;</span>
+<span class="line" id="L154">    <span class="tok-kw">const</span> ee = std.testing.expectEqual;</span>
+<span class="line" id="L155">    <span class="tok-kw">try</span> ee(<span class="tok-builtin">@as</span>(<span class="tok-type">u64</span>, <span class="tok-number">0</span>), dist(<span class="tok-str">&quot;aabb&quot;</span>, <span class="tok-str">&quot;aabb&quot;</span>));</span>
+<span class="line" id="L156">    <span class="tok-kw">try</span> ee(<span class="tok-builtin">@as</span>(<span class="tok-type">u64</span>, <span class="tok-number">1</span>), dist(<span class="tok-str">&quot;aabb&quot;</span>, <span class="tok-str">&quot;acbb&quot;</span>));</span>
+<span class="line" id="L157">    <span class="tok-kw">try</span> ee(<span class="tok-builtin">@as</span>(<span class="tok-type">u64</span>, <span class="tok-number">3</span>), dist(<span class="tok-str">&quot;&quot;</span>, <span class="tok-str">&quot;dog&quot;</span>));</span>
+<span class="line" id="L158">    <span class="tok-kw">try</span> ee(<span class="tok-builtin">@as</span>(<span class="tok-type">u64</span>, <span class="tok-number">3</span>), dist(<span class="tok-str">&quot;dog&quot;</span>, <span class="tok-str">&quot;&quot;</span>));</span>
+<span class="line" id="L159">    <span class="tok-kw">try</span> ee(<span class="tok-builtin">@as</span>(<span class="tok-type">u64</span>, <span class="tok-number">1</span>), dist(<span class="tok-str">&quot;dog&quot;</span>, <span class="tok-str">&quot;dig&quot;</span>));</span>
+<span class="line" id="L160">    <span class="tok-kw">try</span> ee(<span class="tok-builtin">@as</span>(<span class="tok-type">u64</span>, <span class="tok-number">1</span>), dist(<span class="tok-str">&quot;dog&quot;</span>, <span class="tok-str">&quot;do&quot;</span>));</span>
+<span class="line" id="L161">    <span class="tok-kw">try</span> ee(<span class="tok-builtin">@as</span>(<span class="tok-type">u64</span>, <span class="tok-number">1</span>), dist(<span class="tok-str">&quot;d&quot;</span>, <span class="tok-str">&quot;do&quot;</span>));</span>
+<span class="line" id="L162">    <span class="tok-kw">try</span> ee(<span class="tok-builtin">@as</span>(<span class="tok-type">u64</span>, <span class="tok-number">26</span>), dist(<span class="tok-str">&quot;abcdefghijklmnopqrstuvwxyz&quot;</span>, <span class="tok-str">&quot;&quot;</span>));</span>
+<span class="line" id="L163">    <span class="tok-kw">try</span> ee(<span class="tok-builtin">@as</span>(<span class="tok-type">u64</span>, <span class="tok-number">52</span>), dist(<span class="tok-str">&quot;abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz&quot;</span>, <span class="tok-str">&quot;&quot;</span>));</span>
+<span class="line" id="L164">    <span class="tok-kw">try</span> ee(<span class="tok-builtin">@as</span>(<span class="tok-type">u64</span>, <span class="tok-number">50</span>), dist(<span class="tok-str">&quot;abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz&quot;</span>, <span class="tok-str">&quot;zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz&quot;</span>));</span>
+<span class="line" id="L165">    <span class="tok-kw">try</span> ee(<span class="tok-builtin">@as</span>(<span class="tok-type">u64</span>, <span class="tok-number">2</span>), dist(<span class="tok-str">&quot;eleven&quot;</span>, <span class="tok-str">&quot;even&quot;</span>));</span>
+<span class="line" id="L166">    <span class="tok-kw">try</span> ee(<span class="tok-builtin">@as</span>(<span class="tok-type">u64</span>, <span class="tok-number">2</span>), dist(<span class="tok-str">&quot;abab&quot;</span>, <span class="tok-str">&quot;aabb&quot;</span>));</span>
+<span class="line" id="L167">}</span>
+<span class="line" id="L168"></span>
+<span class="line" id="L169"><span class="tok-comment">/// Computes the Levenshtein distance for two strings.  This implementation may</span></span>
+<span class="line" id="L170"><span class="tok-comment">///  allocate and can fail only if allocation fails.</span></span>
+<span class="line" id="L171"><span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">distanceAlloc</span>(</span>
+<span class="line" id="L172">    allocator: std.mem.Allocator,</span>
+<span class="line" id="L173">    a: []<span class="tok-kw">const</span> <span class="tok-type">u8</span>, b: []<span class="tok-kw">const</span> <span class="tok-type">u8</span>,</span>
+<span class="line" id="L174">    edit_costs: EditCosts</span>
+<span class="line" id="L175">) <span class="tok-kw">error</span>{OutOfMemory}!<span class="tok-type">u64</span> {</span>
+<span class="line" id="L176">    <span class="tok-comment">// Ported from the D standard library:</span>
 </span>
-<span class="line" id="L173">    <span class="tok-comment">// This implementation doesn't store the entire matrix, only last/current row,</span>
+<span class="line" id="L177">    <span class="tok-comment">//  https://github.com/dlang/phobos/blob/71371234e768a3ce14d9d53fd6725938abd51238/std/algorithm/comparison.d#L1407</span>
 </span>
-<span class="line" id="L174">    <span class="tok-comment">//  resulting in significantly lower memory usage and modest performance uplift</span>
+<span class="line" id="L178">    <span class="tok-comment">// This implementation doesn't store the entire matrix, only last/current row,</span>
 </span>
-<span class="line" id="L175">    <span class="tok-comment">//  over the naive version, generally ~1.3x faster.</span>
+<span class="line" id="L179">    <span class="tok-comment">//  resulting in significantly lower memory usage and modest performance uplift</span>
 </span>
-<span class="line" id="L176">    <span class="tok-comment">//</span>
+<span class="line" id="L180">    <span class="tok-comment">//  over the naive version, generally ~1.3x faster.</span>
 </span>
-<span class="line" id="L177">    <span class="tok-comment">// Original author: Andrei Alexandrescu</span>
+<span class="line" id="L181">    <span class="tok-comment">//</span>
 </span>
-<span class="line" id="L178">    <span class="tok-comment">// Original license:</span>
+<span class="line" id="L182">    <span class="tok-comment">// Original author: Andrei Alexandrescu</span>
 </span>
-<span class="line" id="L179">    <span class="tok-comment">//    Boost Software License - Version 1.0 - August 17th, 2003</span>
+<span class="line" id="L183">    <span class="tok-comment">// Original license:</span>
 </span>
-<span class="line" id="L180">    <span class="tok-comment">//</span>
+<span class="line" id="L184">    <span class="tok-comment">//    Boost Software License - Version 1.0 - August 17th, 2003</span>
 </span>
-<span class="line" id="L181">    <span class="tok-comment">//    Permission is hereby granted, free of charge, to any person or organization</span>
+<span class="line" id="L185">    <span class="tok-comment">//</span>
 </span>
-<span class="line" id="L182">    <span class="tok-comment">//    obtaining a copy of the software and accompanying documentation covered by</span>
+<span class="line" id="L186">    <span class="tok-comment">//    Permission is hereby granted, free of charge, to any person or organization</span>
 </span>
-<span class="line" id="L183">    <span class="tok-comment">//    this license (the &quot;Software&quot;) to use, reproduce, display, distribute,</span>
+<span class="line" id="L187">    <span class="tok-comment">//    obtaining a copy of the software and accompanying documentation covered by</span>
 </span>
-<span class="line" id="L184">    <span class="tok-comment">//    execute, and transmit the Software, and to prepare derivative works of the</span>
+<span class="line" id="L188">    <span class="tok-comment">//    this license (the &quot;Software&quot;) to use, reproduce, display, distribute,</span>
 </span>
-<span class="line" id="L185">    <span class="tok-comment">//    Software, and to permit third-parties to whom the Software is furnished to</span>
+<span class="line" id="L189">    <span class="tok-comment">//    execute, and transmit the Software, and to prepare derivative works of the</span>
 </span>
-<span class="line" id="L186">    <span class="tok-comment">//    do so, all subject to the following:</span>
+<span class="line" id="L190">    <span class="tok-comment">//    Software, and to permit third-parties to whom the Software is furnished to</span>
 </span>
-<span class="line" id="L187">    <span class="tok-comment">//</span>
+<span class="line" id="L191">    <span class="tok-comment">//    do so, all subject to the following:</span>
 </span>
-<span class="line" id="L188">    <span class="tok-comment">//    The copyright notices in the Software and this entire statement, including</span>
+<span class="line" id="L192">    <span class="tok-comment">//</span>
 </span>
-<span class="line" id="L189">    <span class="tok-comment">//    the above license grant, this restriction and the following disclaimer,</span>
+<span class="line" id="L193">    <span class="tok-comment">//    The copyright notices in the Software and this entire statement, including</span>
 </span>
-<span class="line" id="L190">    <span class="tok-comment">//    must be included in all copies of the Software, in whole or in part, and</span>
+<span class="line" id="L194">    <span class="tok-comment">//    the above license grant, this restriction and the following disclaimer,</span>
 </span>
-<span class="line" id="L191">    <span class="tok-comment">//    all derivative works of the Software, unless such copies or derivative</span>
+<span class="line" id="L195">    <span class="tok-comment">//    must be included in all copies of the Software, in whole or in part, and</span>
 </span>
-<span class="line" id="L192">    <span class="tok-comment">//    works are solely in the form of machine-executable object code generated by</span>
+<span class="line" id="L196">    <span class="tok-comment">//    all derivative works of the Software, unless such copies or derivative</span>
 </span>
-<span class="line" id="L193">    <span class="tok-comment">//    a source language processor.</span>
+<span class="line" id="L197">    <span class="tok-comment">//    works are solely in the form of machine-executable object code generated by</span>
 </span>
-<span class="line" id="L194">    <span class="tok-comment">//</span>
+<span class="line" id="L198">    <span class="tok-comment">//    a source language processor.</span>
 </span>
-<span class="line" id="L195">    <span class="tok-comment">//    THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="line" id="L199">    <span class="tok-comment">//</span>
 </span>
-<span class="line" id="L196">    <span class="tok-comment">//    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="line" id="L200">    <span class="tok-comment">//    THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
 </span>
-<span class="line" id="L197">    <span class="tok-comment">//    FITNESS FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO EVENT</span>
+<span class="line" id="L201">    <span class="tok-comment">//    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
 </span>
-<span class="line" id="L198">    <span class="tok-comment">//    SHALL THE COPYRIGHT HOLDERS OR ANYONE DISTRIBUTING THE SOFTWARE BE LIABLE</span>
+<span class="line" id="L202">    <span class="tok-comment">//    FITNESS FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO EVENT</span>
 </span>
-<span class="line" id="L199">    <span class="tok-comment">//    FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,</span>
+<span class="line" id="L203">    <span class="tok-comment">//    SHALL THE COPYRIGHT HOLDERS OR ANYONE DISTRIBUTING THE SOFTWARE BE LIABLE</span>
 </span>
-<span class="line" id="L200">    <span class="tok-comment">//    ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER</span>
+<span class="line" id="L204">    <span class="tok-comment">//    FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,</span>
 </span>
-<span class="line" id="L201">    <span class="tok-comment">//    DEALINGS IN THE SOFTWARE.</span>
+<span class="line" id="L205">    <span class="tok-comment">//    ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER</span>
 </span>
-<span class="line" id="L202">    <span class="tok-kw">const</span> short = <span class="tok-kw">if</span> (a.len &lt; b.len) a <span class="tok-kw">else</span> b;</span>
-<span class="line" id="L203">    <span class="tok-kw">const</span> long = <span class="tok-kw">if</span> (a.len &lt; b.len) b <span class="tok-kw">else</span> a;</span>
-<span class="line" id="L204">    std.debug.assert(long.len &lt;= <span class="tok-number">64</span>);</span>
-<span class="line" id="L205"></span>
-<span class="line" id="L206">    <span class="tok-comment">// Early out if one of the strings is empty</span>
+<span class="line" id="L206">    <span class="tok-comment">//    DEALINGS IN THE SOFTWARE.</span>
 </span>
-<span class="line" id="L207">    <span class="tok-kw">if</span> (short.len == <span class="tok-number">0</span>) {</span>
-<span class="line" id="L208">        <span class="tok-kw">return</span> long.len;</span>
-<span class="line" id="L209">    }</span>
+<span class="line" id="L207">    <span class="tok-kw">const</span> short = <span class="tok-kw">if</span> (a.len &lt; b.len) a <span class="tok-kw">else</span> b;</span>
+<span class="line" id="L208">    <span class="tok-kw">const</span> long = <span class="tok-kw">if</span> (a.len &lt; b.len) b <span class="tok-kw">else</span> a;</span>
+<span class="line" id="L209">    std.debug.assert(long.len &lt;= <span class="tok-number">64</span>);</span>
 <span class="line" id="L210"></span>
-<span class="line" id="L211">    <span class="tok-comment">// If the strings are 64 bytes or less, no allocations needed</span>
+<span class="line" id="L211">    <span class="tok-comment">// Early out if one of the strings is empty</span>
 </span>
-<span class="line" id="L212">    <span class="tok-kw">var</span> matrix_buf: [<span class="tok-number">65</span>]<span class="tok-type">u64</span> = <span class="tok-null">undefined</span>;</span>
-<span class="line" id="L213">    <span class="tok-kw">const</span> m = short.len + <span class="tok-number">1</span>;</span>
-<span class="line" id="L214">    <span class="tok-kw">const</span> needs_alloc = m &gt; matrix_buf.len;</span>
-<span class="line" id="L215">    <span class="tok-comment">// actually just the most recent row of the naive matrix</span>
+<span class="line" id="L212">    <span class="tok-kw">if</span> (short.len == <span class="tok-number">0</span>) {</span>
+<span class="line" id="L213">        <span class="tok-kw">return</span> long.len;</span>
+<span class="line" id="L214">    }</span>
+<span class="line" id="L215"></span>
+<span class="line" id="L216">    <span class="tok-comment">// If the strings are 64 bytes or less, no allocations needed</span>
 </span>
-<span class="line" id="L216">    <span class="tok-kw">var</span> matrix: []<span class="tok-type">u64</span> = <span class="tok-kw">if</span> (needs_alloc) <span class="tok-kw">try</span> allocator.alloc(<span class="tok-type">u64</span>, m) <span class="tok-kw">else</span> matrix_buf[<span class="tok-number">0</span>..m];</span>
-<span class="line" id="L217">    <span class="tok-kw">defer</span> <span class="tok-kw">if</span> (needs_alloc) allocator.free(matrix);</span>
-<span class="line" id="L218">    std.mem.set(<span class="tok-type">u64</span>, matrix, <span class="tok-number">0</span>);</span>
-<span class="line" id="L219"></span>
-<span class="line" id="L220">    <span class="tok-comment">// Initialize the row</span>
+<span class="line" id="L217">    <span class="tok-kw">var</span> matrix_buf: [<span class="tok-number">65</span>]<span class="tok-type">u64</span> = <span class="tok-null">undefined</span>;</span>
+<span class="line" id="L218">    <span class="tok-kw">const</span> m = short.len + <span class="tok-number">1</span>;</span>
+<span class="line" id="L219">    <span class="tok-kw">const</span> needs_alloc = m &gt; matrix_buf.len;</span>
+<span class="line" id="L220">    <span class="tok-comment">// actually just the most recent row of the naive matrix</span>
 </span>
-<span class="line" id="L221">    <span class="tok-kw">var</span> y: <span class="tok-type">usize</span> = <span class="tok-number">1</span>;</span>
-<span class="line" id="L222">    <span class="tok-kw">while</span> (y &lt; m) : (y += <span class="tok-number">1</span>) {</span>
-<span class="line" id="L223">        matrix[y] = y;</span>
-<span class="line" id="L224">    }</span>
-<span class="line" id="L225"></span>
-<span class="line" id="L226">    <span class="tok-comment">// matrix[x-1, y-1]</span>
+<span class="line" id="L221">    <span class="tok-kw">var</span> matrix: []<span class="tok-type">u64</span> = <span class="tok-kw">if</span> (needs_alloc) <span class="tok-kw">try</span> allocator.alloc(<span class="tok-type">u64</span>, m) <span class="tok-kw">else</span> matrix_buf[<span class="tok-number">0</span>..m];</span>
+<span class="line" id="L222">    <span class="tok-kw">defer</span> <span class="tok-kw">if</span> (needs_alloc) allocator.free(matrix);</span>
+<span class="line" id="L223">    std.mem.set(<span class="tok-type">u64</span>, matrix, <span class="tok-number">0</span>);</span>
+<span class="line" id="L224"></span>
+<span class="line" id="L225">    <span class="tok-comment">// Initialize the row</span>
 </span>
-<span class="line" id="L227">    <span class="tok-kw">var</span> last_diag: <span class="tok-type">u64</span> = <span class="tok-number">0</span>;</span>
-<span class="line" id="L228">    <span class="tok-kw">var</span> old_diag: <span class="tok-type">u64</span> = <span class="tok-number">0</span>;</span>
-<span class="line" id="L229">    <span class="tok-kw">var</span> x: <span class="tok-type">usize</span> = <span class="tok-number">1</span>;</span>
+<span class="line" id="L226">    <span class="tok-kw">var</span> y: <span class="tok-type">usize</span> = <span class="tok-number">1</span>;</span>
+<span class="line" id="L227">    <span class="tok-kw">while</span> (y &lt; m) : (y += <span class="tok-number">1</span>) {</span>
+<span class="line" id="L228">        matrix[y] = y;</span>
+<span class="line" id="L229">    }</span>
 <span class="line" id="L230"></span>
-<span class="line" id="L231">    <span class="tok-comment">// Conceptually, this is filling the matrix.  In practice, we're updating the</span>
+<span class="line" id="L231">    <span class="tok-comment">// matrix[x-1, y-1]</span>
 </span>
-<span class="line" id="L232">    <span class="tok-comment">//  current row in place.</span>
+<span class="line" id="L232">    <span class="tok-kw">var</span> last_diag: <span class="tok-type">u64</span> = <span class="tok-number">0</span>;</span>
+<span class="line" id="L233">    <span class="tok-kw">var</span> old_diag: <span class="tok-type">u64</span> = <span class="tok-number">0</span>;</span>
+<span class="line" id="L234">    <span class="tok-kw">var</span> x: <span class="tok-type">usize</span> = <span class="tok-number">1</span>;</span>
+<span class="line" id="L235"></span>
+<span class="line" id="L236">    <span class="tok-comment">// Conceptually, this is filling the matrix.  In practice, we're updating the</span>
 </span>
-<span class="line" id="L233">    <span class="tok-kw">while</span> (x &lt; long.len + <span class="tok-number">1</span>) : (x += <span class="tok-number">1</span>) {</span>
-<span class="line" id="L234">        <span class="tok-kw">var</span> short_i: <span class="tok-type">usize</span> = <span class="tok-number">0</span>;</span>
-<span class="line" id="L235">        matrix[<span class="tok-number">0</span>] = x;</span>
-<span class="line" id="L236">        last_diag = x - <span class="tok-number">1</span>;</span>
-<span class="line" id="L237"></span>
-<span class="line" id="L238">        y = <span class="tok-number">1</span>;</span>
-<span class="line" id="L239">        <span class="tok-kw">while</span> (y &lt; m) : (y += <span class="tok-number">1</span>) {</span>
-<span class="line" id="L240">            old_diag = matrix[y];</span>
-<span class="line" id="L241">            <span class="tok-kw">const</span> c_update = last_diag + <span class="tok-kw">if</span> (short[short_i] == long[x-<span class="tok-number">1</span>])</span>
-<span class="line" id="L242">                                             <span class="tok-builtin">@as</span>(<span class="tok-type">u64</span>, <span class="tok-number">0</span>)</span>
-<span class="line" id="L243">                                         <span class="tok-kw">else</span> edit_costs.update;</span>
-<span class="line" id="L244">            short_i += <span class="tok-number">1</span>;</span>
-<span class="line" id="L245">            <span class="tok-kw">const</span> c_insert = matrix[y - <span class="tok-number">1</span>] + edit_costs.insert;</span>
-<span class="line" id="L246">            <span class="tok-kw">const</span> c_delete = matrix[y] + edit_costs.delete;</span>
-<span class="line" id="L247">            matrix[y] = std.math.min(</span>
-<span class="line" id="L248">                c_update,</span>
-<span class="line" id="L249">                std.math.min( c_insert, c_delete )</span>
-<span class="line" id="L250">            );</span>
-<span class="line" id="L251">            last_diag = old_diag;</span>
-<span class="line" id="L252">        }</span>
-<span class="line" id="L253">    }</span>
-<span class="line" id="L254">    <span class="tok-kw">return</span> matrix[short.len];</span>
-<span class="line" id="L255">}</span>
-<span class="line" id="L256"></span>
+<span class="line" id="L237">    <span class="tok-comment">//  current row in place.</span>
+</span>
+<span class="line" id="L238">    <span class="tok-kw">while</span> (x &lt; long.len + <span class="tok-number">1</span>) : (x += <span class="tok-number">1</span>) {</span>
+<span class="line" id="L239">        <span class="tok-kw">var</span> short_i: <span class="tok-type">usize</span> = <span class="tok-number">0</span>;</span>
+<span class="line" id="L240">        matrix[<span class="tok-number">0</span>] = x;</span>
+<span class="line" id="L241">        last_diag = x - <span class="tok-number">1</span>;</span>
+<span class="line" id="L242"></span>
+<span class="line" id="L243">        y = <span class="tok-number">1</span>;</span>
+<span class="line" id="L244">        <span class="tok-kw">while</span> (y &lt; m) : (y += <span class="tok-number">1</span>) {</span>
+<span class="line" id="L245">            old_diag = matrix[y];</span>
+<span class="line" id="L246">            <span class="tok-kw">const</span> c_update = last_diag + <span class="tok-kw">if</span> (short[short_i] == long[x-<span class="tok-number">1</span>])</span>
+<span class="line" id="L247">                                             <span class="tok-builtin">@as</span>(<span class="tok-type">u64</span>, <span class="tok-number">0</span>)</span>
+<span class="line" id="L248">                                         <span class="tok-kw">else</span> edit_costs.update;</span>
+<span class="line" id="L249">            short_i += <span class="tok-number">1</span>;</span>
+<span class="line" id="L250">            <span class="tok-kw">const</span> c_insert = matrix[y - <span class="tok-number">1</span>] + edit_costs.insert;</span>
+<span class="line" id="L251">            <span class="tok-kw">const</span> c_delete = matrix[y] + edit_costs.delete;</span>
+<span class="line" id="L252">            matrix[y] = std.math.min(</span>
+<span class="line" id="L253">                c_update,</span>
+<span class="line" id="L254">                std.math.min( c_insert, c_delete )</span>
+<span class="line" id="L255">            );</span>
+<span class="line" id="L256">            last_diag = old_diag;</span>
+<span class="line" id="L257">        }</span>
+<span class="line" id="L258">    }</span>
+<span class="line" id="L259">    <span class="tok-kw">return</span> matrix[short.len];</span>
+<span class="line" id="L260">}</span>
+<span class="line" id="L261"></span>
 </code></pre></body>
 </html>

@@ -412,5 +412,13 @@
 <span class="line" id="L292">    Environment: ?*<span class="tok-type">anyopaque</span>,</span>
 <span class="line" id="L293">) <span class="tok-kw">callconv</span>(WINAPI) NTSTATUS;</span>
 <span class="line" id="L294"></span>
+<span class="line" id="L295"><span class="tok-kw">pub</span> <span class="tok-kw">extern</span> <span class="tok-str">&quot;ntdll&quot;</span> <span class="tok-kw">fn</span> <span class="tok-fn">NtProtectVirtualMemory</span>(</span>
+<span class="line" id="L296">    ProcessHandle: HANDLE,</span>
+<span class="line" id="L297">    BaseAddress: *PVOID,</span>
+<span class="line" id="L298">    NumberOfBytesToProtect: *ULONG,</span>
+<span class="line" id="L299">    NewAccessProtection: ULONG,</span>
+<span class="line" id="L300">    OldAccessProtection: *ULONG,</span>
+<span class="line" id="L301">) <span class="tok-kw">callconv</span>(WINAPI) NTSTATUS;</span>
+<span class="line" id="L302"></span>
 </code></pre></body>
 </html>

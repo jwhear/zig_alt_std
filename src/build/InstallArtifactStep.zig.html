@@ -194,8 +194,8 @@
 <span class="line" id="L81">        <span class="tok-kw">try</span> builder.updateFile(self.artifact.getOutputPdbSource().getPath(builder), full_pdb_path);</span>
 <span class="line" id="L82">    }</span>
 <span class="line" id="L83">    <span class="tok-kw">if</span> (self.h_dir) |h_dir| {</span>
-<span class="line" id="L84">        <span class="tok-kw">const</span> full_pdb_path = builder.getInstallPath(h_dir, self.artifact.out_h_filename);</span>
-<span class="line" id="L85">        <span class="tok-kw">try</span> builder.updateFile(self.artifact.getOutputHSource().getPath(builder), full_pdb_path);</span>
+<span class="line" id="L84">        <span class="tok-kw">const</span> full_h_path = builder.getInstallPath(h_dir, self.artifact.out_h_filename);</span>
+<span class="line" id="L85">        <span class="tok-kw">try</span> builder.updateFile(self.artifact.getOutputHSource().getPath(builder), full_h_path);</span>
 <span class="line" id="L86">    }</span>
 <span class="line" id="L87">    self.artifact.installed_path = full_dest_path;</span>
 <span class="line" id="L88">}</span>

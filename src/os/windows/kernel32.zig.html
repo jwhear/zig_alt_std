@@ -336,7 +336,7 @@
 <span class="line" id="L223"><span class="tok-kw">pub</span> <span class="tok-kw">extern</span> <span class="tok-str">&quot;kernel32&quot;</span> <span class="tok-kw">fn</span> <span class="tok-fn">GetFullPathNameW</span>(</span>
 <span class="line" id="L224">    lpFileName: [*:<span class="tok-number">0</span>]<span class="tok-kw">const</span> <span class="tok-type">u16</span>,</span>
 <span class="line" id="L225">    nBufferLength: <span class="tok-type">u32</span>,</span>
-<span class="line" id="L226">    lpBuffer: ?[*:<span class="tok-number">0</span>]<span class="tok-type">u16</span>,</span>
+<span class="line" id="L226">    lpBuffer: [*]<span class="tok-type">u16</span>,</span>
 <span class="line" id="L227">    lpFilePart: ?*?[*:<span class="tok-number">0</span>]<span class="tok-type">u16</span>,</span>
 <span class="line" id="L228">) <span class="tok-kw">callconv</span>(<span class="tok-builtin">@import</span>(<span class="tok-str">&quot;std&quot;</span>).os.windows.WINAPI) <span class="tok-type">u32</span>;</span>
 <span class="line" id="L229"></span>
