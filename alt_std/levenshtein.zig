@@ -86,6 +86,11 @@ pub fn distance64(a: []const u8, b: []const u8) u64 {
     // This function implements the algorithm described in this paper:
     //   Myers, Gene. (1970). A Fast Bit-Vector Algorithm for Approximate String Matching Based on Dynamic Programming. Journal of the ACM. 46. 10.1145/316542.316550.
     //
+    // Highly recommended is a an explanatory paper by Heikki Hyyrö:
+    //   Hyyrö, H. (2001). Explaining and Extending the Bit-parallel Approximate String Matching Algorithm of Myers.
+    // Note: the Hyyrö paper provides a simple extension to this algorithm for
+    //  adding transposition as an edit type (Damerau–Levenshtein distance).
+    //
     // The algorithm is extremely cool but quite dense--as a result, we do not
     //  attempt to exhaustively comment here; if you want to understand how this
     //  works reading the paper is your best bet.
@@ -99,7 +104,7 @@ pub fn distance64(a: []const u8, b: []const u8) u64 {
     const long = if (a.len < b.len) b else a;
     std.debug.assert(long.len <= 64);
 
-	var score: u64 = @intCast(u64, long.len);
+    var score: u64 = @intCast(u64, long.len);
 
     // Early out if one of the strings is empty
     if (short.len == 0) {
@@ -111,38 +116,38 @@ pub fn distance64(a: []const u8, b: []const u8) u64 {
     //  peq['d'] = 0b101; // 'd' occurs at first and third position
     //  peq['o'] = 0b010; // '0' occurs at the second position
     var peq: [256]u64 = [_]u64{0} ** 256;
-	for (long) |c, idx| {
-		peq[c] |= @as(u64, 1) << @intCast(u6, idx);
-	}
+    for (long) |c, idx| {
+        peq[c] |= @as(u64, 1) << @intCast(u6, idx);
+    }
 
-	// The last bit OR'd in
-	// In the paper this is the term `10^(m-1)`
-	const last_set = @as(u64, 1) << @intCast(u6, score - 1);
-	var pv = ~@as(u64, 0); // all 1s to start
-	var mv = @as(u64, 0);  // all 0s to start
+    // The last bit OR'd in
+    // In the paper this is the term `10^(m-1)`
+    const last_set = @as(u64, 1) << @intCast(u6, score - 1);
+    var pv = ~@as(u64, 0); // all 1s to start
+    var mv = @as(u64, 0);  // all 0s to start
 
-	for (short) |c| {
-		var eq = peq[c];
+    for (short) |c| {
+        var eq = peq[c];
 
-		var xv = eq | mv;
-		const xh = (((eq & pv) +% pv) ^ pv) | eq;
+        var xv = eq | mv;
+        const xh = (((eq & pv) +% pv) ^ pv) | eq;
 
-		var ph = mv | ~(xh | pv);
-		const mh = pv & xh;
+        var ph = mv | ~(xh | pv);
+        const mh = pv & xh;
 
-		if ((ph & last_set) != 0) {
-			score += 1;
-		}
+        if ((ph & last_set) != 0) {
+            score += 1;
+        }
 
-		if ((mh & last_set) != 0) {
-			score -= 1;
-		}
-		// Shift the bits up, filling with ones
-		ph = (ph << 1) | 1;
-		pv = (mh << 1) | ~(xv | ph);
-		mv = ph & xv;
-	}
-	return score;
+        if ((mh & last_set) != 0) {
+            score -= 1;
+        }
+        // Shift the bits up, filling with ones
+        ph = (ph << 1) | 1;
+        pv = (mh << 1) | ~(xv | ph);
+        mv = ph & xv;
+    }
+    return score;
 }
 test "distance64" {
     const dist = distance64;
