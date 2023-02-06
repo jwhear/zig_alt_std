@@ -1,36 +1,40 @@
 const std = @import("std");
-const Builder = std.build.Builder;
 
-pub fn build(b: *Builder) !void {
-    const mode = b.standardReleaseOptions();
+pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
+    const optimize = b.standardOptimizeOption(.{});
 
     var buildDir = try std.fs.openIterableDirAbsolute(b.build_root,
                              .{ .access_sub_paths=true });
     defer buildDir.close();
 
-    const lib = b.addStaticLibrary("alt_std", "alt_std.zig");
-    lib.setBuildMode(mode);
-    lib.setTarget(target);
+    _ = b.addStaticLibrary(.{
+        .name = "alt_std",
+        .root_source_file = .{ .path = "alt_std.zig" },
+        .target = target,
+        .optimize = optimize,
+    });
 
     // Package
-    const package = std.build.Pkg{
+    b.addModule(.{
         .name = "alt_std",
-        .source = std.build.FileSource{
+        .source_file = std.build.FileSource{
             .path = "alt_std.zig",
         }
-    };
+    });
 
     // Tests
-    const tests = b.addTest("alt_std.zig");
-    tests.setBuildMode(mode);
+    const tests = b.addTest(.{
+        .root_source_file = .{ .path = "alt_std.zig" },
+    });
     const test_step = b.step("test", "run all tests");
     test_step.dependOn(&tests.step);
 
 
     // Documentation
-    const docs = b.addTest("alt_std.zig");
-    docs.setBuildMode(mode);
+    const docs = b.addTest(.{
+        .root_source_file = .{ .path = "alt_std.zig" },
+    });
     docs.emit_docs = .emit;
     const docs_step = b.step("docs", "Generate documentation");
     docs_step.dependOn(&docs.step);
@@ -50,10 +54,13 @@ pub fn build(b: *Builder) !void {
                                    &[_][]const u8{"bench", entry.name});
 
             // Generate a binary
-            const exe = b.addExecutable(binary, srcPath);
-            exe.setTarget(target);
-            exe.setBuildMode(mode);
-            exe.addPackage(package);
+            const exe = b.addExecutable(.{
+                .name = binary,
+                .root_source_file = .{ .path = srcPath },
+                .target = target,
+                .optimize = optimize,
+            });
+            exe.addModule("alt_std", b.modules.get("alt_std") orelse return error.missing_module);
             exe.linkLibC();
 
             // Create an install step

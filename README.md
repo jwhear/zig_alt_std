@@ -34,7 +34,7 @@ Contains allocators that are either useful on their own or as building blocks of
 Algorithms for computing the Levenshtein edit distance between two strings.  Most users should use `alt_std.levenshtein.distance` for the most flexible and general-purpose implementation.  If you don't need custom edit costs and can guarantee your strings will be 64 bytes or less in length (a reasonable limitation for human languages), the `alt_std.levenshtein.distance64` does not allocate, cannot fail, and is ~13x faster than most implementations.  To benchmark on your hardware, run:
 
 ```
-zig build run-bench-levenshtein -Drelease-fast=true -Dtarget=native -Dcpu=native
+zig build run-bench-levenshtein -Doptimize=ReleaseFast -Dtarget=native -Dcpu=native
 ```
 
 Note that `alt_std.levenshtein.distance` automatically dispatches to the fast `distance64` implementation when possible.
