@@ -2037,11 +2037,568 @@
 <span class="line" id="L1880">            =&gt; <span class="tok-number">16</span>,</span>
 <span class="line" id="L1881">        };</span>
 <span class="line" id="L1882">    }</span>
-<span class="line" id="L1883">};</span>
-<span class="line" id="L1884"></span>
-<span class="line" id="L1885"><span class="tok-kw">test</span> {</span>
-<span class="line" id="L1886">    std.testing.refAllDecls(Target.Cpu.Arch);</span>
-<span class="line" id="L1887">}</span>
-<span class="line" id="L1888"></span>
+<span class="line" id="L1883"></span>
+<span class="line" id="L1884">    <span class="tok-kw">pub</span> <span class="tok-kw">const</span> CType = <span class="tok-kw">enum</span> {</span>
+<span class="line" id="L1885">        short,</span>
+<span class="line" id="L1886">        ushort,</span>
+<span class="line" id="L1887">        int,</span>
+<span class="line" id="L1888">        uint,</span>
+<span class="line" id="L1889">        long,</span>
+<span class="line" id="L1890">        ulong,</span>
+<span class="line" id="L1891">        longlong,</span>
+<span class="line" id="L1892">        ulonglong,</span>
+<span class="line" id="L1893">        float,</span>
+<span class="line" id="L1894">        double,</span>
+<span class="line" id="L1895">        longdouble,</span>
+<span class="line" id="L1896">    };</span>
+<span class="line" id="L1897"></span>
+<span class="line" id="L1898">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">c_type_byte_size</span>(t: Target, c_type: CType) <span class="tok-type">u16</span> {</span>
+<span class="line" id="L1899">        <span class="tok-kw">return</span> <span class="tok-kw">switch</span> (c_type) {</span>
+<span class="line" id="L1900">            .short,</span>
+<span class="line" id="L1901">            .ushort,</span>
+<span class="line" id="L1902">            .int,</span>
+<span class="line" id="L1903">            .uint,</span>
+<span class="line" id="L1904">            .long,</span>
+<span class="line" id="L1905">            .ulong,</span>
+<span class="line" id="L1906">            .longlong,</span>
+<span class="line" id="L1907">            .ulonglong,</span>
+<span class="line" id="L1908">            =&gt; <span class="tok-builtin">@divExact</span>(c_type_bit_size(t, c_type), <span class="tok-number">8</span>),</span>
+<span class="line" id="L1909"></span>
+<span class="line" id="L1910">            .float =&gt; <span class="tok-number">4</span>,</span>
+<span class="line" id="L1911">            .double =&gt; <span class="tok-number">8</span>,</span>
+<span class="line" id="L1912"></span>
+<span class="line" id="L1913">            .longdouble =&gt; <span class="tok-kw">switch</span> (c_type_bit_size(t, c_type)) {</span>
+<span class="line" id="L1914">                <span class="tok-number">16</span> =&gt; <span class="tok-number">2</span>,</span>
+<span class="line" id="L1915">                <span class="tok-number">32</span> =&gt; <span class="tok-number">4</span>,</span>
+<span class="line" id="L1916">                <span class="tok-number">64</span> =&gt; <span class="tok-number">8</span>,</span>
+<span class="line" id="L1917">                <span class="tok-number">80</span> =&gt; <span class="tok-builtin">@intCast</span>(<span class="tok-type">u16</span>, mem.alignForward(<span class="tok-number">10</span>, c_type_alignment(t, .longdouble))),</span>
+<span class="line" id="L1918">                <span class="tok-number">128</span> =&gt; <span class="tok-number">16</span>,</span>
+<span class="line" id="L1919">                <span class="tok-kw">else</span> =&gt; <span class="tok-kw">unreachable</span>,</span>
+<span class="line" id="L1920">            },</span>
+<span class="line" id="L1921">        };</span>
+<span class="line" id="L1922">    }</span>
+<span class="line" id="L1923"></span>
+<span class="line" id="L1924">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">c_type_bit_size</span>(target: Target, c_type: CType) <span class="tok-type">u16</span> {</span>
+<span class="line" id="L1925">        <span class="tok-kw">switch</span> (target.os.tag) {</span>
+<span class="line" id="L1926">            .freestanding, .other =&gt; <span class="tok-kw">switch</span> (target.cpu.arch) {</span>
+<span class="line" id="L1927">                .msp430 =&gt; <span class="tok-kw">switch</span> (c_type) {</span>
+<span class="line" id="L1928">                    .short, .ushort, .int, .uint =&gt; <span class="tok-kw">return</span> <span class="tok-number">16</span>,</span>
+<span class="line" id="L1929">                    .float, .long, .ulong =&gt; <span class="tok-kw">return</span> <span class="tok-number">32</span>,</span>
+<span class="line" id="L1930">                    .longlong, .ulonglong, .double, .longdouble =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L1931">                },</span>
+<span class="line" id="L1932">                .avr =&gt; <span class="tok-kw">switch</span> (c_type) {</span>
+<span class="line" id="L1933">                    .short, .ushort, .int, .uint =&gt; <span class="tok-kw">return</span> <span class="tok-number">16</span>,</span>
+<span class="line" id="L1934">                    .long, .ulong, .float, .double, .longdouble =&gt; <span class="tok-kw">return</span> <span class="tok-number">32</span>,</span>
+<span class="line" id="L1935">                    .longlong, .ulonglong =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L1936">                },</span>
+<span class="line" id="L1937">                .tce, .tcele =&gt; <span class="tok-kw">switch</span> (c_type) {</span>
+<span class="line" id="L1938">                    .short, .ushort =&gt; <span class="tok-kw">return</span> <span class="tok-number">16</span>,</span>
+<span class="line" id="L1939">                    .int, .uint, .long, .ulong, .longlong, .ulonglong =&gt; <span class="tok-kw">return</span> <span class="tok-number">32</span>,</span>
+<span class="line" id="L1940">                    .float, .double, .longdouble =&gt; <span class="tok-kw">return</span> <span class="tok-number">32</span>,</span>
+<span class="line" id="L1941">                },</span>
+<span class="line" id="L1942">                .mips64, .mips64el =&gt; <span class="tok-kw">switch</span> (c_type) {</span>
+<span class="line" id="L1943">                    .short, .ushort =&gt; <span class="tok-kw">return</span> <span class="tok-number">16</span>,</span>
+<span class="line" id="L1944">                    .int, .uint, .float =&gt; <span class="tok-kw">return</span> <span class="tok-number">32</span>,</span>
+<span class="line" id="L1945">                    .long, .ulong =&gt; <span class="tok-kw">return</span> <span class="tok-kw">if</span> (target.abi != .gnuabin32) <span class="tok-number">64</span> <span class="tok-kw">else</span> <span class="tok-number">32</span>,</span>
+<span class="line" id="L1946">                    .longlong, .ulonglong, .double =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L1947">                    .longdouble =&gt; <span class="tok-kw">return</span> <span class="tok-number">128</span>,</span>
+<span class="line" id="L1948">                },</span>
+<span class="line" id="L1949">                .x86_64 =&gt; <span class="tok-kw">switch</span> (c_type) {</span>
+<span class="line" id="L1950">                    .short, .ushort =&gt; <span class="tok-kw">return</span> <span class="tok-number">16</span>,</span>
+<span class="line" id="L1951">                    .int, .uint, .float =&gt; <span class="tok-kw">return</span> <span class="tok-number">32</span>,</span>
+<span class="line" id="L1952">                    .long, .ulong =&gt; <span class="tok-kw">switch</span> (target.abi) {</span>
+<span class="line" id="L1953">                        .gnux32, .muslx32 =&gt; <span class="tok-kw">return</span> <span class="tok-number">32</span>,</span>
+<span class="line" id="L1954">                        <span class="tok-kw">else</span> =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L1955">                    },</span>
+<span class="line" id="L1956">                    .longlong, .ulonglong, .double =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L1957">                    .longdouble =&gt; <span class="tok-kw">return</span> <span class="tok-number">80</span>,</span>
+<span class="line" id="L1958">                },</span>
+<span class="line" id="L1959">                <span class="tok-kw">else</span> =&gt; <span class="tok-kw">switch</span> (c_type) {</span>
+<span class="line" id="L1960">                    .short, .ushort =&gt; <span class="tok-kw">return</span> <span class="tok-number">16</span>,</span>
+<span class="line" id="L1961">                    .int, .uint, .float =&gt; <span class="tok-kw">return</span> <span class="tok-number">32</span>,</span>
+<span class="line" id="L1962">                    .long, .ulong =&gt; <span class="tok-kw">return</span> target.cpu.arch.ptrBitWidth(),</span>
+<span class="line" id="L1963">                    .longlong, .ulonglong, .double =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L1964">                    .longdouble =&gt; <span class="tok-kw">switch</span> (target.cpu.arch) {</span>
+<span class="line" id="L1965">                        .x86 =&gt; <span class="tok-kw">switch</span> (target.abi) {</span>
+<span class="line" id="L1966">                            .android =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L1967">                            <span class="tok-kw">else</span> =&gt; <span class="tok-kw">return</span> <span class="tok-number">80</span>,</span>
+<span class="line" id="L1968">                        },</span>
+<span class="line" id="L1969"></span>
+<span class="line" id="L1970">                        .powerpc,</span>
+<span class="line" id="L1971">                        .powerpcle,</span>
+<span class="line" id="L1972">                        .powerpc64,</span>
+<span class="line" id="L1973">                        .powerpc64le,</span>
+<span class="line" id="L1974">                        =&gt; <span class="tok-kw">switch</span> (target.abi) {</span>
+<span class="line" id="L1975">                            .musl,</span>
+<span class="line" id="L1976">                            .musleabi,</span>
+<span class="line" id="L1977">                            .musleabihf,</span>
+<span class="line" id="L1978">                            .muslx32,</span>
+<span class="line" id="L1979">                            =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L1980">                            <span class="tok-kw">else</span> =&gt; <span class="tok-kw">return</span> <span class="tok-number">128</span>,</span>
+<span class="line" id="L1981">                        },</span>
+<span class="line" id="L1982"></span>
+<span class="line" id="L1983">                        .riscv32,</span>
+<span class="line" id="L1984">                        .riscv64,</span>
+<span class="line" id="L1985">                        .aarch64,</span>
+<span class="line" id="L1986">                        .aarch64_be,</span>
+<span class="line" id="L1987">                        .aarch64_32,</span>
+<span class="line" id="L1988">                        .s390x,</span>
+<span class="line" id="L1989">                        .sparc,</span>
+<span class="line" id="L1990">                        .sparc64,</span>
+<span class="line" id="L1991">                        .sparcel,</span>
+<span class="line" id="L1992">                        .wasm32,</span>
+<span class="line" id="L1993">                        .wasm64,</span>
+<span class="line" id="L1994">                        =&gt; <span class="tok-kw">return</span> <span class="tok-number">128</span>,</span>
+<span class="line" id="L1995"></span>
+<span class="line" id="L1996">                        <span class="tok-kw">else</span> =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L1997">                    },</span>
+<span class="line" id="L1998">                },</span>
+<span class="line" id="L1999">            },</span>
+<span class="line" id="L2000"></span>
+<span class="line" id="L2001">            .linux,</span>
+<span class="line" id="L2002">            .freebsd,</span>
+<span class="line" id="L2003">            .netbsd,</span>
+<span class="line" id="L2004">            .dragonfly,</span>
+<span class="line" id="L2005">            .openbsd,</span>
+<span class="line" id="L2006">            .wasi,</span>
+<span class="line" id="L2007">            .emscripten,</span>
+<span class="line" id="L2008">            .plan9,</span>
+<span class="line" id="L2009">            .solaris,</span>
+<span class="line" id="L2010">            .haiku,</span>
+<span class="line" id="L2011">            .ananas,</span>
+<span class="line" id="L2012">            .fuchsia,</span>
+<span class="line" id="L2013">            .minix,</span>
+<span class="line" id="L2014">            =&gt; <span class="tok-kw">switch</span> (target.cpu.arch) {</span>
+<span class="line" id="L2015">                .msp430 =&gt; <span class="tok-kw">switch</span> (c_type) {</span>
+<span class="line" id="L2016">                    .short, .ushort, .int, .uint =&gt; <span class="tok-kw">return</span> <span class="tok-number">16</span>,</span>
+<span class="line" id="L2017">                    .long, .ulong, .float =&gt; <span class="tok-kw">return</span> <span class="tok-number">32</span>,</span>
+<span class="line" id="L2018">                    .longlong, .ulonglong, .double, .longdouble =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L2019">                },</span>
+<span class="line" id="L2020">                .avr =&gt; <span class="tok-kw">switch</span> (c_type) {</span>
+<span class="line" id="L2021">                    .short, .ushort, .int, .uint =&gt; <span class="tok-kw">return</span> <span class="tok-number">16</span>,</span>
+<span class="line" id="L2022">                    .long, .ulong, .float, .double, .longdouble =&gt; <span class="tok-kw">return</span> <span class="tok-number">32</span>,</span>
+<span class="line" id="L2023">                    .longlong, .ulonglong =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L2024">                },</span>
+<span class="line" id="L2025">                .tce, .tcele =&gt; <span class="tok-kw">switch</span> (c_type) {</span>
+<span class="line" id="L2026">                    .short, .ushort =&gt; <span class="tok-kw">return</span> <span class="tok-number">16</span>,</span>
+<span class="line" id="L2027">                    .int, .uint, .long, .ulong, .longlong, .ulonglong =&gt; <span class="tok-kw">return</span> <span class="tok-number">32</span>,</span>
+<span class="line" id="L2028">                    .float, .double, .longdouble =&gt; <span class="tok-kw">return</span> <span class="tok-number">32</span>,</span>
+<span class="line" id="L2029">                },</span>
+<span class="line" id="L2030">                .mips64, .mips64el =&gt; <span class="tok-kw">switch</span> (c_type) {</span>
+<span class="line" id="L2031">                    .short, .ushort =&gt; <span class="tok-kw">return</span> <span class="tok-number">16</span>,</span>
+<span class="line" id="L2032">                    .int, .uint, .float =&gt; <span class="tok-kw">return</span> <span class="tok-number">32</span>,</span>
+<span class="line" id="L2033">                    .long, .ulong =&gt; <span class="tok-kw">return</span> <span class="tok-kw">if</span> (target.abi != .gnuabin32) <span class="tok-number">64</span> <span class="tok-kw">else</span> <span class="tok-number">32</span>,</span>
+<span class="line" id="L2034">                    .longlong, .ulonglong, .double =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L2035">                    .longdouble =&gt; <span class="tok-kw">if</span> (target.os.tag == .freebsd) <span class="tok-kw">return</span> <span class="tok-number">64</span> <span class="tok-kw">else</span> <span class="tok-kw">return</span> <span class="tok-number">128</span>,</span>
+<span class="line" id="L2036">                },</span>
+<span class="line" id="L2037">                .x86_64 =&gt; <span class="tok-kw">switch</span> (c_type) {</span>
+<span class="line" id="L2038">                    .short, .ushort =&gt; <span class="tok-kw">return</span> <span class="tok-number">16</span>,</span>
+<span class="line" id="L2039">                    .int, .uint, .float =&gt; <span class="tok-kw">return</span> <span class="tok-number">32</span>,</span>
+<span class="line" id="L2040">                    .long, .ulong =&gt; <span class="tok-kw">switch</span> (target.abi) {</span>
+<span class="line" id="L2041">                        .gnux32, .muslx32 =&gt; <span class="tok-kw">return</span> <span class="tok-number">32</span>,</span>
+<span class="line" id="L2042">                        <span class="tok-kw">else</span> =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L2043">                    },</span>
+<span class="line" id="L2044">                    .longlong, .ulonglong, .double =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L2045">                    .longdouble =&gt; <span class="tok-kw">return</span> <span class="tok-number">80</span>,</span>
+<span class="line" id="L2046">                },</span>
+<span class="line" id="L2047">                <span class="tok-kw">else</span> =&gt; <span class="tok-kw">switch</span> (c_type) {</span>
+<span class="line" id="L2048">                    .short, .ushort =&gt; <span class="tok-kw">return</span> <span class="tok-number">16</span>,</span>
+<span class="line" id="L2049">                    .int, .uint, .float =&gt; <span class="tok-kw">return</span> <span class="tok-number">32</span>,</span>
+<span class="line" id="L2050">                    .long, .ulong =&gt; <span class="tok-kw">return</span> target.cpu.arch.ptrBitWidth(),</span>
+<span class="line" id="L2051">                    .longlong, .ulonglong, .double =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L2052">                    .longdouble =&gt; <span class="tok-kw">switch</span> (target.cpu.arch) {</span>
+<span class="line" id="L2053">                        .x86 =&gt; <span class="tok-kw">switch</span> (target.abi) {</span>
+<span class="line" id="L2054">                            .android =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L2055">                            <span class="tok-kw">else</span> =&gt; <span class="tok-kw">return</span> <span class="tok-number">80</span>,</span>
+<span class="line" id="L2056">                        },</span>
+<span class="line" id="L2057"></span>
+<span class="line" id="L2058">                        .powerpc,</span>
+<span class="line" id="L2059">                        .powerpcle,</span>
+<span class="line" id="L2060">                        =&gt; <span class="tok-kw">switch</span> (target.abi) {</span>
+<span class="line" id="L2061">                            .musl,</span>
+<span class="line" id="L2062">                            .musleabi,</span>
+<span class="line" id="L2063">                            .musleabihf,</span>
+<span class="line" id="L2064">                            .muslx32,</span>
+<span class="line" id="L2065">                            =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L2066">                            <span class="tok-kw">else</span> =&gt; <span class="tok-kw">switch</span> (target.os.tag) {</span>
+<span class="line" id="L2067">                                .freebsd, .netbsd, .openbsd =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L2068">                                <span class="tok-kw">else</span> =&gt; <span class="tok-kw">return</span> <span class="tok-number">128</span>,</span>
+<span class="line" id="L2069">                            },</span>
+<span class="line" id="L2070">                        },</span>
+<span class="line" id="L2071"></span>
+<span class="line" id="L2072">                        .powerpc64,</span>
+<span class="line" id="L2073">                        .powerpc64le,</span>
+<span class="line" id="L2074">                        =&gt; <span class="tok-kw">switch</span> (target.abi) {</span>
+<span class="line" id="L2075">                            .musl,</span>
+<span class="line" id="L2076">                            .musleabi,</span>
+<span class="line" id="L2077">                            .musleabihf,</span>
+<span class="line" id="L2078">                            .muslx32,</span>
+<span class="line" id="L2079">                            =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L2080">                            <span class="tok-kw">else</span> =&gt; <span class="tok-kw">switch</span> (target.os.tag) {</span>
+<span class="line" id="L2081">                                .freebsd, .openbsd =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L2082">                                <span class="tok-kw">else</span> =&gt; <span class="tok-kw">return</span> <span class="tok-number">128</span>,</span>
+<span class="line" id="L2083">                            },</span>
+<span class="line" id="L2084">                        },</span>
+<span class="line" id="L2085"></span>
+<span class="line" id="L2086">                        .riscv32,</span>
+<span class="line" id="L2087">                        .riscv64,</span>
+<span class="line" id="L2088">                        .aarch64,</span>
+<span class="line" id="L2089">                        .aarch64_be,</span>
+<span class="line" id="L2090">                        .aarch64_32,</span>
+<span class="line" id="L2091">                        .s390x,</span>
+<span class="line" id="L2092">                        .mips64,</span>
+<span class="line" id="L2093">                        .mips64el,</span>
+<span class="line" id="L2094">                        .sparc,</span>
+<span class="line" id="L2095">                        .sparc64,</span>
+<span class="line" id="L2096">                        .sparcel,</span>
+<span class="line" id="L2097">                        .wasm32,</span>
+<span class="line" id="L2098">                        .wasm64,</span>
+<span class="line" id="L2099">                        =&gt; <span class="tok-kw">return</span> <span class="tok-number">128</span>,</span>
+<span class="line" id="L2100"></span>
+<span class="line" id="L2101">                        <span class="tok-kw">else</span> =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L2102">                    },</span>
+<span class="line" id="L2103">                },</span>
+<span class="line" id="L2104">            },</span>
+<span class="line" id="L2105"></span>
+<span class="line" id="L2106">            .windows, .uefi =&gt; <span class="tok-kw">switch</span> (target.cpu.arch) {</span>
+<span class="line" id="L2107">                .x86 =&gt; <span class="tok-kw">switch</span> (c_type) {</span>
+<span class="line" id="L2108">                    .short, .ushort =&gt; <span class="tok-kw">return</span> <span class="tok-number">16</span>,</span>
+<span class="line" id="L2109">                    .int, .uint, .float =&gt; <span class="tok-kw">return</span> <span class="tok-number">32</span>,</span>
+<span class="line" id="L2110">                    .long, .ulong =&gt; <span class="tok-kw">return</span> <span class="tok-number">32</span>,</span>
+<span class="line" id="L2111">                    .longlong, .ulonglong, .double =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L2112">                    .longdouble =&gt; <span class="tok-kw">switch</span> (target.abi) {</span>
+<span class="line" id="L2113">                        .gnu, .gnuilp32, .cygnus =&gt; <span class="tok-kw">return</span> <span class="tok-number">80</span>,</span>
+<span class="line" id="L2114">                        <span class="tok-kw">else</span> =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L2115">                    },</span>
+<span class="line" id="L2116">                },</span>
+<span class="line" id="L2117">                .x86_64 =&gt; <span class="tok-kw">switch</span> (c_type) {</span>
+<span class="line" id="L2118">                    .short, .ushort =&gt; <span class="tok-kw">return</span> <span class="tok-number">16</span>,</span>
+<span class="line" id="L2119">                    .int, .uint, .float =&gt; <span class="tok-kw">return</span> <span class="tok-number">32</span>,</span>
+<span class="line" id="L2120">                    .long, .ulong =&gt; <span class="tok-kw">switch</span> (target.abi) {</span>
+<span class="line" id="L2121">                        .cygnus =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L2122">                        <span class="tok-kw">else</span> =&gt; <span class="tok-kw">return</span> <span class="tok-number">32</span>,</span>
+<span class="line" id="L2123">                    },</span>
+<span class="line" id="L2124">                    .longlong, .ulonglong, .double =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L2125">                    .longdouble =&gt; <span class="tok-kw">switch</span> (target.abi) {</span>
+<span class="line" id="L2126">                        .gnu, .gnuilp32, .cygnus =&gt; <span class="tok-kw">return</span> <span class="tok-number">80</span>,</span>
+<span class="line" id="L2127">                        <span class="tok-kw">else</span> =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L2128">                    },</span>
+<span class="line" id="L2129">                },</span>
+<span class="line" id="L2130">                <span class="tok-kw">else</span> =&gt; <span class="tok-kw">switch</span> (c_type) {</span>
+<span class="line" id="L2131">                    .short, .ushort =&gt; <span class="tok-kw">return</span> <span class="tok-number">16</span>,</span>
+<span class="line" id="L2132">                    .int, .uint, .float =&gt; <span class="tok-kw">return</span> <span class="tok-number">32</span>,</span>
+<span class="line" id="L2133">                    .long, .ulong =&gt; <span class="tok-kw">return</span> <span class="tok-number">32</span>,</span>
+<span class="line" id="L2134">                    .longlong, .ulonglong, .double =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L2135">                    .longdouble =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L2136">                },</span>
+<span class="line" id="L2137">            },</span>
+<span class="line" id="L2138"></span>
+<span class="line" id="L2139">            .macos, .ios, .tvos, .watchos =&gt; <span class="tok-kw">switch</span> (c_type) {</span>
+<span class="line" id="L2140">                .short, .ushort =&gt; <span class="tok-kw">return</span> <span class="tok-number">16</span>,</span>
+<span class="line" id="L2141">                .int, .uint, .float =&gt; <span class="tok-kw">return</span> <span class="tok-number">32</span>,</span>
+<span class="line" id="L2142">                .long, .ulong =&gt; <span class="tok-kw">switch</span> (target.cpu.arch) {</span>
+<span class="line" id="L2143">                    .x86, .arm, .aarch64_32 =&gt; <span class="tok-kw">return</span> <span class="tok-number">32</span>,</span>
+<span class="line" id="L2144">                    .x86_64 =&gt; <span class="tok-kw">switch</span> (target.abi) {</span>
+<span class="line" id="L2145">                        .gnux32, .muslx32 =&gt; <span class="tok-kw">return</span> <span class="tok-number">32</span>,</span>
+<span class="line" id="L2146">                        <span class="tok-kw">else</span> =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L2147">                    },</span>
+<span class="line" id="L2148">                    <span class="tok-kw">else</span> =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L2149">                },</span>
+<span class="line" id="L2150">                .longlong, .ulonglong, .double =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L2151">                .longdouble =&gt; <span class="tok-kw">switch</span> (target.cpu.arch) {</span>
+<span class="line" id="L2152">                    .x86 =&gt; <span class="tok-kw">switch</span> (target.abi) {</span>
+<span class="line" id="L2153">                        .android =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L2154">                        <span class="tok-kw">else</span> =&gt; <span class="tok-kw">return</span> <span class="tok-number">80</span>,</span>
+<span class="line" id="L2155">                    },</span>
+<span class="line" id="L2156">                    .x86_64 =&gt; <span class="tok-kw">return</span> <span class="tok-number">80</span>,</span>
+<span class="line" id="L2157">                    <span class="tok-kw">else</span> =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L2158">                },</span>
+<span class="line" id="L2159">            },</span>
+<span class="line" id="L2160"></span>
+<span class="line" id="L2161">            .nvcl, .cuda =&gt; <span class="tok-kw">switch</span> (c_type) {</span>
+<span class="line" id="L2162">                .short, .ushort =&gt; <span class="tok-kw">return</span> <span class="tok-number">16</span>,</span>
+<span class="line" id="L2163">                .int, .uint, .float =&gt; <span class="tok-kw">return</span> <span class="tok-number">32</span>,</span>
+<span class="line" id="L2164">                .long, .ulong =&gt; <span class="tok-kw">switch</span> (target.cpu.arch) {</span>
+<span class="line" id="L2165">                    .nvptx =&gt; <span class="tok-kw">return</span> <span class="tok-number">32</span>,</span>
+<span class="line" id="L2166">                    .nvptx64 =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L2167">                    <span class="tok-kw">else</span> =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L2168">                },</span>
+<span class="line" id="L2169">                .longlong, .ulonglong, .double =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L2170">                .longdouble =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L2171">            },</span>
+<span class="line" id="L2172"></span>
+<span class="line" id="L2173">            .amdhsa, .amdpal =&gt; <span class="tok-kw">switch</span> (c_type) {</span>
+<span class="line" id="L2174">                .short, .ushort =&gt; <span class="tok-kw">return</span> <span class="tok-number">16</span>,</span>
+<span class="line" id="L2175">                .int, .uint, .float =&gt; <span class="tok-kw">return</span> <span class="tok-number">32</span>,</span>
+<span class="line" id="L2176">                .long, .ulong, .longlong, .ulonglong, .double =&gt; <span class="tok-kw">return</span> <span class="tok-number">64</span>,</span>
+<span class="line" id="L2177">                .longdouble =&gt; <span class="tok-kw">return</span> <span class="tok-number">128</span>,</span>
+<span class="line" id="L2178">            },</span>
+<span class="line" id="L2179"></span>
+<span class="line" id="L2180">            .cloudabi,</span>
+<span class="line" id="L2181">            .kfreebsd,</span>
+<span class="line" id="L2182">            .lv2,</span>
+<span class="line" id="L2183">            .zos,</span>
+<span class="line" id="L2184">            .rtems,</span>
+<span class="line" id="L2185">            .nacl,</span>
+<span class="line" id="L2186">            .aix,</span>
+<span class="line" id="L2187">            .ps4,</span>
+<span class="line" id="L2188">            .ps5,</span>
+<span class="line" id="L2189">            .elfiamcu,</span>
+<span class="line" id="L2190">            .mesa3d,</span>
+<span class="line" id="L2191">            .contiki,</span>
+<span class="line" id="L2192">            .hermit,</span>
+<span class="line" id="L2193">            .hurd,</span>
+<span class="line" id="L2194">            .opencl,</span>
+<span class="line" id="L2195">            .glsl450,</span>
+<span class="line" id="L2196">            .vulkan,</span>
+<span class="line" id="L2197">            .driverkit,</span>
+<span class="line" id="L2198">            .shadermodel,</span>
+<span class="line" id="L2199">            =&gt; <span class="tok-builtin">@panic</span>(<span class="tok-str">&quot;TODO specify the C integer and float type sizes for this OS&quot;</span>),</span>
+<span class="line" id="L2200">        }</span>
+<span class="line" id="L2201">    }</span>
+<span class="line" id="L2202"></span>
+<span class="line" id="L2203">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">c_type_alignment</span>(target: Target, c_type: CType) <span class="tok-type">u16</span> {</span>
+<span class="line" id="L2204">        <span class="tok-comment">// Overrides for unusual alignments</span>
+</span>
+<span class="line" id="L2205">        <span class="tok-kw">switch</span> (target.cpu.arch) {</span>
+<span class="line" id="L2206">            .avr =&gt; <span class="tok-kw">switch</span> (c_type) {</span>
+<span class="line" id="L2207">                .short, .ushort =&gt; <span class="tok-kw">return</span> <span class="tok-number">2</span>,</span>
+<span class="line" id="L2208">                <span class="tok-kw">else</span> =&gt; <span class="tok-kw">return</span> <span class="tok-number">1</span>,</span>
+<span class="line" id="L2209">            },</span>
+<span class="line" id="L2210">            .x86 =&gt; <span class="tok-kw">switch</span> (target.os.tag) {</span>
+<span class="line" id="L2211">                .windows, .uefi =&gt; <span class="tok-kw">switch</span> (c_type) {</span>
+<span class="line" id="L2212">                    .longlong, .ulonglong, .double =&gt; <span class="tok-kw">return</span> <span class="tok-number">8</span>,</span>
+<span class="line" id="L2213">                    .longdouble =&gt; <span class="tok-kw">switch</span> (target.abi) {</span>
+<span class="line" id="L2214">                        .gnu, .gnuilp32, .cygnus =&gt; <span class="tok-kw">return</span> <span class="tok-number">4</span>,</span>
+<span class="line" id="L2215">                        <span class="tok-kw">else</span> =&gt; <span class="tok-kw">return</span> <span class="tok-number">8</span>,</span>
+<span class="line" id="L2216">                    },</span>
+<span class="line" id="L2217">                    <span class="tok-kw">else</span> =&gt; {},</span>
+<span class="line" id="L2218">                },</span>
+<span class="line" id="L2219">                <span class="tok-kw">else</span> =&gt; {},</span>
+<span class="line" id="L2220">            },</span>
+<span class="line" id="L2221">            <span class="tok-kw">else</span> =&gt; {},</span>
+<span class="line" id="L2222">        }</span>
+<span class="line" id="L2223"></span>
+<span class="line" id="L2224">        <span class="tok-comment">// Next-power-of-two-aligned, up to a maximum.</span>
+</span>
+<span class="line" id="L2225">        <span class="tok-kw">return</span> <span class="tok-builtin">@min</span>(</span>
+<span class="line" id="L2226">            std.math.ceilPowerOfTwoAssert(<span class="tok-type">u16</span>, (c_type_bit_size(target, c_type) + <span class="tok-number">7</span>) / <span class="tok-number">8</span>),</span>
+<span class="line" id="L2227">            <span class="tok-kw">switch</span> (target.cpu.arch) {</span>
+<span class="line" id="L2228">                .arm, .armeb, .thumb, .thumbeb =&gt; <span class="tok-kw">switch</span> (target.os.tag) {</span>
+<span class="line" id="L2229">                    .netbsd =&gt; <span class="tok-kw">switch</span> (target.abi) {</span>
+<span class="line" id="L2230">                        .gnueabi,</span>
+<span class="line" id="L2231">                        .gnueabihf,</span>
+<span class="line" id="L2232">                        .eabi,</span>
+<span class="line" id="L2233">                        .eabihf,</span>
+<span class="line" id="L2234">                        .android,</span>
+<span class="line" id="L2235">                        .musleabi,</span>
+<span class="line" id="L2236">                        .musleabihf,</span>
+<span class="line" id="L2237">                        =&gt; <span class="tok-number">8</span>,</span>
+<span class="line" id="L2238"></span>
+<span class="line" id="L2239">                        <span class="tok-kw">else</span> =&gt; <span class="tok-builtin">@as</span>(<span class="tok-type">u16</span>, <span class="tok-number">4</span>),</span>
+<span class="line" id="L2240">                    },</span>
+<span class="line" id="L2241">                    .ios, .tvos, .watchos =&gt; <span class="tok-number">4</span>,</span>
+<span class="line" id="L2242">                    <span class="tok-kw">else</span> =&gt; <span class="tok-number">8</span>,</span>
+<span class="line" id="L2243">                },</span>
+<span class="line" id="L2244"></span>
+<span class="line" id="L2245">                .msp430,</span>
+<span class="line" id="L2246">                .avr,</span>
+<span class="line" id="L2247">                =&gt; <span class="tok-number">2</span>,</span>
+<span class="line" id="L2248"></span>
+<span class="line" id="L2249">                .arc,</span>
+<span class="line" id="L2250">                .csky,</span>
+<span class="line" id="L2251">                .x86,</span>
+<span class="line" id="L2252">                .xcore,</span>
+<span class="line" id="L2253">                .dxil,</span>
+<span class="line" id="L2254">                .loongarch32,</span>
+<span class="line" id="L2255">                .tce,</span>
+<span class="line" id="L2256">                .tcele,</span>
+<span class="line" id="L2257">                .le32,</span>
+<span class="line" id="L2258">                .amdil,</span>
+<span class="line" id="L2259">                .hsail,</span>
+<span class="line" id="L2260">                .spir,</span>
+<span class="line" id="L2261">                .spirv32,</span>
+<span class="line" id="L2262">                .kalimba,</span>
+<span class="line" id="L2263">                .shave,</span>
+<span class="line" id="L2264">                .renderscript32,</span>
+<span class="line" id="L2265">                .ve,</span>
+<span class="line" id="L2266">                .spu_2,</span>
+<span class="line" id="L2267">                =&gt; <span class="tok-number">4</span>,</span>
+<span class="line" id="L2268"></span>
+<span class="line" id="L2269">                .aarch64_32,</span>
+<span class="line" id="L2270">                .amdgcn,</span>
+<span class="line" id="L2271">                .amdil64,</span>
+<span class="line" id="L2272">                .bpfel,</span>
+<span class="line" id="L2273">                .bpfeb,</span>
+<span class="line" id="L2274">                .hexagon,</span>
+<span class="line" id="L2275">                .hsail64,</span>
+<span class="line" id="L2276">                .loongarch64,</span>
+<span class="line" id="L2277">                .m68k,</span>
+<span class="line" id="L2278">                .mips,</span>
+<span class="line" id="L2279">                .mipsel,</span>
+<span class="line" id="L2280">                .sparc,</span>
+<span class="line" id="L2281">                .sparcel,</span>
+<span class="line" id="L2282">                .sparc64,</span>
+<span class="line" id="L2283">                .lanai,</span>
+<span class="line" id="L2284">                .le64,</span>
+<span class="line" id="L2285">                .nvptx,</span>
+<span class="line" id="L2286">                .nvptx64,</span>
+<span class="line" id="L2287">                .r600,</span>
+<span class="line" id="L2288">                .s390x,</span>
+<span class="line" id="L2289">                .spir64,</span>
+<span class="line" id="L2290">                .spirv64,</span>
+<span class="line" id="L2291">                .renderscript64,</span>
+<span class="line" id="L2292">                =&gt; <span class="tok-number">8</span>,</span>
+<span class="line" id="L2293"></span>
+<span class="line" id="L2294">                .aarch64,</span>
+<span class="line" id="L2295">                .aarch64_be,</span>
+<span class="line" id="L2296">                .mips64,</span>
+<span class="line" id="L2297">                .mips64el,</span>
+<span class="line" id="L2298">                .powerpc,</span>
+<span class="line" id="L2299">                .powerpcle,</span>
+<span class="line" id="L2300">                .powerpc64,</span>
+<span class="line" id="L2301">                .powerpc64le,</span>
+<span class="line" id="L2302">                .riscv32,</span>
+<span class="line" id="L2303">                .riscv64,</span>
+<span class="line" id="L2304">                .x86_64,</span>
+<span class="line" id="L2305">                .wasm32,</span>
+<span class="line" id="L2306">                .wasm64,</span>
+<span class="line" id="L2307">                =&gt; <span class="tok-number">16</span>,</span>
+<span class="line" id="L2308">            },</span>
+<span class="line" id="L2309">        );</span>
+<span class="line" id="L2310">    }</span>
+<span class="line" id="L2311"></span>
+<span class="line" id="L2312">    <span class="tok-kw">pub</span> <span class="tok-kw">fn</span> <span class="tok-fn">c_type_preferred_alignment</span>(target: Target, c_type: CType) <span class="tok-type">u16</span> {</span>
+<span class="line" id="L2313">        <span class="tok-comment">// Overrides for unusual alignments</span>
+</span>
+<span class="line" id="L2314">        <span class="tok-kw">switch</span> (target.cpu.arch) {</span>
+<span class="line" id="L2315">            .arm, .armeb, .thumb, .thumbeb =&gt; <span class="tok-kw">switch</span> (target.os.tag) {</span>
+<span class="line" id="L2316">                .netbsd =&gt; <span class="tok-kw">switch</span> (target.abi) {</span>
+<span class="line" id="L2317">                    .gnueabi,</span>
+<span class="line" id="L2318">                    .gnueabihf,</span>
+<span class="line" id="L2319">                    .eabi,</span>
+<span class="line" id="L2320">                    .eabihf,</span>
+<span class="line" id="L2321">                    .android,</span>
+<span class="line" id="L2322">                    .musleabi,</span>
+<span class="line" id="L2323">                    .musleabihf,</span>
+<span class="line" id="L2324">                    =&gt; {},</span>
+<span class="line" id="L2325"></span>
+<span class="line" id="L2326">                    <span class="tok-kw">else</span> =&gt; <span class="tok-kw">switch</span> (c_type) {</span>
+<span class="line" id="L2327">                        .longdouble =&gt; <span class="tok-kw">return</span> <span class="tok-number">4</span>,</span>
+<span class="line" id="L2328">                        <span class="tok-kw">else</span> =&gt; {},</span>
+<span class="line" id="L2329">                    },</span>
+<span class="line" id="L2330">                },</span>
+<span class="line" id="L2331">                .ios, .tvos, .watchos =&gt; <span class="tok-kw">switch</span> (c_type) {</span>
+<span class="line" id="L2332">                    .longdouble =&gt; <span class="tok-kw">return</span> <span class="tok-number">4</span>,</span>
+<span class="line" id="L2333">                    <span class="tok-kw">else</span> =&gt; {},</span>
+<span class="line" id="L2334">                },</span>
+<span class="line" id="L2335">                <span class="tok-kw">else</span> =&gt; {},</span>
+<span class="line" id="L2336">            },</span>
+<span class="line" id="L2337">            .arc =&gt; <span class="tok-kw">switch</span> (c_type) {</span>
+<span class="line" id="L2338">                .longdouble =&gt; <span class="tok-kw">return</span> <span class="tok-number">4</span>,</span>
+<span class="line" id="L2339">                <span class="tok-kw">else</span> =&gt; {},</span>
+<span class="line" id="L2340">            },</span>
+<span class="line" id="L2341">            .avr =&gt; <span class="tok-kw">switch</span> (c_type) {</span>
+<span class="line" id="L2342">                .int, .uint, .long, .ulong, .float, .longdouble =&gt; <span class="tok-kw">return</span> <span class="tok-number">1</span>,</span>
+<span class="line" id="L2343">                .short, .ushort =&gt; <span class="tok-kw">return</span> <span class="tok-number">2</span>,</span>
+<span class="line" id="L2344">                .double =&gt; <span class="tok-kw">return</span> <span class="tok-number">4</span>,</span>
+<span class="line" id="L2345">                .longlong, .ulonglong =&gt; <span class="tok-kw">return</span> <span class="tok-number">8</span>,</span>
+<span class="line" id="L2346">            },</span>
+<span class="line" id="L2347">            .x86 =&gt; <span class="tok-kw">switch</span> (target.os.tag) {</span>
+<span class="line" id="L2348">                .windows, .uefi =&gt; <span class="tok-kw">switch</span> (c_type) {</span>
+<span class="line" id="L2349">                    .longdouble =&gt; <span class="tok-kw">switch</span> (target.abi) {</span>
+<span class="line" id="L2350">                        .gnu, .gnuilp32, .cygnus =&gt; <span class="tok-kw">return</span> <span class="tok-number">4</span>,</span>
+<span class="line" id="L2351">                        <span class="tok-kw">else</span> =&gt; <span class="tok-kw">return</span> <span class="tok-number">8</span>,</span>
+<span class="line" id="L2352">                    },</span>
+<span class="line" id="L2353">                    <span class="tok-kw">else</span> =&gt; {},</span>
+<span class="line" id="L2354">                },</span>
+<span class="line" id="L2355">                <span class="tok-kw">else</span> =&gt; <span class="tok-kw">switch</span> (c_type) {</span>
+<span class="line" id="L2356">                    .longdouble =&gt; <span class="tok-kw">return</span> <span class="tok-number">4</span>,</span>
+<span class="line" id="L2357">                    <span class="tok-kw">else</span> =&gt; {},</span>
+<span class="line" id="L2358">                },</span>
+<span class="line" id="L2359">            },</span>
+<span class="line" id="L2360">            <span class="tok-kw">else</span> =&gt; {},</span>
+<span class="line" id="L2361">        }</span>
+<span class="line" id="L2362"></span>
+<span class="line" id="L2363">        <span class="tok-comment">// Next-power-of-two-aligned, up to a maximum.</span>
+</span>
+<span class="line" id="L2364">        <span class="tok-kw">return</span> <span class="tok-builtin">@min</span>(</span>
+<span class="line" id="L2365">            std.math.ceilPowerOfTwoAssert(<span class="tok-type">u16</span>, (c_type_bit_size(target, c_type) + <span class="tok-number">7</span>) / <span class="tok-number">8</span>),</span>
+<span class="line" id="L2366">            <span class="tok-kw">switch</span> (target.cpu.arch) {</span>
+<span class="line" id="L2367">                .msp430 =&gt; <span class="tok-builtin">@as</span>(<span class="tok-type">u16</span>, <span class="tok-number">2</span>),</span>
+<span class="line" id="L2368"></span>
+<span class="line" id="L2369">                .csky,</span>
+<span class="line" id="L2370">                .xcore,</span>
+<span class="line" id="L2371">                .dxil,</span>
+<span class="line" id="L2372">                .loongarch32,</span>
+<span class="line" id="L2373">                .tce,</span>
+<span class="line" id="L2374">                .tcele,</span>
+<span class="line" id="L2375">                .le32,</span>
+<span class="line" id="L2376">                .amdil,</span>
+<span class="line" id="L2377">                .hsail,</span>
+<span class="line" id="L2378">                .spir,</span>
+<span class="line" id="L2379">                .spirv32,</span>
+<span class="line" id="L2380">                .kalimba,</span>
+<span class="line" id="L2381">                .shave,</span>
+<span class="line" id="L2382">                .renderscript32,</span>
+<span class="line" id="L2383">                .ve,</span>
+<span class="line" id="L2384">                .spu_2,</span>
+<span class="line" id="L2385">                =&gt; <span class="tok-number">4</span>,</span>
+<span class="line" id="L2386"></span>
+<span class="line" id="L2387">                .arc,</span>
+<span class="line" id="L2388">                .arm,</span>
+<span class="line" id="L2389">                .armeb,</span>
+<span class="line" id="L2390">                .avr,</span>
+<span class="line" id="L2391">                .thumb,</span>
+<span class="line" id="L2392">                .thumbeb,</span>
+<span class="line" id="L2393">                .aarch64_32,</span>
+<span class="line" id="L2394">                .amdgcn,</span>
+<span class="line" id="L2395">                .amdil64,</span>
+<span class="line" id="L2396">                .bpfel,</span>
+<span class="line" id="L2397">                .bpfeb,</span>
+<span class="line" id="L2398">                .hexagon,</span>
+<span class="line" id="L2399">                .hsail64,</span>
+<span class="line" id="L2400">                .x86,</span>
+<span class="line" id="L2401">                .loongarch64,</span>
+<span class="line" id="L2402">                .m68k,</span>
+<span class="line" id="L2403">                .mips,</span>
+<span class="line" id="L2404">                .mipsel,</span>
+<span class="line" id="L2405">                .sparc,</span>
+<span class="line" id="L2406">                .sparcel,</span>
+<span class="line" id="L2407">                .sparc64,</span>
+<span class="line" id="L2408">                .lanai,</span>
+<span class="line" id="L2409">                .le64,</span>
+<span class="line" id="L2410">                .nvptx,</span>
+<span class="line" id="L2411">                .nvptx64,</span>
+<span class="line" id="L2412">                .r600,</span>
+<span class="line" id="L2413">                .s390x,</span>
+<span class="line" id="L2414">                .spir64,</span>
+<span class="line" id="L2415">                .spirv64,</span>
+<span class="line" id="L2416">                .renderscript64,</span>
+<span class="line" id="L2417">                =&gt; <span class="tok-number">8</span>,</span>
+<span class="line" id="L2418"></span>
+<span class="line" id="L2419">                .aarch64,</span>
+<span class="line" id="L2420">                .aarch64_be,</span>
+<span class="line" id="L2421">                .mips64,</span>
+<span class="line" id="L2422">                .mips64el,</span>
+<span class="line" id="L2423">                .powerpc,</span>
+<span class="line" id="L2424">                .powerpcle,</span>
+<span class="line" id="L2425">                .powerpc64,</span>
+<span class="line" id="L2426">                .powerpc64le,</span>
+<span class="line" id="L2427">                .riscv32,</span>
+<span class="line" id="L2428">                .riscv64,</span>
+<span class="line" id="L2429">                .x86_64,</span>
+<span class="line" id="L2430">                .wasm32,</span>
+<span class="line" id="L2431">                .wasm64,</span>
+<span class="line" id="L2432">                =&gt; <span class="tok-number">16</span>,</span>
+<span class="line" id="L2433">            },</span>
+<span class="line" id="L2434">        );</span>
+<span class="line" id="L2435">    }</span>
+<span class="line" id="L2436">};</span>
+<span class="line" id="L2437"></span>
+<span class="line" id="L2438"><span class="tok-kw">test</span> {</span>
+<span class="line" id="L2439">    std.testing.refAllDecls(Target.Cpu.Arch);</span>
+<span class="line" id="L2440">}</span>
+<span class="line" id="L2441"></span>
 </code></pre></body>
 </html>
